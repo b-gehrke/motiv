@@ -28,6 +28,9 @@ set(OTF2XX_CHRONO_DURATION_TYPE nanoseconds CACHE INTERNAL "")
 add_subdirectory(lib/otf2xx)
 mark_as_advanced(OTF2XX_WITH_MPI OTF2_CONFIG OTF2_PRINT)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(otf2vis
