@@ -52,7 +52,8 @@ private:
     std::vector<Slot> slots_;
     std::vector<Communication> communications_;
 
-    std::vector<Slot> slots_building_;
+    std::map<otf2::reference<otf2::definition::location>, std::vector<Slot>*> slots_building_;
+//    std::vector<Slot> slots_building_;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;
@@ -84,12 +85,24 @@ public:
             .location = location,
             .region = event.region(),
         };
-        this->slots_building_.push_back(slot);
+
+        std::vector<Slot>* locationStack;
+        auto locationStackIt = this->slots_building_.find(location.ref());
+        if(locationStackIt == this->slots_building_.end()){
+            locationStack = new std::vector<Slot>();
+            this->slots_building_.insert({location.ref(), locationStack});
+        } else {
+            locationStack = locationStackIt->second;
+        }
+
+        locationStack->push_back(slot);
     }
 
     void event(const otf2::definition::location &location, const otf2::event::leave &event) override {
-        Slot &slot = this->slots_building_.back();
-        this->slots_building_.pop_back();
+        auto locationStack = this->slots_building_.at(location.ref());
+
+        Slot &slot = locationStack->back();
+        locationStack->pop_back();
 
 
         slot.end = event.timestamp() - this->program_start_;
@@ -112,6 +125,11 @@ public:
         std::sort(this->slots_.begin(), this->slots_.end(), [](Slot& rhs, Slot& lhs) {
             return rhs.start < lhs.start;
         });
+
+        for (const auto &item: this->slots_building_) {
+            delete item.second;
+        }
+        std::destroy(this->slots_building_.begin(), this->slots_building_.end());
     }
 };
 
@@ -142,7 +160,7 @@ void MainWindow::onButtonClicked() {
 
         unsigned int r = slot.location.location_group().ref().get();
         long y = r * 30 + 4;
-        long x = (start.count() / duration) * maxWidth + 4;
+        long x = (start.count() / runtime) * maxWidth + 4;
 
         QString text = QString::fromStdString(region);
         auto *label = new QLabel(this->ui->frame);
