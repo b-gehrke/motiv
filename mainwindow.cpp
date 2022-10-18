@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QLabel>
+#include <QStringListModel>
 
 #include <otf2xx/otf2.hpp>
 #include <QVBoxLayout>
@@ -14,14 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-//    auto layout = new QVBoxLayout();
-//    ui->frame->setLayout(layout);
-
-    connect(this->ui->pushButton, &QPushButton::clicked, this, &MainWindow::onButtonClicked);
-
-    auto vbox = new QVBoxLayout();
-    this->ui->frame->setLayout(vbox);
-
+    connect(this->ui->actionOpen_Trace, &QAction::triggered, this, &MainWindow::openTrace);
 }
 
 MainWindow::~MainWindow()
@@ -133,7 +127,7 @@ public:
     }
 };
 
-void MainWindow::onButtonClicked() {
+void MainWindow::openTrace() {
     QString fileName = QFileDialog::getOpenFileName(this);
 
     otf2::reader::reader reader(fileName.toStdString());
@@ -146,6 +140,9 @@ void MainWindow::onButtonClicked() {
 
     double maxWidth = this->ui->frame->width() - 8;
     double runtime = cb.duration().count();
+
+    auto model = new QStringListModel();
+    QStringList items;
 
     for(auto &&slot : cb.getSlots()) {
         std::string region = slot.region.name().str();
@@ -172,8 +169,12 @@ void MainWindow::onButtonClicked() {
         label->move(x, y);
         label->show();
 
-
+        QString item = QString::fromStdString(rank) + " " + text;
+        items << item;
     }
+
+    model->setStringList(items);
+    this->ui->listView->setModel(model);
     
 
 }

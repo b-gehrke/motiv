@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void onButtonClicked();
+    void openTrace();
 
 private:
     Ui::MainWindow *ui;
