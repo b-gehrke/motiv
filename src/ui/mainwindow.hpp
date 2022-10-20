@@ -1,7 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <otf2xx/otf2.hpp>
+#include "lib/otf2xx/include/otf2xx/otf2.hpp"
+#include "src/models/trace.hpp"
 
 #include <QMainWindow>
 #undef foreach
@@ -20,8 +21,12 @@ public:
 
     void openTrace();
 
+    void loadTrace();
+    void showTrace(otf2::chrono::time_point start, otf2::chrono::time_point end);
+
 private:
     Ui::MainWindow *ui;
+    std::shared_ptr<Trace> trace;
 };
 
 

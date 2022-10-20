@@ -17,11 +17,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-)
+        src/main.cpp
+        src/ui/mainwindow.cpp
+#        src/ui/mainwindow.hpp
+        src/ui/mainwindow.ui
+#        src/models/communication.hpp
+#        src/models/slot.hpp
+        src/readercallbacks.cpp
+        src/readercallbacks.hpp
+        src/models/trace.hpp src/models/slot.cpp src/models/communication.cpp src/models/trace.cpp)
 
 # configure OTF2xx submodule
 set(OTF2XX_CHRONO_DURATION_TYPE nanoseconds CACHE INTERNAL "")
