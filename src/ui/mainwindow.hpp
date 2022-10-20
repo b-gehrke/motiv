@@ -19,10 +19,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void openTrace();
+    void loadTrace(const std::string& path);
 
-    void loadTrace();
-    void showTrace(otf2::chrono::time_point start, otf2::chrono::time_point end);
+    void openTrace();
+    void showTrace(otf2::chrono::duration start, otf2::chrono::duration end);
 
 private:
     Ui::MainWindow *ui;

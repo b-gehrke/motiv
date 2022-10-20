@@ -1,7 +1,3 @@
-//
-// Created by bjoern on 20.10.22.
-//
-
 #ifndef MOTIV_READERCALLBACKS_HPP
 #define MOTIV_READERCALLBACKS_HPP
 
@@ -11,14 +7,11 @@
 #include "src/models/communication.hpp"
 
 class ReaderCallbacks : public otf2::reader::callback {
-//    using otf2::reader::callback::event;
-//    using otf2::reader::callback::definition;
 private:
-    std::vector<Slot> slots_;
-    std::vector<Communication> communications_;
+    std::shared_ptr<std::vector<Slot>> slots_;
+    std::shared_ptr<std::vector<Communication>> communications_;
 
     std::map<otf2::reference<otf2::definition::location>, std::vector<Slot> *> slots_building_;
-//    std::vector<Slot> slots_building_;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;
@@ -35,8 +28,8 @@ public:
     void events_done(const otf2::reader::reader &) override;
 
 public:
-    std::vector<Communication> &getCommunications();
-    std::vector<Slot> &getSlots();
+    std::shared_ptr<std::vector<Communication>> getCommunications();
+    std::shared_ptr<std::vector<Slot>> getSlots();
     otf2::chrono::duration duration() const;
 };
 

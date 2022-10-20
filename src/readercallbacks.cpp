@@ -24,7 +24,7 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::enter &event) {
     auto start = event.timestamp() - this->program_start_;
 
-    Slot slot(start,  location, event.region());
+    Slot slot(start, location, event.region());
 
     std::vector<Slot> *locationStack;
     auto locationStackIt = this->slots_building_.find(location.ref());
@@ -42,19 +42,19 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     auto locationStack = this->slots_building_.at(location.ref());
 
     Slot &slot = locationStack->back();
-    locationStack->pop_back();
-
 
     slot.end = event.timestamp() - this->program_start_;
 
-    this->slots_.push_back(slot);
+    this->slots_->push_back(slot);
+
+    locationStack->pop_back();
 }
 
-std::vector<Slot> &ReaderCallbacks::getSlots() {
+std::shared_ptr<std::vector<Slot>> ReaderCallbacks::getSlots() {
     return this->slots_;
 }
 
-std::vector<Communication> &ReaderCallbacks::getCommunications() {
+std::shared_ptr<std::vector<Communication>> ReaderCallbacks::getCommunications() {
     return this->communications_;
 }
 

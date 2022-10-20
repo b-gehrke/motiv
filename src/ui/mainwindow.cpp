@@ -22,11 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
     delete ui;
 }
-
 void MainWindow::openTrace() {
     QString fileName = QFileDialog::getOpenFileName(this);
 
-    otf2::reader::reader reader(fileName.toStdString());
+    this->loadTrace(fileName.toStdString());
+}
+
+void MainWindow::loadTrace(const std::string& path) {
+    otf2::reader::reader reader(path);
 
     ReaderCallbacks cb(reader);
 
@@ -34,26 +37,31 @@ void MainWindow::openTrace() {
     reader.read_definitions();
     reader.read_events();
 
-    double maxWidth = this->ui->frame->width() - 8;
-    double runtime = cb.duration().count();
+    this->trace = std::make_shared<Trace>(cb.getSlots(), cb.getCommunications(), cb.duration());
+    this->showTrace(this->trace->slotss->begin()->start, this->trace->slotss->begin()->start + this->trace->runtime);
+}
+
+void MainWindow::showTrace(otf2::chrono::duration, otf2::chrono::duration) {
+    int maxWidth = this->ui->frame->width() - 8;
+    long double runtime = this->trace->runtime.count();
 
     auto model = new QStringListModel();
     QStringList items;
 
-    for (auto &&slot: cb.getSlots()) {
+    for (auto &&slot: *this->trace->slotss) {
         std::string region = slot.region.name().str();
         std::string rank(slot.location.location_group().name());
         std::string thread(slot.location.name());
         auto start = slot.start;
         auto end = slot.end;
 
-        double duration = (end - start).count();
-        double width = (duration / runtime) * maxWidth;
+        long double duration = (end - start).count();
+        int width = static_cast<int>((duration / runtime) * maxWidth);
 
 
         unsigned int r = slot.location.location_group().ref().get();
-        long y = r * 30 + 4;
-        long x = (start.count() / runtime) * maxWidth + 4;
+        int y = static_cast<int>(r * 30 + 4);
+        int x = static_cast<int>((start.count() / runtime) * maxWidth + 4);
 
         QString text = QString::fromStdString(region);
         auto *label = new QLabel(this->ui->frame);
@@ -71,7 +79,5 @@ void MainWindow::openTrace() {
 
     model->setStringList(items);
     this->ui->listView->setModel(model);
-
-
 }
 

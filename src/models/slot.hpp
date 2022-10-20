@@ -15,9 +15,11 @@ public:
          otf2::definition::location location, otf2::definition::region region);
 
     otf2::chrono::duration start;
-    otf2::chrono::duration end{};
+    otf2::chrono::duration end;
     otf2::definition::location location;
     otf2::definition::region region;
+
+    [[nodiscard]] bool valid() const;
 
 
 };
