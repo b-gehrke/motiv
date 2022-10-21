@@ -13,3 +13,6 @@ cd build
 cmake ..
 make
 ```
+
+# License
+MOTIV is licensed under GPL v3 or later. The license is available [here](COPYING).
