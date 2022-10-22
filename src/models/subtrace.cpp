@@ -33,9 +33,6 @@ std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chr
     auto slots = getSlots();
     auto communications = getCommunications();
 
-    otf2::chrono::duration slotStartTime, slotEndTime, comStartTime, comEndTime;
-
-
     auto newSlotsStart = std::upper_bound(slots.begin(), slots.end(), from, &compareStart<Slot>);
     auto newSlotsEnd = std::upper_bound(slots.begin(), slots.end(), to, &compareEnd<Slot>);
     auto newComsStart = std::upper_bound(communications.begin(), communications.end(), from, &compareStart<Communication>);
@@ -53,11 +50,11 @@ std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chr
     Range<Slot> newSlots(newSlotsStart, newSlotsEnd);
     Range<Communication> newComs(newComsStart, newComsEnd);
 
-    slotStartTime = !newSlots.empty() ? newSlotsStart->start : otf2::chrono::duration::max();
-    slotEndTime = !newSlots.empty() ? (newSlotsEnd - 1)->end : otf2::chrono::duration::min();
+    auto slotStartTime = !newSlots.empty() ? newSlotsStart->start : otf2::chrono::duration::max();
+    auto slotEndTime = !newSlots.empty() ? (newSlotsEnd - 1)->end : otf2::chrono::duration::min();
 
-    comStartTime = !newComs.empty() ? newComsStart->start : otf2::chrono::duration::max();
-    comEndTime = !newComs.empty() ? (newComsEnd - 1)->end : otf2::chrono::duration::min();
+    auto comStartTime = !newComs.empty() ? newComsStart->start : otf2::chrono::duration::max();
+    auto comEndTime = !newComs.empty() ? (newComsEnd - 1)->end : otf2::chrono::duration::min();
 
     auto startTime = std::min(slotStartTime, comStartTime);
     auto endTime = std::max(slotEndTime, comEndTime);

@@ -11,7 +11,7 @@ private:
     std::shared_ptr<std::vector<Slot>> slots_;
     std::shared_ptr<std::vector<Communication>> communications_;
 
-    std::map<otf2::reference<otf2::definition::location>, std::vector<Slot> *> slots_building_;
+    std::map<otf2::reference<otf2::definition::location>, std::vector<Slot::Builder> *> slotsBuilding;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;

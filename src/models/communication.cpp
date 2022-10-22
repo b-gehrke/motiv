@@ -3,7 +3,7 @@
 #include "./communication.hpp"
 
 Communication::Communication(const otf2::chrono::duration &start, const otf2::chrono::duration &anEnd,
-                             std::string from, std::string to) : start(start),
-                                                                 end(anEnd),
-                                                                 from(std::move(from)),
-                                                                 to(std::move(to)) {}
+                             const otf2::definition::location &sender, const otf2::definition::location &receiver,
+                             uint32_t receiverRank) : start(start), end(anEnd), sender(sender), receiver(receiver),
+                                                      receiverRank(receiverRank) {}
+

@@ -9,7 +9,7 @@ ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
     rdr_(rdr),
     slots_(std::make_shared<std::vector<Slot>>()),
     communications_(std::make_shared<std::vector<Communication>>()),
-    slots_building_(),
+    slotsBuilding(),
     program_start_() {
 
 }
@@ -26,33 +26,37 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     this->program_end_ = event.timestamp();
 }
 
-void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::enter &event) {
+void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::enter &event) {
     auto start = event.timestamp() - this->program_start_;
 
-    Slot slot(start, location, event.region());
+    Slot::Builder builder{};
+    auto region = event.region();
+    auto location = loc;
+    builder.start(start)->location(location)->region(region);
 
-    std::vector<Slot> *locationStack;
-    auto locationStackIt = this->slots_building_.find(location.ref());
-    if (locationStackIt == this->slots_building_.end()) {
-        locationStack = new std::vector<Slot>();
-        this->slots_building_.insert({location.ref(), locationStack});
+    std::vector<Slot::Builder> *builders;
+    auto buildersIt = this->slotsBuilding.find(location.ref());
+    if (buildersIt == this->slotsBuilding.end()) {
+        builders = new std::vector<Slot::Builder>();
+        this->slotsBuilding.insert({location.ref(), builders});
     } else {
-        locationStack = locationStackIt->second;
+        builders = buildersIt->second;
     }
 
-    locationStack->push_back(slot);
+    builders->push_back(builder);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::leave &event) {
-    auto locationStack = this->slots_building_.at(location.ref());
+    auto builders = this->slotsBuilding.at(location.ref());
 
-    Slot &slot = locationStack->back();
+    Slot::Builder &builder = builders->back();
 
-    slot.end = event.timestamp() - this->program_start_;
+    auto end = event.timestamp() - this->program_start_;
+    builder.end(end);
 
-    this->slots_->push_back(slot);
+    this->slots_->push_back(builder.build());
 
-    locationStack->pop_back();
+    builders->pop_back();
 }
 
 std::shared_ptr<std::vector<Slot>> ReaderCallbacks::getSlots() {
@@ -72,8 +76,8 @@ void ReaderCallbacks::events_done(const otf2::reader::reader &) {
         return rhs.start < lhs.start;
     });
 
-    for (const auto &item: this->slots_building_) {
+    for (const auto &item: this->slotsBuilding) {
         delete item.second;
     }
-    std::destroy(this->slots_building_.begin(), this->slots_building_.end());
+    std::destroy(this->slotsBuilding.begin(), this->slotsBuilding.end());
 }
