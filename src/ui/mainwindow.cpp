@@ -11,6 +11,7 @@
 #include "src/models/slot.hpp"
 #include "src/models/communication.hpp"
 #include "src/readercallbacks.hpp"
+#include "src/models/filetrace.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -37,18 +38,22 @@ void MainWindow::loadTrace(const std::string& path) {
     reader.read_definitions();
     reader.read_events();
 
-    this->trace = std::make_shared<Trace>(cb.getSlots(), cb.getCommunications(), cb.duration());
-    this->showTrace(this->trace->slotss->begin()->start, this->trace->slotss->begin()->start + this->trace->runtime);
+
+
+    this->trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), cb.duration());
+    this->showTrace(otf2::chrono::duration::min(), otf2::chrono::duration::max());
 }
 
-void MainWindow::showTrace(otf2::chrono::duration, otf2::chrono::duration) {
+void MainWindow::showTrace(otf2::chrono::duration from, otf2::chrono::duration to) {
     int maxWidth = this->ui->frame->width() - 8;
-    long double runtime = this->trace->runtime.count();
+
+    auto subtrace = this->trace; // ->subtrace(from, to); Subtrace does not work currently
+    long double runtime = subtrace->getRuntime().count();
 
     auto model = new QStringListModel();
     QStringList items;
 
-    for (auto &&slot: *this->trace->slotss) {
+    for (auto &&slot: subtrace->getSlots()) {
         std::string region = slot.region.name().str();
         std::string rank(slot.location.location_group().name());
         std::string thread(slot.location.name());

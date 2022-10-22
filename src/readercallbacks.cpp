@@ -3,9 +3,14 @@
 #include "src/models/slot.hpp"
 #include "lib/otf2xx/include/otf2xx/otf2.hpp"
 #include <QStringListModel>
+#include <memory>
 
-ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) : rdr_(rdr), slots_(), communications_(), slots_building_(),
-                                                              program_start_() {
+ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
+    rdr_(rdr),
+    slots_(std::make_shared<std::vector<Slot>>()),
+    communications_(std::make_shared<std::vector<Communication>>()),
+    slots_building_(),
+    program_start_() {
 
 }
 
@@ -63,7 +68,7 @@ otf2::chrono::duration ReaderCallbacks::duration() const {
 }
 
 void ReaderCallbacks::events_done(const otf2::reader::reader &) {
-    std::sort(this->slots_.begin(), this->slots_.end(), [](Slot &rhs, Slot &lhs) {
+    std::sort(this->slots_->begin(), this->slots_->end(), [](Slot &rhs, Slot &lhs) {
         return rhs.start < lhs.start;
     });
 

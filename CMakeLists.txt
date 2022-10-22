@@ -25,7 +25,11 @@ set(PROJECT_SOURCES
 #        src/models/slot.hpp
         src/readercallbacks.cpp
         src/readercallbacks.hpp
-        src/models/trace.hpp src/models/slot.cpp src/models/communication.cpp src/models/trace.cpp)
+        src/models/trace.hpp
+        src/models/slot.cpp
+        src/models/communication.cpp
+        src/models/subtrace.cpp
+        src/models/filetrace.cpp)
 
 # configure OTF2xx submodule
 set(OTF2XX_CHRONO_DURATION_TYPE nanoseconds CACHE INTERNAL "")
