@@ -28,9 +28,27 @@ public:
     void events_done(const otf2::reader::reader &) override;
 
 public:
+    /**
+     * @brief Returns all read communications
+     *
+     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     *
+     * @return All read communications
+     */
     std::shared_ptr<std::vector<Communication>> getCommunications();
+    /**
+     * @brief Returns all read slots
+     *
+     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     *
+     * @return All read slots
+     */
     std::shared_ptr<std::vector<Slot>> getSlots();
-    otf2::chrono::duration duration() const;
+    /**
+     * Duration of the trace
+     * @return Duration of the trace
+     */
+    [[nodiscard]] otf2::chrono::duration duration() const;
 };
 
 #endif //MOTIV_READERCALLBACKS_HPP

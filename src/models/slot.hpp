@@ -1,7 +1,3 @@
-//
-// Created by bjoern on 20.10.22.
-//
-
 #ifndef MOTIV_SLOT_HPP
 #define MOTIV_SLOT_HPP
 

@@ -26,6 +26,10 @@ struct Range {
 
 class Trace {
 public:
+    /**
+     * Gets the slots
+     * @return The slots
+     */
     [[nodiscard]] virtual Range<Slot> getSlots() const = 0;
     [[nodiscard]] virtual Range<Communication> getCommunications() const = 0;
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;

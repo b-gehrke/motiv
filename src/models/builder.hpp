@@ -1,6 +1,8 @@
 #ifndef MOTIV_BUILDER_HPP
 #define MOTIV_BUILDER_HPP
 
+// Makros allowing performing some operation on each element of a list
+// Code from https://github.com/swansontec/map-macro/blob/master/map.h
 #define EVAL0(...) __VA_ARGS__
 #define EVAL1(...) EVAL0(EVAL0(EVAL0(__VA_ARGS__)))
 #define EVAL2(...) EVAL1(EVAL1(EVAL1(__VA_ARGS__)))
@@ -39,31 +41,65 @@
  */
 #define MAP_LIST(f, ...) EVAL(MAP_LIST1(f, __VA_ARGS__, ()()(), ()()(), ()()(), 0))
 
-#define DELETE(var) delete var ## _;
-#define CHECK(field) check_ ## field();
-#define DEREF(field) *field ## _
+#define BUILDER_CHECK(field) check_ ## field();
+#define BUILDER_DREF(field) *field ## _
 
-
-#define BUILDER_FIELD(type, name) \
-private: \
-    std::shared_ptr<type> name ## _;  \
-    void check_ ## name() { \
-        if(!name ## _) \
-        throw std::invalid_argument("Field '"#name"'must be set!"); } \
-public: \
-    Builder * name(type & s) { \
-        name ## _ = std::make_shared<type>(s); \
-        return this; \
+/**
+ * Macro to add a field to a BUILDER
+ */
+#define BUILDER_FIELD(type, name)                                       \
+private:                                                                \
+    std::shared_ptr<type> name ## _;                                    \
+    void check_ ## name() {                                             \
+        if(!name ## _)                                                  \
+        throw std::invalid_argument("Field '"#name"'must be set!"); }   \
+public:                                                                 \
+    Builder * name((type) & s) {                                          \
+        name ## _ = std::make_shared<type>(s);                          \
+        return this;                                                    \
     }
 
-#define BUILDER(type, content, ...) class Builder { \
-public:                                             \
-    Builder() = default;                            \
-    type build(){                                   \
-        MAP(CHECK, __VA_ARGS__)                     \
-        return {MAP_LIST(DEREF, __VA_ARGS__)};      \
-    };                                              \
-    content                                         \
+/**
+ * Macro generating a Builder subclass for a specific data type.
+ * This macro should be used inside a class.
+ * The second arguments should contain several BUILDER_FIELD calls (without comma in between).
+ * The last arguments must be the list of names used in content
+ *
+ * @example @code
+ * class SomeClass {
+ * private:
+ *    someType1 someField1;
+ *    someType2 someField2;
+ *
+ *    BUILDER(SomeClass,
+ *            BUILDER_FIELD(someType1, someField1)
+ *            BUILDER_FIELD(someType2, someField2),
+ *            someField1, someField1)
+ * }
+ */
+#define BUILDER(type, content, ...)                     \
+class Builder : public builder<type> {                  \
+public:                                                 \
+    Builder() = default;                                \
+    type build(){                                       \
+        MAP(BUILDER_CHECK, __VA_ARGS__)                 \
+        return {MAP_LIST(BUILDER_DREF, __VA_ARGS__)};   \
+    };                                                  \
+    content                                             \
+};
+
+template<typename T>
+class builder {
+
+    /**
+     * @brief Build the target object
+     *
+     * Before constructing the target object, all fields are checked.
+     * If one has not been set, an @code std::invalid_argument_exception @endcode is thrown.
+     *
+     * @return Instance of target object
+     */
+    virtual T build() = 0;
 };
 
 #endif //MOTIV_BUILDER_HPP
