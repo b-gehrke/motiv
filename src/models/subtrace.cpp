@@ -20,12 +20,12 @@ otf2::chrono::duration SubTrace::getRuntime() const {
 
 template<typename T>
 static bool compareStart(otf2::chrono::duration val, T x) {
-    return x.start < val;
+    return val < x.start;
 }
 
 template<typename T>
-static bool compareEnd(T x, otf2::chrono::duration val) {
-    return x.end > val;
+static bool compareEnd(otf2::chrono::duration val, T x) {
+    return val < x.end;
 }
 
 
@@ -36,24 +36,28 @@ std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chr
     otf2::chrono::duration slotStartTime, slotEndTime, comStartTime, comEndTime;
 
 
-//    if (!slots.empty()) {
     auto newSlotsStart = std::upper_bound(slots.begin(), slots.end(), from, &compareStart<Slot>);
-    auto newSlotsEnd = std::lower_bound(slots.begin(), slots.end(), to, &compareEnd<Slot>);
+    auto newSlotsEnd = std::upper_bound(slots.begin(), slots.end(), to, &compareEnd<Slot>);
+    auto newComsStart = std::upper_bound(communications.begin(), communications.end(), from, &compareStart<Communication>);
+    auto newComsEnd = std::upper_bound(communications.begin(), communications.end(), to, &compareEnd<Communication>);
+
+    // No start element found. Start subtrace with first element
+    if(newSlotsStart == slots.end()){
+        newSlotsStart = slots.begin();
+    }
+
+    if(newComsStart == communications.end()) {
+        newComsStart = communications.begin();
+    }
 
     Range<Slot> newSlots(newSlotsStart, newSlotsEnd);
+    Range<Communication> newComs(newComsStart, newComsEnd);
 
     slotStartTime = !newSlots.empty() ? newSlotsStart->start : otf2::chrono::duration::max();
     slotEndTime = !newSlots.empty() ? (newSlotsEnd - 1)->end : otf2::chrono::duration::min();
-//    }
-
-    auto newComsStart = std::upper_bound(communications.begin(), communications.end(), from, &compareStart<Communication>);
-    auto newComsEnd = std::lower_bound(communications.begin(), communications.end(), to, &compareEnd<Communication>);
-
-    Range<Communication> newComs(newComsStart, newComsEnd);
 
     comStartTime = !newComs.empty() ? newComsStart->start : otf2::chrono::duration::max();
     comEndTime = !newComs.empty() ? (newComsEnd - 1)->end : otf2::chrono::duration::min();
-//    }
 
     auto startTime = std::min(slotStartTime, comStartTime);
     auto endTime = std::max(slotEndTime, comEndTime);

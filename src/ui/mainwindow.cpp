@@ -47,7 +47,7 @@ void MainWindow::loadTrace(const std::string& path) {
 void MainWindow::showTrace(otf2::chrono::duration from, otf2::chrono::duration to) {
     int maxWidth = this->ui->frame->width() - 8;
 
-    auto subtrace = this->trace; // ->subtrace(from, to); Subtrace does not work currently
+    auto subtrace = this->trace->subtrace(from, to);
     long double runtime = subtrace->getRuntime().count();
 
     auto model = new QStringListModel();
