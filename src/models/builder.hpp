@@ -54,7 +54,7 @@ private:                                                                \
         if(!name ## _)                                                  \
         throw std::invalid_argument("Field '"#name"'must be set!"); }   \
 public:                                                                 \
-    Builder * name((type) & s) {                                          \
+    Builder * name(type & s) {                                          \
         name ## _ = std::make_shared<type>(s);                          \
         return this;                                                    \
     }

@@ -11,7 +11,21 @@ private:
     std::shared_ptr<std::vector<Slot>> slots_;
     std::shared_ptr<std::vector<Communication>> communications_;
 
+    /**
+     * Vectors for building the slot datatypes. Key is the location of the events.
+     */
     std::map<otf2::reference<otf2::definition::location>, std::vector<Slot::Builder> *> slotsBuilding;
+
+
+    /**
+     * Vectors holding builders for communications for which the send request is issued but receive is pending.
+     */
+    std::map<uint32_t, std::vector<Communication::Builder> *> pendingSends;
+
+    /**
+     * Vectors holding builders for communications for which the receive request is issued but send is pending.
+     */
+    std::map<uint32_t, std::vector<Communication::Builder> *> pendingReceives;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;
@@ -25,6 +39,11 @@ public:
     void event(const otf2::definition::location &location, const otf2::event::program_end &event) override;
     void event(const otf2::definition::location &location, const otf2::event::enter &event) override;
     void event(const otf2::definition::location &location, const otf2::event::leave &event) override;
+
+    void event(const otf2::definition::location &location, const otf2::event::mpi_send &send) override;
+
+    void event(const otf2::definition::location &location, const otf2::event::mpi_receive &receive) override;
+
     void events_done(const otf2::reader::reader &) override;
 
 public:
