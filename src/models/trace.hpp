@@ -6,6 +6,9 @@
 #include <ranges>
 #include "slot.hpp"
 #include "communication.hpp"
+#include "blockingp2pcommunication.hpp"
+#include "nonblockingp2pcommunication.hpp"
+#include "collectivecommunication.hpp"
 
 template <typename T>
 struct Range {
@@ -31,7 +34,10 @@ public:
      * @return The slots
      */
     [[nodiscard]] virtual Range<Slot> getSlots() const = 0;
-    [[nodiscard]] virtual Range<Communication> getCommunications() const = 0;
+    [[nodiscard]] virtual Range<BlockingP2PCommunication> getBlockingP2PCommunications() const = 0;
+    [[nodiscard]] virtual Range<NonBlockingP2PCommunication> getNonBlockingP2PCommunications() const = 0;
+    [[nodiscard]] virtual Range<CollectiveCommunication> getCollectiveCommunications() const = 0;
+    [[nodiscard]] virtual otf2::chrono::duration getStartTime() const = 0;
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;
 
     [[nodiscard]] virtual std::shared_ptr<Trace> subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const = 0;

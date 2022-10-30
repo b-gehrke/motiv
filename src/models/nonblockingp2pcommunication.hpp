@@ -17,7 +17,7 @@ public:
     };
 
     NonBlockingP2PCommunication(const otf2::definition::location &sender, const otf2::definition::location &receiver,
-                                uint32_t msgTag, uint32_t msgLength,
+                                uint32_t msgTag, uint64_t msgLength,
                                 const types::communicator &communicator,
                                 const otf2::chrono::duration &sendStartTime,
                                 const otf2::chrono::duration &sendEndTime,

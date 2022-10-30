@@ -40,8 +40,8 @@ void MainWindow::loadTrace(const std::string& path) {
 
 
 
-    this->trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), cb.duration());
-    this->showTrace(otf2::chrono::duration::min(), otf2::chrono::duration::max());
+    this->trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getBlockingComm(), *cb.getNonBlockingComm(), *cb.getCollectiveComm(), cb.duration());
+    this->showTrace(otf2::chrono::duration(0), this->trace->getRuntime());
 }
 
 void MainWindow::showTrace(otf2::chrono::duration from, otf2::chrono::duration to) {

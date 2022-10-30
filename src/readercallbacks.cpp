@@ -4,11 +4,14 @@
 #include "lib/otf2xx/include/otf2xx/otf2.hpp"
 #include <QStringListModel>
 #include <memory>
+#include <utility>
 
 ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
     rdr_(rdr),
     slots_(std::make_shared<std::vector<Slot>>()),
-    communications_(std::make_shared<std::vector<Communication>>()),
+    blockingComm_(std::make_shared<std::vector<BlockingP2PCommunication>>()),
+    nonBlockingComm_(std::make_shared<std::vector<NonBlockingP2PCommunication>>()),
+    collectiveComm_(std::make_shared<std::vector<CollectiveCommunication>>()),
     slotsBuilding(),
     program_start_() {
 
@@ -19,8 +22,14 @@ std::shared_ptr<std::vector<Slot>> ReaderCallbacks::getSlots() {
     return this->slots_;
 }
 
-std::shared_ptr<std::vector<Communication>> ReaderCallbacks::getCommunications() {
-    return this->communications_;
+std::shared_ptr<std::vector<BlockingP2PCommunication>> ReaderCallbacks::getBlockingComm() {
+    return this->blockingComm_;
+}
+std::shared_ptr<std::vector<NonBlockingP2PCommunication>> ReaderCallbacks::getNonBlockingComm() {
+    return this->nonBlockingComm_;
+}
+std::shared_ptr<std::vector<CollectiveCommunication>> ReaderCallbacks::getCollectiveComm() {
+    return this->collectiveComm_;
 }
 
 otf2::chrono::duration ReaderCallbacks::duration() const {
@@ -75,12 +84,22 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
 
 void ReaderCallbacks::communicationEvent(otf2::definition::location location, uint32_t matching,
                                          otf2::chrono::time_point timestamp,
-                                         std::map<uint32_t, std::vector<Communication::Builder> *>& selfPending,
-                                         std::map<uint32_t, std::vector<Communication::Builder> *>& matchingPending,
-                                         std::function<Communication::Builder *(Communication::Builder &,
-                                                                                otf2::definition::location &)> &setLocation,
-                                         std::function<Communication::Builder *(Communication::Builder &,
-                                                                                otf2::chrono::duration &)> &setTime
+                                         std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *>& selfPending,
+                                         std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *>& matchingPending,
+                                         BlockingP2PBuilderSetLocation &setLocation,
+                                         BlockingP2PBuilderSetTime &setTime
+) {
+    BlockingP2PBuilderSetter empty;
+    communicationEvent(std::move(location), matching, timestamp, selfPending, matchingPending, setLocation, setTime, empty);
+}
+
+void ReaderCallbacks::communicationEvent(otf2::definition::location location, uint32_t matching,
+                                         otf2::chrono::time_point timestamp,
+                                         std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *>& selfPending,
+                                         std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *>& matchingPending,
+                                         BlockingP2PBuilderSetLocation &setLocation,
+                                         BlockingP2PBuilderSetTime &setTime,
+                                         BlockingP2PBuilderSetter &additionalBuilderSetter
 ) {
     auto self = location.ref().get();
     // Check for a pending matching receive call
@@ -92,10 +111,13 @@ void ReaderCallbacks::communicationEvent(otf2::definition::location location, ui
         auto timepoint = timestamp - this->program_start_;
         setLocation(builder, location);
         setTime(builder, timepoint);
+        if (additionalBuilderSetter) {
+            additionalBuilderSetter(builder);
+        }
 
         auto communication = builder.build();
 
-        this->communications_->push_back(communication);
+        this->blockingComm_->push_back(communication);
 
         builderStack->pop_back();
         if (builderStack->empty()) {
@@ -103,40 +125,51 @@ void ReaderCallbacks::communicationEvent(otf2::definition::location location, ui
             matchingPending.erase(matching);
         }
     } else {
-        std::vector<Communication::Builder> *builderStack;
+        std::vector<BlockingP2PCommunication::Builder> *builderStack;
         if (selfPending.contains(self)) {
             builderStack = selfPending[self];
         } else {
-            builderStack = new std::vector<Communication::Builder>();
+            builderStack = new std::vector<BlockingP2PCommunication::Builder>();
             selfPending[self] = builderStack;
         }
 
-        Communication::Builder builder;
+        BlockingP2PCommunication::Builder builder;
 
         auto timepoint = timestamp - this->program_start_;
         setLocation(builder, location);
         setTime(builder, timepoint);
+
+        if (additionalBuilderSetter) {
+            additionalBuilderSetter(builder);
+        }
 
         builderStack->push_back(builder);
     }
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_send &send) {
-    std::function<Communication::Builder*(Communication::Builder&, otf2::definition::location&)> l = &Communication::Builder::sender;
-    std::function<Communication::Builder*(Communication::Builder&, otf2::chrono::duration &)> t = &Communication::Builder::start;
-    this->communicationEvent(loc, send.receiver(), send.timestamp(), pendingSends, pendingReceives, l, t);
+    BlockingP2PBuilderSetLocation setLocation = &BlockingP2PCommunication::Builder::sender;
+    BlockingP2PBuilderSetTime setTime = &BlockingP2PCommunication::Builder::sendTime;
+
+    BlockingP2PBuilderSetter setter = [send](BlockingP2PCommunication::Builder &builder) {
+        auto len = send.msg_length();
+        auto tag = send.msg_tag();
+        auto comm =  send.comm();
+        builder.msgLength(len);
+        builder.msgTag(tag);
+        builder.communicator(comm);
+    };
+
+    this->communicationEvent(loc, send.receiver(), send.timestamp(), pendingSends, pendingReceives, setLocation, setTime, setter);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_receive &receive) {
-    std::function<Communication::Builder*(Communication::Builder&, otf2::definition::location&)> l = &Communication::Builder::receiver;
-    std::function<Communication::Builder*(Communication::Builder&, otf2::chrono::duration &)> t = &Communication::Builder::end;
-    this->communicationEvent(loc, receive.sender(), receive.timestamp(), pendingReceives, pendingSends, l, t);
+    BlockingP2PBuilderSetLocation setLocation = &BlockingP2PCommunication::Builder::receiver;
+    BlockingP2PBuilderSetTime setTime = &BlockingP2PCommunication::Builder::receiveTime;
+    this->communicationEvent(loc, receive.sender(), receive.timestamp(), pendingReceives, pendingSends, setLocation, setTime);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_request &request) {
-    std::function<Communication::Builder*(Communication::Builder&, otf2::definition::location&)> l = &Communication::Builder::sender;
-    std::function<Communication::Builder*(Communication::Builder&, otf2::chrono::duration &)> t = &Communication::Builder::start;
-    this->communicationEvent(location, request.receiver(), request.timestamp(), pendingSends, pendingReceives, l, t);
 
 
 }
@@ -179,8 +212,8 @@ void ReaderCallbacks::events_done(const otf2::reader::reader &) {
     std::sort(this->slots_->begin(), this->slots_->end(), [](Slot &rhs, Slot &lhs) {
         return rhs.start < lhs.start;
     });
-    std::sort(this->communications_->begin(), this->communications_->end(), [](Communication &rhs, Communication &lhs) {
-        return rhs.start < lhs.start;
+    std::sort(this->blockingComm_->begin(), this->blockingComm_->end(), [](BlockingP2PCommunication &rhs, BlockingP2PCommunication &lhs) {
+        return rhs.sendTime < lhs.sendTime;
     });
 
     for (const auto &item: this->slotsBuilding) {

@@ -8,8 +8,10 @@
  */
 class FileTrace : public SubTrace {
 private:
-    std::vector<Slot>& slotsVec_;
-    std::vector<Communication> &communicationsVec_;
+    std::vector<Slot> &slots_;
+    std::vector<BlockingP2PCommunication> &blockingComm_;
+    std::vector<NonBlockingP2PCommunication> &nonBlockingComm_;
+    std::vector<CollectiveCommunication> &collectiveComm_;
 public:
     /**
      * Creates a new instance
@@ -18,17 +20,22 @@ public:
      * @param communications vector of communications from the trace file
      * @param runtime total runtime of the trace
      */
-    FileTrace(std::vector<Slot>& slotss, std::vector<Communication> &communications, otf2::chrono::duration runtime);
+    FileTrace(std::vector<Slot> &slotss,
+              std::vector<BlockingP2PCommunication> &blockingComm,
+              std::vector<NonBlockingP2PCommunication> &nonBlockingComm,
+              std::vector<CollectiveCommunication> &collectiveComm,
+              otf2::chrono::duration runtime);
 
     /**
      * @copydoc Trace::getSlots()
      */
     [[nodiscard]] Range<Slot> getSlots() const override;
 
-    /**
-     * @copydoc Trace::getCommunications()
-     */
-    [[nodiscard]] Range<Communication> getCommunications() const override;
+    [[nodiscard]] Range<BlockingP2PCommunication> getBlockingP2PCommunications() const override;
+
+    [[nodiscard]] Range<NonBlockingP2PCommunication> getNonBlockingP2PCommunications() const override;
+
+    [[nodiscard]] Range<CollectiveCommunication> getCollectiveCommunications() const override;
 };
 
 #endif //MOTIV_FILETRACE_HPP

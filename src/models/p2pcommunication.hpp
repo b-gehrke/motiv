@@ -65,14 +65,14 @@
 class P2PCommunication {
 protected:
     P2PCommunication(otf2::definition::location sender, otf2::definition::location receiver,
-                     uint32_t msgTag, uint32_t msgLength,
+                     uint32_t msgTag, uint64_t msgLength,
                      const types::communicator &communicator);
 
 public:
-    const otf2::definition::location sender;
-    const otf2::definition::location receiver;
-    const uint32_t msgTag;
-    const uint32_t msgLength;
-    const types::communicator communicator;
+    otf2::definition::location sender;
+    otf2::definition::location receiver;
+    uint32_t msgTag;
+    uint64_t msgLength;
+    types::communicator communicator;
 };
 #endif //MOTIV_P2PCOMMUNICATION_HPP

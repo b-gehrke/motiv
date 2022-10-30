@@ -6,13 +6,26 @@
 
 #include "src/models/slot.hpp"
 #include "src/models/communication.hpp"
+#include "src/models/blockingp2pcommunication.hpp"
+#include "src/models/nonblockingp2pcommunication.hpp"
+#include "src/models/collectivecommunication.hpp"
+
+typedef std::function<BlockingP2PCommunication::Builder *(BlockingP2PCommunication::Builder &,
+                                                          otf2::definition::location &)> BlockingP2PBuilderSetLocation;
+
+typedef std::function<BlockingP2PCommunication::Builder *(BlockingP2PCommunication::Builder &,
+                                                          otf2::chrono::duration &)> BlockingP2PBuilderSetTime;
+
+typedef std::function<void (BlockingP2PCommunication::Builder &)> BlockingP2PBuilderSetter;
 
 class ReaderCallbacks : public otf2::reader::callback {
     using otf2::reader::callback::event;
     using otf2::reader::callback::definition;
 private:
     std::shared_ptr<std::vector<Slot>> slots_;
-    std::shared_ptr<std::vector<Communication>> communications_;
+    std::shared_ptr<std::vector<BlockingP2PCommunication>> blockingComm_;
+    std::shared_ptr<std::vector<NonBlockingP2PCommunication>> nonBlockingComm_;
+    std::shared_ptr<std::vector<CollectiveCommunication>> collectiveComm_;
 
     /**
      * Vectors for building the slot datatypes. Key is the location of the events.
@@ -23,12 +36,12 @@ private:
     /**
      * Vectors holding builders for communications for which the send request is issued but receive is pending.
      */
-    std::map<uint32_t, std::vector<Communication::Builder> *> pendingSends;
+    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingSends;
 
     /**
      * Vectors holding builders for communications for which the receive request is issued but send is pending.
      */
-    std::map<uint32_t, std::vector<Communication::Builder> *> pendingReceives;
+    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingReceives;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;
@@ -69,6 +82,11 @@ public:
      * @return All read communications
      */
     std::shared_ptr<std::vector<Communication>> getCommunications();
+
+    std::shared_ptr<std::vector<BlockingP2PCommunication>> getBlockingComm();
+    std::shared_ptr<std::vector<NonBlockingP2PCommunication>> getNonBlockingComm();
+    std::shared_ptr<std::vector<CollectiveCommunication>> getCollectiveComm();
+
     /**
      * @brief Returns all read slots
      *
@@ -86,12 +104,18 @@ public:
 private:
     void communicationEvent(otf2::definition::location location, uint32_t matching,
                             otf2::chrono::time_point timestamp,
-                            std::map<uint32_t, std::vector<Communication::Builder> *> &selfPending,
-                            std::map<uint32_t, std::vector<Communication::Builder> *> &matchingPending,
-                            std::function<Communication::Builder *(Communication::Builder &,
-                                                                   otf2::definition::location &)> &setLocation,
-                            std::function<Communication::Builder *(Communication::Builder &,
-                                                                   otf2::chrono::duration &)> &setTime);
+                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &selfPending,
+                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &matchingPending,
+                            BlockingP2PBuilderSetLocation &setLocation,
+                            BlockingP2PBuilderSetTime &setTime);
+
+    void communicationEvent(otf2::definition::location location, uint32_t matching,
+                            otf2::chrono::time_point timestamp,
+                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &selfPending,
+                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &matchingPending,
+                            BlockingP2PBuilderSetLocation &setLocation,
+                            BlockingP2PBuilderSetTime &setTime,
+                            BlockingP2PBuilderSetter &additionalBuilderSetter);
 };
 
 #endif //MOTIV_READERCALLBACKS_HPP

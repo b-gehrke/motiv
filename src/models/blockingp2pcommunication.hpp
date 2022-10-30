@@ -11,18 +11,18 @@
 class BlockingP2PCommunication : public P2PCommunication {
 public:
     BlockingP2PCommunication(const otf2::definition::location &sender, const otf2::definition::location &receiver,
-                             uint32_t msgTag, uint32_t msgLength,
+                             uint32_t msgTag, uint64_t msgLength,
                              const types::communicator &communicator,
                              const otf2::chrono::duration &sendTime, const otf2::chrono::duration &receiveTime);
 
-    const otf2::chrono::duration sendTime;
-    const otf2::chrono::duration receiveTime;
+    otf2::chrono::duration sendTime;
+    otf2::chrono::duration receiveTime;
 
     BUILDER(BlockingP2PCommunication,
             BUILDER_FIELD(otf2::definition::location, sender)
                 BUILDER_FIELD(otf2::definition::location, receiver)
                 BUILDER_FIELD(uint32_t, msgTag)
-                BUILDER_FIELD(uint32_t, msgLength)
+                BUILDER_FIELD(uint64_t, msgLength)
                 BUILDER_FIELD(types::communicator, communicator)
                 BUILDER_FIELD(otf2::chrono::duration, sendTime)
                 BUILDER_FIELD(otf2::chrono::duration, receiveTime),
