@@ -2,7 +2,6 @@
 #define MOTIV_MAINWINDOW_HPP
 
 #include <QMainWindow>
-#undef foreach
 
 #include "src/models/trace.hpp"
 #include "src/ui/views/selectiondetails.hpp"
