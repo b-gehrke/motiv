@@ -15,30 +15,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-
 set(PROJECT_SOURCES
         src/main.cpp
-        src/ui/mainwindow.cpp
-#        src/ui/mainwindow.hpp
-        src/ui/mainwindow.ui
-#        src/models/communication.hpp
-#        src/models/slot.hpp
+        src/ui/views/selectiondetails.cpp
+        src/ui/views/tracelist.cpp
+        src/ui/views/traceselection.cpp
+        src/ui/views/traceoverview.cpp
+        src/ui/windows/mainwindow.cpp
         src/readercallbacks.cpp
-        src/readercallbacks.hpp
-        src/models/trace.hpp
         src/models/slot.cpp
         src/models/communication.cpp
         src/models/subtrace.cpp
         src/models/filetrace.cpp)
 
+# XXX this would require qt version 6
+#qt_add_resources(${PROJECT_NAME} resources.qrc)
+
 # configure OTF2xx submodule
 set(OTF2XX_CHRONO_DURATION_TYPE nanoseconds CACHE INTERNAL "")
 add_subdirectory(lib/otf2xx)
 mark_as_advanced(OTF2XX_WITH_MPI OTF2_CONFIG OTF2_PRINT)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
@@ -63,6 +59,8 @@ else()
     endif()
 endif()
 
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
@@ -70,7 +68,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_GUI_IDENTIFIER de.ovgu.parcio.motiv
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
