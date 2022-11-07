@@ -10,13 +10,16 @@
 #include "src/models/nonblockingp2pcommunication.hpp"
 #include "src/models/collectivecommunication.hpp"
 
-typedef std::function<BlockingP2PCommunication::Builder *(BlockingP2PCommunication::Builder &,
-                                                          otf2::definition::location &)> BlockingP2PBuilderSetLocation;
+template <typename T>
+using BuilderSetLocation = std::function<typename T::Builder *(typename T::Builder &,
+                                                          otf2::definition::location &)>;
 
-typedef std::function<BlockingP2PCommunication::Builder *(BlockingP2PCommunication::Builder &,
-                                                          otf2::chrono::duration &)> BlockingP2PBuilderSetTime;
+template <typename T>
+using BuilderSetTime = std::function<typename T::Builder *(typename T::Builder &,
+                                                          otf2::chrono::duration &)>;
 
-typedef std::function<void (BlockingP2PCommunication::Builder &)> BlockingP2PBuilderSetter;
+template <typename T>
+using BuilderSetter = std::function<void (typename T::Builder &)>;
 
 class ReaderCallbacks : public otf2::reader::callback {
     using otf2::reader::callback::event;
@@ -102,20 +105,20 @@ public:
     [[nodiscard]] otf2::chrono::duration duration() const;
 
 private:
-    void communicationEvent(otf2::definition::location location, uint32_t matching,
-                            otf2::chrono::time_point timestamp,
-                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &selfPending,
-                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &matchingPending,
-                            BlockingP2PBuilderSetLocation &setLocation,
-                            BlockingP2PBuilderSetTime &setTime);
+    template <typename T>
+    void communicationEvent(otf2::definition::location location, uint32_t matching, otf2::chrono::time_point timestamp,
+                            std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
+                            std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
+                            BuilderSetLocation<T> &setLocation, BuilderSetTime<T> &setTime);
 
+    template <typename T>
     void communicationEvent(otf2::definition::location location, uint32_t matching,
                             otf2::chrono::time_point timestamp,
-                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &selfPending,
-                            std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> &matchingPending,
-                            BlockingP2PBuilderSetLocation &setLocation,
-                            BlockingP2PBuilderSetTime &setTime,
-                            BlockingP2PBuilderSetter &additionalBuilderSetter);
+                            std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
+                            std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
+                            BuilderSetLocation<T> &setLocation,
+                            BuilderSetTime<T> &setTime,
+                            BuilderSetter<T> &additionalBuilderSetter);
 };
 
 #endif //MOTIV_READERCALLBACKS_HPP
