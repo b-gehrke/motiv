@@ -9,7 +9,7 @@
 #include <otf2xx/otf2.hpp>
 
 #include "src/models/slot.hpp"
-#include "src/models/communication.hpp"
+#include "src/models/communication/communication.hpp"
 #include "src/readercallbacks.hpp"
 #include "src/models/filetrace.hpp"
 

@@ -27,12 +27,10 @@ set(PROJECT_SOURCES
         src/readercallbacks.hpp
         src/models/trace.hpp
         src/models/slot.cpp
-        src/models/communication.cpp
+        src/models/communication/communication.cpp
         src/models/subtrace.cpp
         src/models/filetrace.cpp
-        src/models/p2pcommunication.cpp
-        src/models/blockingp2pcommunication.cpp
-        src/models/nonblockingp2pcommunication.cpp src/models/collectivecommunication.cpp src/models/collectivecommunication.hpp)
+        src/models/communication/blockingp2pcommunicationevent.cpp src/models/communication/nonblockingp2pcommunicationevent.cpp src/models/communication/blockingsendevent.cpp src/models/communication/blockingsendevent.hpp src/models/communication/blockingreceiveevent.cpp src/models/communication/blockingreceiveevent.hpp src/models/communication/nonblockingsendevent.cpp src/models/communication/nonblockingsendevent.hpp src/models/communication/nonblockingreceiveevent.cpp src/models/communication/nonblockingreceiveevent.hpp)
 
 # configure OTF2xx submodule
 set(OTF2XX_CHRONO_DURATION_TYPE nanoseconds CACHE INTERNAL "")

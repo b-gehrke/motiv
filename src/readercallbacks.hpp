@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "src/models/slot.hpp"
-#include "src/models/communication.hpp"
+#include "src/models/communication/communication.hpp"
 #include "src/models/blockingp2pcommunication.hpp"
 #include "src/models/nonblockingp2pcommunication.hpp"
 #include "src/models/collectivecommunication.hpp"
@@ -37,14 +37,27 @@ private:
 
 
     /**
-     * Vectors holding builders for communications for which the send request is issued but receive is pending.
+     * Vectors holding builders for blocking communications for which the send request is issued but receive is pending.
      */
-    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingSends;
+    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingBlockingSends;
 
     /**
-     * Vectors holding builders for communications for which the receive request is issued but send is pending.
+     * Vectors holding builders for blocking communications for which the receive request is issued but send is pending.
      */
-    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingReceives;
+    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingBlockingReceives;
+
+
+    /**
+     * Vectors holding builders for non blocking communications for which the send request is issued but receive is pending.
+     */
+    std::map<uint32_t, std::vector<NonBlockingP2PCommunication::Builder> *> pendingNonBlockingSends;
+
+    /**
+     * Vectors holding builders for non blocking communications for which the receive request is issued but send is pending.
+     */
+    std::map<uint32_t, std::vector<NonBlockingP2PCommunication::Builder> *> pendingNonBlockingReceives;
+
+    std::map<uint64_t, NonBlockingP2PCommunication::Builder> uncompletedRequests;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;

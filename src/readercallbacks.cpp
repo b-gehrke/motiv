@@ -1,5 +1,5 @@
 #include "readercallbacks.hpp"
-#include "src/models/communication.hpp"
+#include "src/models/communication/communication.hpp"
 #include "src/models/slot.hpp"
 #include "lib/otf2xx/include/otf2xx/otf2.hpp"
 #include <QStringListModel>
@@ -166,25 +166,48 @@ void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::e
         builder.communicator(comm);
     };
 
-    this->communicationEvent<BlockingP2PCommunication>(loc, send.receiver(), send.timestamp(), pendingSends,
-                                                       pendingReceives, setLocation, setTime, setter);
+    this->communicationEvent<BlockingP2PCommunication>(loc, send.receiver(), send.timestamp(), pendingBlockingSends,
+                                                       pendingBlockingReceives, setLocation, setTime, setter);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_receive &receive) {
     BuilderSetLocation<BlockingP2PCommunication> setLocation = &BlockingP2PCommunication::Builder::receiver;
     BuilderSetTime<BlockingP2PCommunication> setTime = &BlockingP2PCommunication::Builder::receiveTime;
-    this->communicationEvent<BlockingP2PCommunication>(loc, receive.sender(), receive.timestamp(), pendingReceives,
-                                                       pendingSends, setLocation, setTime);
+    this->communicationEvent<BlockingP2PCommunication>(loc, receive.sender(), receive.timestamp(), pendingBlockingReceives,
+                                                       pendingBlockingSends, setLocation, setTime);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_request &request) {
+    NonBlockingP2PCommunication::Builder builder;
 
 
+    auto requestId = request.request_id();
+    auto comm = request.comm();
+    auto msgLength = request.msg_length();
+    auto msgTag = request.msg_tag();
+    auto receiver = request.receiver();
+    auto timestamp = request.timestamp() - this->program_start_;
+    
+    builder.requestId(requestId);
+    builder.communicator(comm);
+    builder.msgLength(msgLength);
+    builder.msgTag(msgTag);
+    builder.sendStartTime(timestamp);
+    
+    
+    this->uncompletedRequests.insert({request.request_id(), builder});
 }
 
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_complete &complete) {
-    callback::event(location, complete);
+    auto builder = this->uncompletedRequests[complete.request_id()];
+    this->uncompletedRequests.erase(complete.request_id());
+
+    // search for matching receive
+    // if found
+    //      complete
+    // else
+    //      insert pending send
 }
 
 void
@@ -228,13 +251,13 @@ void ReaderCallbacks::events_done(const otf2::reader::reader &) {
     for (const auto &item: this->slotsBuilding) {
         delete item.second;
     }
-    for (const auto &item: this->pendingSends) {
+    for (const auto &item: this->pendingBlockingSends) {
         delete item.second;
     }
-    for (const auto &item: this->pendingReceives) {
+    for (const auto &item: this->pendingBlockingReceives) {
         delete item.second;
     }
     std::destroy(this->slotsBuilding.begin(), this->slotsBuilding.end());
-    std::destroy(this->pendingSends.begin(), this->pendingSends.end());
-    std::destroy(this->pendingReceives.begin(), this->pendingReceives.end());
+    std::destroy(this->pendingBlockingSends.begin(), this->pendingBlockingSends.end());
+    std::destroy(this->pendingBlockingReceives.begin(), this->pendingBlockingReceives.end());
 }

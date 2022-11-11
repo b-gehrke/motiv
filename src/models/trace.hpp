@@ -5,7 +5,7 @@
 #include <vector>
 #include <ranges>
 #include "slot.hpp"
-#include "communication.hpp"
+#include "src/models/communication/communication.hpp"
 #include "blockingp2pcommunication.hpp"
 #include "nonblockingp2pcommunication.hpp"
 #include "collectivecommunication.hpp"
