@@ -1,9 +1,9 @@
 #include "nonblockingsendevent.hpp"
 
-NonBlockingSendEvent::NonBlockingSendEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &anEnd,
+NonBlockingSendEvent::NonBlockingSendEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
                                            const otf2::definition::location &location,
                                            const types::communicator &communicator) : NonBlockingP2PCommunicationEvent(
-    start, anEnd, location, communicator) {}
+    start, end, location, communicator) {}
 
 CommunicationKind NonBlockingSendEvent::getKind() {
     return NonBlockingSend;

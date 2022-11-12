@@ -124,9 +124,11 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     auto comm = request.comm();
     auto loc = location;
     auto start = relative(request.timestamp());
+    auto receiver = request.receiver();
     builder.communicator(comm);
     builder.location(loc);
     builder.start(start);
+    builder.receiver(receiver);
 
     this->uncompletedRequests.insert({request.request_id(), builder});
 }
@@ -175,7 +177,18 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
 
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_ireceive_request &request) {
-    callback::event(location, request);
+
+    NonBlockingReceiveEvent::Builder builder;
+    auto comm = request.comm();
+    auto loc = location;
+    auto start = relative(request.timestamp());
+    auto sender = request.sender();
+    builder.communicator(comm);
+    builder.location(loc);
+    builder.start(start);
+    builder.sender(sender);
+
+    this->uncompletedRequests.insert({request.request_id(), builder});
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_request_test &test) {
