@@ -9,9 +9,7 @@
 class FileTrace : public SubTrace {
 private:
     std::vector<Slot> &slots_;
-    std::vector<BlockingP2PCommunication> &blockingComm_;
-    std::vector<NonBlockingP2PCommunication> &nonBlockingComm_;
-    std::vector<CollectiveCommunication> &collectiveComm_;
+    std::vector<Communication> &communications_;
 public:
     /**
      * Creates a new instance
@@ -21,9 +19,7 @@ public:
      * @param runtime total runtime of the trace
      */
     FileTrace(std::vector<Slot> &slotss,
-              std::vector<BlockingP2PCommunication> &blockingComm,
-              std::vector<NonBlockingP2PCommunication> &nonBlockingComm,
-              std::vector<CollectiveCommunication> &collectiveComm,
+              std::vector<Communication> &communications,
               otf2::chrono::duration runtime);
 
     /**
@@ -31,11 +27,7 @@ public:
      */
     [[nodiscard]] Range<Slot> getSlots() const override;
 
-    [[nodiscard]] Range<BlockingP2PCommunication> getBlockingP2PCommunications() const override;
-
-    [[nodiscard]] Range<NonBlockingP2PCommunication> getNonBlockingP2PCommunications() const override;
-
-    [[nodiscard]] Range<CollectiveCommunication> getCollectiveCommunications() const override;
+    [[nodiscard]] Range<Communication> getCommunications() const override;
 };
 
 #endif //MOTIV_FILETRACE_HPP

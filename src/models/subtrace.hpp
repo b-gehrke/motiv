@@ -24,23 +24,10 @@ public:
      */
     [[nodiscard]] std::shared_ptr<Trace> subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const override;
 
-
     /**
-     * @copydoc Trace::getBlockingP2PCommunications()
+     * @copydoc Trace::getCommunications()
      */
-    [[nodiscard]] Range<BlockingP2PCommunication> getBlockingP2PCommunications() const override;
-
-
-    /**
-     * @copydoc Trace::getNonBlockingP2PCommunications()
-     */
-    [[nodiscard]] Range<NonBlockingP2PCommunication> getNonBlockingP2PCommunications() const override;
-
-
-    /**
-     * @copydoc Trace::getCollectiveCommunications()
-     */
-    [[nodiscard]] Range<CollectiveCommunication> getCollectiveCommunications() const override;
+    [[nodiscard]] Range<Communication> getCommunications() const override;
 
 
     /**
@@ -55,20 +42,9 @@ protected:
     Range<Slot> slots_;
 
     /**
-     * Backing field for blocking point-to-point communications of this subtrace
+     * Backing field for communications of this subtrace
      */
-    Range<BlockingP2PCommunication> blockingP2PCommunications_;
-
-    /**
-     * Backing field for non-blocking point-to-point communications of this subtrace
-     */
-    Range<NonBlockingP2PCommunication> nonBlockingP2PCommunications_;
-
-
-    /**
-     * Backing field for collective communications of this subtrace
-     */
-    Range<CollectiveCommunication> collectiveCommunications_;
+    Range<Communication> communications_;
 
     /**
      * Backing field for the runtime of this subtrace
@@ -94,9 +70,7 @@ public:
      */
     SubTrace(const Range<Slot> &slots, const Range<Communication> &communications, otf2::chrono::duration runtime);
 
-    SubTrace(const Range<Slot> &slots, const Range<BlockingP2PCommunication> &blockingP2PCommunications,
-             const Range<NonBlockingP2PCommunication> &nonBlockingP2PCommunications,
-             const Range<CollectiveCommunication> &collectiveCommunications, const otf2::chrono::duration &runtime,
+    SubTrace(const Range<Slot> &slots, const Range<Communication> &communications, const otf2::chrono::duration &runtime,
              const otf2::chrono::duration &startTime);
 };
 

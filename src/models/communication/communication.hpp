@@ -10,14 +10,14 @@
 
 class Communication {
 public:
-    Communication(CommunicationEvent &start, CommunicationEvent &anEnd);
+    Communication(const std::shared_ptr<CommunicationEvent> &start, const std::shared_ptr<CommunicationEvent> &end);
 
-    [[nodiscard]] CommunicationEvent &getStart() const;
-    [[nodiscard]] CommunicationEvent &getAnEnd() const;
+    [[nodiscard]] std::shared_ptr<CommunicationEvent> getStart() const;
+    [[nodiscard]] std::shared_ptr<CommunicationEvent> getEnd() const;
 
 private:
-    CommunicationEvent& start;
-    CommunicationEvent& end;
+    std::shared_ptr<CommunicationEvent> start;
+    std::shared_ptr<CommunicationEvent> end;
 };
 
 #endif //MOTIV_COMMUNICATION_HPP

@@ -6,9 +6,8 @@
 
 #include "src/models/slot.hpp"
 #include "src/models/communication/communication.hpp"
-#include "src/models/blockingp2pcommunication.hpp"
-#include "src/models/nonblockingp2pcommunication.hpp"
-#include "src/models/collectivecommunication.hpp"
+#include "src/models/communication/nonblockingsendevent.hpp"
+#include "src/models/communication/nonblockingreceiveevent.hpp"
 
 template <typename T>
 using BuilderSetLocation = std::function<typename T::Builder *(typename T::Builder &,
@@ -21,43 +20,24 @@ using BuilderSetTime = std::function<typename T::Builder *(typename T::Builder &
 template <typename T>
 using BuilderSetter = std::function<void (typename T::Builder &)>;
 
+typedef std::variant<NonBlockingSendEvent::Builder,  NonBlockingReceiveEvent::Builder> NonBlockingCommunicationEventBuilder;
+
 class ReaderCallbacks : public otf2::reader::callback {
     using otf2::reader::callback::event;
     using otf2::reader::callback::definition;
 private:
     std::shared_ptr<std::vector<Slot>> slots_;
-    std::shared_ptr<std::vector<BlockingP2PCommunication>> blockingComm_;
-    std::shared_ptr<std::vector<NonBlockingP2PCommunication>> nonBlockingComm_;
-    std::shared_ptr<std::vector<CollectiveCommunication>> collectiveComm_;
+    std::shared_ptr<std::vector<Communication>> communications_;
 
     /**
      * Vectors for building the slot datatypes. Key is the location of the events.
      */
     std::map<otf2::reference<otf2::definition::location>, std::vector<Slot::Builder> *> slotsBuilding;
 
+    std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> pendingSends;
+    std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> pendingReceives;
 
-    /**
-     * Vectors holding builders for blocking communications for which the send request is issued but receive is pending.
-     */
-    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingBlockingSends;
-
-    /**
-     * Vectors holding builders for blocking communications for which the receive request is issued but send is pending.
-     */
-    std::map<uint32_t, std::vector<BlockingP2PCommunication::Builder> *> pendingBlockingReceives;
-
-
-    /**
-     * Vectors holding builders for non blocking communications for which the send request is issued but receive is pending.
-     */
-    std::map<uint32_t, std::vector<NonBlockingP2PCommunication::Builder> *> pendingNonBlockingSends;
-
-    /**
-     * Vectors holding builders for non blocking communications for which the receive request is issued but send is pending.
-     */
-    std::map<uint32_t, std::vector<NonBlockingP2PCommunication::Builder> *> pendingNonBlockingReceives;
-
-    std::map<uint64_t, NonBlockingP2PCommunication::Builder> uncompletedRequests;
+    std::map<uint64_t, NonBlockingCommunicationEventBuilder> uncompletedRequests;
 
     otf2::chrono::time_point program_start_;
     otf2::chrono::time_point program_end_;
@@ -99,10 +79,6 @@ public:
      */
     std::shared_ptr<std::vector<Communication>> getCommunications();
 
-    std::shared_ptr<std::vector<BlockingP2PCommunication>> getBlockingComm();
-    std::shared_ptr<std::vector<NonBlockingP2PCommunication>> getNonBlockingComm();
-    std::shared_ptr<std::vector<CollectiveCommunication>> getCollectiveComm();
-
     /**
      * @brief Returns all read slots
      *
@@ -118,20 +94,12 @@ public:
     [[nodiscard]] otf2::chrono::duration duration() const;
 
 private:
-    template <typename T>
-    void communicationEvent(otf2::definition::location location, uint32_t matching, otf2::chrono::time_point timestamp,
-                            std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
-                            std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
-                            BuilderSetLocation<T> &setLocation, BuilderSetTime<T> &setTime);
+    template<typename T, typename = std::enable_if_t<std::is_base_of_v<CommunicationEvent, T>>>
+    void communicationEvent(std::shared_ptr<T> self, uint32_t matching,
+                            std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &selfPending,
+                            std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &matchingPending);
 
-    template <typename T>
-    void communicationEvent(otf2::definition::location location, uint32_t matching,
-                            otf2::chrono::time_point timestamp,
-                            std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
-                            std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
-                            BuilderSetLocation<T> &setLocation,
-                            BuilderSetTime<T> &setTime,
-                            BuilderSetter<T> &additionalBuilderSetter);
+    [[nodiscard]] otf2::chrono::duration relative(otf2::chrono::time_point) const;
 };
 
 #endif //MOTIV_READERCALLBACKS_HPP

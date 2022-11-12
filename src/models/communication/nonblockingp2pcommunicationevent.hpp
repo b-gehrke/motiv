@@ -21,7 +21,6 @@ public:
     otf2::chrono::duration getStart() override;
     otf2::chrono::duration getEnd() override;
     types::communicator getCommunicator() override;
-    CommunicationKind getKind() override;
 };
 
 #endif //MOTIV_NONBLOCKINGP2PCOMMUNICATIONEVENT_HPP

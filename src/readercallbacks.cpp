@@ -2,16 +2,18 @@
 #include "src/models/communication/communication.hpp"
 #include "src/models/slot.hpp"
 #include "lib/otf2xx/include/otf2xx/otf2.hpp"
+#include "src/models/communication/blockingsendevent.hpp"
+#include "src/models/communication/blockingreceiveevent.hpp"
+#include "src/models/communication/nonblockingsendevent.hpp"
 #include <QStringListModel>
 #include <memory>
 #include <utility>
+#include <type_traits>
 
 ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
     rdr_(rdr),
     slots_(std::make_shared<std::vector<Slot>>()),
-    blockingComm_(std::make_shared<std::vector<BlockingP2PCommunication>>()),
-    nonBlockingComm_(std::make_shared<std::vector<NonBlockingP2PCommunication>>()),
-    collectiveComm_(std::make_shared<std::vector<CollectiveCommunication>>()),
+    communications_(std::make_shared<std::vector<Communication>>()),
     slotsBuilding(),
     program_start_() {
 
@@ -20,18 +22,6 @@ ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
 
 std::shared_ptr<std::vector<Slot>> ReaderCallbacks::getSlots() {
     return this->slots_;
-}
-
-std::shared_ptr<std::vector<BlockingP2PCommunication>> ReaderCallbacks::getBlockingComm() {
-    return this->blockingComm_;
-}
-
-std::shared_ptr<std::vector<NonBlockingP2PCommunication>> ReaderCallbacks::getNonBlockingComm() {
-    return this->nonBlockingComm_;
-}
-
-std::shared_ptr<std::vector<CollectiveCommunication>> ReaderCallbacks::getCollectiveComm() {
-    return this->collectiveComm_;
 }
 
 otf2::chrono::duration ReaderCallbacks::duration() const {
@@ -84,135 +74,103 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     builders->pop_back();
 }
 
-template<typename T>
-void ReaderCallbacks::communicationEvent(otf2::definition::location location, uint32_t matching,
-                                         otf2::chrono::time_point timestamp,
-                                         std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
-                                         std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
-                                         BuilderSetLocation<T> &setLocation,
-                                         BuilderSetTime<T> &setTime
-) {
-    BuilderSetter<T> empty;
-    communicationEvent<T>(
-        std::move(location), matching, timestamp, selfPending, matchingPending, setLocation, setTime, empty);
-}
 
-template<typename T>
-void ReaderCallbacks::communicationEvent(otf2::definition::location location, uint32_t matching,
-                                         otf2::chrono::time_point timestamp,
-                                         std::map<uint32_t, std::vector<typename T::Builder> *> &selfPending,
-                                         std::map<uint32_t, std::vector<typename T::Builder> *> &matchingPending,
-                                         BuilderSetLocation<T> &setLocation,
-                                         BuilderSetTime<T> &setTime,
-                                         BuilderSetter<T> &additionalBuilderSetter
+template<typename T, typename>
+void ReaderCallbacks::communicationEvent(std::shared_ptr<T> self, uint32_t matching,
+                                         std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &selfPending,
+                                         std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &matchingPending
 ) {
-    using Builder = typename T::Builder;
-    auto self = location.ref().get();
-    // Check for a pending matching receive call
+    // Check for a pending matching call
     if (matchingPending.contains(matching)) {
-        auto builderStack = matchingPending[matching];
-        auto builder = builderStack->back();
+        auto& matchingEvents = matchingPending[matching];
+        auto matchingEvent = matchingEvents->back();
 
+        Communication communication(matchingEvent, self);
+        communications_->push_back(communication);
 
-        auto timepoint = timestamp - this->program_start_;
-        setLocation(builder, location);
-        setTime(builder, timepoint);
-        if (additionalBuilderSetter) {
-            additionalBuilderSetter(builder);
-        }
-
-        auto communication = builder.build();
-
-        this->blockingComm_->push_back(communication);
-
-        builderStack->pop_back();
-        if (builderStack->empty()) {
-            delete builderStack;
+        matchingEvents->pop_back();
+        if (matchingEvents->empty()) {
+            delete matchingEvents;
             matchingPending.erase(matching);
         }
     } else {
-        std::vector<Builder> *builderStack;
-        if (selfPending.contains(self)) {
-            builderStack = selfPending[self];
+        std::vector<std::shared_ptr<CommunicationEvent>> *matchingEvents;
+        auto id = self->getLocation().ref().get();
+        if (selfPending.contains(id)) {
+            matchingEvents = selfPending[id];
         } else {
-            builderStack = new std::vector<Builder>();
-            selfPending[self] = builderStack;
+            matchingEvents = new std::vector<std::shared_ptr<CommunicationEvent>>();
+            selfPending[id] = matchingEvents;
         }
 
-        Builder builder;
-
-        auto timepoint = timestamp - this->program_start_;
-        setLocation(builder, location);
-        setTime(builder, timepoint);
-
-        if (additionalBuilderSetter) {
-            additionalBuilderSetter(builder);
-        }
-
-        builderStack->push_back(builder);
+        matchingEvents->push_back(self);
     }
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_send &send) {
-    BuilderSetLocation<BlockingP2PCommunication> setLocation = &BlockingP2PCommunication::Builder::sender;
-    BuilderSetTime<BlockingP2PCommunication> setTime = &BlockingP2PCommunication::Builder::sendTime;
+    auto ev = std::make_shared<BlockingSendEvent>(relative(send.timestamp()), loc, send.comm());
 
-    BuilderSetter<BlockingP2PCommunication> setter = [send](BlockingP2PCommunication::Builder &builder) {
-        auto len = send.msg_length();
-        auto tag = send.msg_tag();
-        auto comm = send.comm();
-        builder.msgLength(len);
-        builder.msgTag(tag);
-        builder.communicator(comm);
-    };
-
-    this->communicationEvent<BlockingP2PCommunication>(loc, send.receiver(), send.timestamp(), pendingBlockingSends,
-                                                       pendingBlockingReceives, setLocation, setTime, setter);
+    this->communicationEvent(ev, send.receiver(), pendingSends, pendingReceives);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_receive &receive) {
-    BuilderSetLocation<BlockingP2PCommunication> setLocation = &BlockingP2PCommunication::Builder::receiver;
-    BuilderSetTime<BlockingP2PCommunication> setTime = &BlockingP2PCommunication::Builder::receiveTime;
-    this->communicationEvent<BlockingP2PCommunication>(loc, receive.sender(), receive.timestamp(), pendingBlockingReceives,
-                                                       pendingBlockingSends, setLocation, setTime);
+    auto ev = std::make_shared<BlockingReceiveEvent>(relative(receive.timestamp()), loc, receive.comm());
+
+    this->communicationEvent(ev, receive.sender(), pendingSends, pendingReceives);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_request &request) {
-    NonBlockingP2PCommunication::Builder builder;
-
-
-    auto requestId = request.request_id();
+    NonBlockingSendEvent::Builder builder;
     auto comm = request.comm();
-    auto msgLength = request.msg_length();
-    auto msgTag = request.msg_tag();
-    auto receiver = request.receiver();
-    auto timestamp = request.timestamp() - this->program_start_;
-    
-    builder.requestId(requestId);
+    auto loc = location;
+    auto start = relative(request.timestamp());
     builder.communicator(comm);
-    builder.msgLength(msgLength);
-    builder.msgTag(msgTag);
-    builder.sendStartTime(timestamp);
-    
-    
+    builder.location(loc);
+    builder.start(start);
+
     this->uncompletedRequests.insert({request.request_id(), builder});
 }
 
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_complete &complete) {
-    auto builder = this->uncompletedRequests[complete.request_id()];
-    this->uncompletedRequests.erase(complete.request_id());
+    if (!uncompletedRequests.contains(complete.request_id())) {
+        throw std::logic_error("Found a mpi_isend_complete event with no matching mpi_isend_request event!");
+    }
 
-    // search for matching receive
-    // if found
-    //      complete
-    // else
-    //      insert pending send
+    auto builderVariant = uncompletedRequests[complete.request_id()];
+    if(!holds_alternative<NonBlockingSendEvent::Builder>(builderVariant)) {
+        throw std::logic_error("mpi_isend_complete event completes an mpi_ireceive event!");
+    }
+    
+    auto builder = get<NonBlockingSendEvent::Builder>(builderVariant);
+
+    auto end = relative(complete.timestamp());
+    builder.end(end);
+
+    auto ev = builder.build_shared();
+
+    communicationEvent(ev, builder.receiver(), pendingSends, pendingReceives);
 }
 
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_ireceive_complete &complete) {
-    callback::event(location, complete);
+    if (!uncompletedRequests.contains(complete.request_id())) {
+        throw std::logic_error("Found a mpi_ireceive_complete event with no matching mpi_ireceive_request event!");
+    }
+
+    auto builderVariant = uncompletedRequests[complete.request_id()];
+    if(!holds_alternative<NonBlockingReceiveEvent::Builder>(builderVariant)) {
+        throw std::logic_error("mpi_ireceive_complete event completes an mpi_isend event!");
+    }
+
+    auto builder = get<NonBlockingReceiveEvent::Builder>(builderVariant);
+
+    auto end = relative(complete.timestamp());
+    builder.end(end);
+
+    auto ev = builder.build_shared();
+
+    communicationEvent(ev, builder.receiver(), pendingReceives, pendingSends);
 }
 
 void
@@ -243,21 +201,37 @@ void ReaderCallbacks::events_done(const otf2::reader::reader &) {
     std::sort(this->slots_->begin(), this->slots_->end(), [](Slot &rhs, Slot &lhs) {
         return rhs.start < lhs.start;
     });
-    std::sort(this->blockingComm_->begin(), this->blockingComm_->end(),
-              [](BlockingP2PCommunication &rhs, BlockingP2PCommunication &lhs) {
-                  return rhs.sendTime < lhs.sendTime;
+    std::sort(this->communications_->begin(), this->communications_->end(),
+              [](Communication &rhs, Communication &lhs) {
+                  return rhs.getStart()->getStart() < lhs.getStart()->getStart();
               });
 
     for (const auto &item: this->slotsBuilding) {
+        // TODO: Warn about uncomplete slots
         delete item.second;
     }
-    for (const auto &item: this->pendingBlockingSends) {
+    for (const auto &item: this->pendingSends) {
+        // TODO: Warn about unmatched sends
         delete item.second;
     }
-    for (const auto &item: this->pendingBlockingReceives) {
+    for (const auto &item: this->pendingReceives) {
+        // TODO: Warn about unmatched receives
         delete item.second;
     }
+    for(const auto &item: this->uncompletedRequests) {
+        // TODO: Warn about uncompleted (and not cancelled) requests
+    }
+
     std::destroy(this->slotsBuilding.begin(), this->slotsBuilding.end());
-    std::destroy(this->pendingBlockingSends.begin(), this->pendingBlockingSends.end());
-    std::destroy(this->pendingBlockingReceives.begin(), this->pendingBlockingReceives.end());
+    std::destroy(this->pendingSends.begin(), this->pendingSends.end());
+    std::destroy(this->pendingReceives.begin(), this->pendingReceives.end());
+    std::destroy(this->uncompletedRequests.begin(), this->uncompletedRequests.end());
+}
+
+otf2::chrono::duration ReaderCallbacks::relative(otf2::chrono::time_point timepoint) const {
+    return timepoint - program_start_;
+}
+
+std::shared_ptr<std::vector<Communication>> ReaderCallbacks::getCommunications() {
+    return communications_;
 }

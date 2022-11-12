@@ -10,6 +10,7 @@ enum CommunicationKind {
     BlockingReceive,
     NonBlockingSend,
     NonBlockingReceive,
-    Collective
+    Collective,
+    RequestCancelled
 };
 #endif //MOTIV_COMMUNICATIONKIND_HPP

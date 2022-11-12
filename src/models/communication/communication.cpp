@@ -3,12 +3,13 @@
 #include "communicationevent.hpp"
 #include "blockingp2pcommunicationevent.hpp"
 
-Communication::Communication(CommunicationEvent &start, CommunicationEvent &anEnd) : start(start), end(anEnd) {}
+Communication::Communication(const std::shared_ptr<CommunicationEvent>& start, const std::shared_ptr<CommunicationEvent>& end) : start(), end() {
+}
 
-CommunicationEvent &Communication::getStart() const {
+std::shared_ptr<CommunicationEvent> Communication::getStart() const {
     return start;
 }
 
-CommunicationEvent &Communication::getAnEnd() const {
+std::shared_ptr<CommunicationEvent> Communication::getEnd() const {
     return end;
 }
