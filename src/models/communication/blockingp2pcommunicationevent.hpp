@@ -8,16 +8,34 @@
 #include "communicationkind.hpp"
 #include "./communication.hpp"
 
+/**
+ * Defines the duration of blocking communication events.
+ *
+ * A blocking communication event has only a single time point and therefore no duration. For easier use in the rest
+ * of the application each blocking event is assigned a small duration nevertheless.
+ */
 const otf2::chrono::duration BLOCKING_EVENT_DURATION(1);
 
+
+/**
+ * Class representing blocking events in point to point communications like MPI_SSEND, MPI_SRECEIVE.
+ *
+ * This class bundles common functionality for these types of events and should be used as a base class and not
+ * instantiated directly.
+ */
 class BlockingP2PCommunicationEvent : public CommunicationEvent {
 protected:
-public:
+    /**
+     * Creates a new instance of the abstract BlockingP2PCommunicationEvent class.
+     *
+     * @param timepoint Timepoint of the event
+     * @param location Location of the event
+     * @param communicator Communicator the event took place in
+     */
     BlockingP2PCommunicationEvent(const otf2::chrono::duration &timepoint, const otf2::definition::location &location,
                                   const types::communicator &communicator);
 
 protected:
-
     otf2::chrono::duration timepoint;
     otf2::definition::location location;
     types::communicator communicator;

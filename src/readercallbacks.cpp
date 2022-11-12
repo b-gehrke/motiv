@@ -170,7 +170,7 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
 
     auto ev = builder.build_shared();
 
-    communicationEvent(ev, builder.receiver(), pendingReceives, pendingSends);
+    communicationEvent(ev, builder.sender(), pendingReceives, pendingSends);
 }
 
 void
