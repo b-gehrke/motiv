@@ -20,7 +20,7 @@ set(PROJECT_SOURCES
         src/ui/views/selectiondetails.cpp
         src/ui/views/tracelist.cpp
         src/ui/views/traceselection.cpp
-        src/ui/views/traceoverview.cpp
+        src/ui/views/preview.cpp
         src/ui/windows/mainwindow.cpp
         src/readercallbacks.cpp
         src/models/slot.cpp

@@ -4,22 +4,18 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenuBar>
-#include <QMessageBox>
 #include <QStringListModel>
-#include <QVBoxLayout>
 #include <QWidget>
 
-#include "src/models/communication.hpp"
-#include "src/models/filetrace.hpp"
-#include "src/models/slot.hpp"
-#include "src/readercallbacks.hpp"
-
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), dockWidgets() {
   createMenus();
+  // contains buttons and overview
+  createToolBar();
+  // contains details
+  createDockWidgets();
+  // contains list of processes
   createCentralWidget();
 }
-
-MainWindow::~MainWindow() {}
 
 void MainWindow::createMenus() {
   /// File menu
@@ -54,23 +50,19 @@ void MainWindow::createMenus() {
   helpMenu->addAction(aboutAction);
 }
 
+void MainWindow::createToolBar() {
+    toolbar = addToolBar(tr("&Toolbar"));
+    toolbar->setMovable(false);
+
+    traceOverview = new view::Preview(this);
+    toolbar->addWidget(traceOverview);
+}
+
+void MainWindow::createDockWidgets() {
+
+}
+
 void MainWindow::createCentralWidget() {
-  auto vertSplit = new QWidget(this);
-  vertSplit->setLayout(new QVBoxLayout(vertSplit));
-  // vertSplit->layout()->setSizeConstraint(QLayout::SetMaximumSize);
-  auto horiSplit = new QWidget(vertSplit);
-  horiSplit->setLayout(new QHBoxLayout(horiSplit));
-  // horiSplit->layout()->setSizeConstraint(QLayout::SetMaximumSize);
-
-  overview = new view::TraceOverview(this);
-  vertSplit->layout()->addWidget(overview);
-  vertSplit->layout()->addWidget(horiSplit);
-
-  details = new view::SelectionDetails(this);
-  tracelist = new view::TraceList(this);
-
-  horiSplit->layout()->addWidget(tracelist);
-  horiSplit->layout()->addWidget(details);
-
-  setCentralWidget(vertSplit);
+  traceList = new view::TraceList(this);
+  setCentralWidget(traceList);
 }
