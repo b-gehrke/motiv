@@ -10,6 +10,7 @@ class FileTrace : public SubTrace {
 private:
     std::vector<Slot> &slots_;
     std::vector<Communication> &communications_;
+    std::vector<CollectiveCommunicationEvent> &collectiveCommunications_;
 public:
     /**
      * Creates a new instance
@@ -20,6 +21,7 @@ public:
      */
     FileTrace(std::vector<Slot> &slotss,
               std::vector<Communication> &communications,
+              std::vector<CollectiveCommunicationEvent> &collectiveCommunications_,
               otf2::chrono::duration runtime);
 
     /**
@@ -28,6 +30,8 @@ public:
     [[nodiscard]] Range<Slot> getSlots() const override;
 
     [[nodiscard]] Range<Communication> getCommunications() const override;
+
+    [[nodiscard]] Range<CollectiveCommunicationEvent> getCollectiveCommunications() const override;
 };
 
 #endif //MOTIV_FILETRACE_HPP

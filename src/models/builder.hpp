@@ -57,6 +57,9 @@ public:                                                                 \
     Builder * name(type & s) {                                          \
         name ## _ = std::make_shared<type>(s);                          \
         return this;                                                    \
+    }                                                                   \
+    std::shared_ptr<type> name() {                                                     \
+        return name ## _;                                               \
     }
 
 #define BUILDER_OPTIONAL_FIELD(type, name)                              \

@@ -9,18 +9,18 @@ NonBlockingP2PCommunicationEvent::NonBlockingP2PCommunicationEvent(const std::ch
                                                                    const std::variant <otf2::definition::comm, otf2::definition::inter_comm> &communicator)
     : start(start), end(end), location(location), communicator(communicator) {}
 
-otf2::definition::location NonBlockingP2PCommunicationEvent::getLocation() {
+otf2::definition::location NonBlockingP2PCommunicationEvent::getLocation() const {
     return location;
 }
 
-otf2::chrono::duration NonBlockingP2PCommunicationEvent::getStart() {
+otf2::chrono::duration NonBlockingP2PCommunicationEvent::getStart() const {
     return start;
 }
 
-otf2::chrono::duration NonBlockingP2PCommunicationEvent::getEnd() {
+otf2::chrono::duration NonBlockingP2PCommunicationEvent::getEnd() const {
     return end;
 }
 
-types::communicator NonBlockingP2PCommunicationEvent::getCommunicator() {
+types::communicator NonBlockingP2PCommunicationEvent::getCommunicator() const {
     return communicator;
 }

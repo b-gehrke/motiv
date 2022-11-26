@@ -6,6 +6,6 @@ BlockingSendEvent::BlockingSendEvent(const otf2::chrono::duration &timepoint,
                                                                                                               location,
                                                                                                               communicator) {}
 
-CommunicationKind BlockingSendEvent::getKind() {
+CommunicationKind BlockingSendEvent::getKind() const {
     return BlockingSend;
 }

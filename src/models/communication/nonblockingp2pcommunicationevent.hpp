@@ -31,10 +31,10 @@ protected:
     otf2::definition::location location;
     types::communicator communicator;
 public:
-    otf2::definition::location getLocation() override;
-    otf2::chrono::duration getStart() override;
-    otf2::chrono::duration getEnd() override;
-    types::communicator getCommunicator() override;
+    otf2::definition::location getLocation() const override;
+    otf2::chrono::duration getStart() const override;
+    otf2::chrono::duration getEnd() const override;
+    types::communicator getCommunicator() const override;
 };
 
 #endif //MOTIV_NONBLOCKINGP2PCOMMUNICATIONEVENT_HPP

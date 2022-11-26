@@ -1,6 +1,6 @@
 #include "blockingreceiveevent.hpp"
 
-CommunicationKind BlockingReceiveEvent::getKind() {
+CommunicationKind BlockingReceiveEvent::getKind() const {
     return BlockingReceive;
 }
 

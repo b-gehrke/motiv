@@ -6,6 +6,7 @@
 #include <ranges>
 #include "slot.hpp"
 #include "src/models/communication/communication.hpp"
+#include "src/models/communication/collectivecommunicationevent.hpp"
 
 template <typename T>
 struct Range {
@@ -32,6 +33,7 @@ public:
      */
     [[nodiscard]] virtual Range<Slot> getSlots() const = 0;
     [[nodiscard]] virtual Range<Communication> getCommunications() const = 0;
+    [[nodiscard]] virtual Range<CollectiveCommunicationEvent> getCollectiveCommunications() const = 0;
     [[nodiscard]] virtual otf2::chrono::duration getStartTime() const = 0;
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;
 

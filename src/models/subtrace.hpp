@@ -31,6 +31,12 @@ public:
 
 
     /**
+     * @copydoc Trace::getCommunications()
+     */
+    [[nodiscard]] Range<CollectiveCommunicationEvent> getCollectiveCommunications() const override;
+
+
+    /**
      * @copydoc Trace::getStartTime()
      */
     [[nodiscard]] otf2::chrono::duration getStartTime() const override;
@@ -45,6 +51,11 @@ protected:
      * Backing field for communications of this subtrace
      */
     Range<Communication> communications_;
+
+    /**
+     * Backing field for collective communications of this subtrace
+     */
+    Range<CollectiveCommunicationEvent> collectiveCommunications_;
 
     /**
      * Backing field for the runtime of this subtrace
@@ -68,9 +79,10 @@ public:
      * @param communications Range of communications this subtrace covers
      * @param runtime Runtime of this subtrace
      */
-    SubTrace(const Range<Slot> &slots, const Range<Communication> &communications, otf2::chrono::duration runtime);
-
-    SubTrace(const Range<Slot> &slots, const Range<Communication> &communications, const otf2::chrono::duration &runtime,
+    SubTrace(const Range<Slot> &slots,
+             const Range<Communication> &communications,
+             const Range<CollectiveCommunicationEvent> &collectiveCommunications,
+             const otf2::chrono::duration &runtime,
              const otf2::chrono::duration &startTime);
 };
 

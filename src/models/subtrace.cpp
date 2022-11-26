@@ -1,16 +1,21 @@
 #include "subtrace.hpp"
 
 
-SubTrace::SubTrace(const Range<Slot> &slots, const Range<Communication> &communications,
-                   const otf2::chrono::duration &runtime, const otf2::chrono::duration &startTime) :
+SubTrace::SubTrace(const Range<Slot> &slots,
+                   const Range<Communication> &communications,
+                   const Range<CollectiveCommunicationEvent> &collectiveCommunications,
+                   const otf2::chrono::duration &runtime,
+                   const otf2::chrono::duration &startTime) :
     slots_(slots),
     communications_(communications),
+    collectiveCommunications_(collectiveCommunications),
     runtime_(runtime),
     startTime_(startTime) {}
 
 SubTrace::SubTrace()
     : slots_(),
       communications_(),
+      collectiveCommunications_(),
       runtime_(),
       startTime_() {};
 
@@ -26,6 +31,10 @@ Range<Communication> SubTrace::getCommunications() const {
     return communications_;
 }
 
+Range<CollectiveCommunicationEvent> SubTrace::getCollectiveCommunications() const {
+    return collectiveCommunications_;
+}
+
 otf2::chrono::duration SubTrace::getStartTime() const {
     return startTime_;
 }
@@ -38,8 +47,16 @@ namespace accessors {
     const TimeAccessor<Slot> slotStart = &Slot::start;
     const TimeAccessor<Slot> slotEnd = &Slot::end;
 
-    const TimeAccessor<Communication> communicationStart = [](const Communication& e) { return e.getStart()->getStart(); };
-    const TimeAccessor<Communication> communicationEnd = [](const Communication& e) { return e.getEnd()->getEnd(); };
+    const TimeAccessor<CommunicationEvent> communicationEventStart = &CommunicationEvent::getStart;
+    const TimeAccessor<CommunicationEvent> communicationEventEnd = &CommunicationEvent::getEnd;
+
+
+    const TimeAccessor<CollectiveCommunicationEvent> colelctiveCommunicationEventStart = &CollectiveCommunicationEvent::getStart;
+    const TimeAccessor<CollectiveCommunicationEvent> colelctiveCommunicationEventEnd = &CollectiveCommunicationEvent::getEnd;
+
+    const TimeAccessor<Communication> communicationStart = [](
+        const Communication &e) { return e.getStart()->getStart(); };
+    const TimeAccessor<Communication> communicationEnd = [](const Communication &e) { return e.getEnd()->getEnd(); };
 };
 
 template<typename T>
@@ -64,8 +81,14 @@ std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chr
     auto newSlots = subRange(getSlots(), from, to, accessors::slotStart, accessors::slotEnd);
     auto newCommunications = subRange(getCommunications(), from, to, accessors::communicationStart,
                                       accessors::communicationEnd);
+    auto newCollectiveCommunications = subRange<CollectiveCommunicationEvent>(getCollectiveCommunications(),
+                                                                              from,
+                                                                              to,
+                                                                              accessors::communicationEventStart,
+                                                                              accessors::communicationEventEnd);
 
-    std::shared_ptr<SubTrace> trace(new SubTrace(newSlots, newCommunications, to - from, from));
+    std::shared_ptr<SubTrace> trace(new SubTrace(newSlots, newCommunications, newCollectiveCommunications, to - from, from));
 
     return trace;
 }
+

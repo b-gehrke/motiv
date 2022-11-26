@@ -5,6 +5,6 @@ RequestCancelledEvent::RequestCancelledEvent(const otf2::chrono::duration &start
                                              const types::communicator &communicator)
     : NonBlockingP2PCommunicationEvent(start, end, location, communicator) {}
 
-CommunicationKind RequestCancelledEvent::getKind() {
+CommunicationKind RequestCancelledEvent::getKind() const {
     return RequestCancelled;
 }

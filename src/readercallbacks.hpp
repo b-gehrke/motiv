@@ -8,6 +8,7 @@
 #include "src/models/communication/communication.hpp"
 #include "src/models/communication/nonblockingsendevent.hpp"
 #include "src/models/communication/nonblockingreceiveevent.hpp"
+#include "src/models/communication/collectivecommunicationevent.hpp"
 
 template <typename T>
 using BuilderSetLocation = std::function<typename T::Builder *(typename T::Builder &,
@@ -28,15 +29,29 @@ class ReaderCallbacks : public otf2::reader::callback {
 private:
     std::shared_ptr<std::vector<Slot>> slots_;
     std::shared_ptr<std::vector<Communication>> communications_;
+    std::shared_ptr<std::vector<CollectiveCommunicationEvent>> collectiveCommunications_;
 
     /**
      * Vectors for building the slot datatypes. Key is the location of the events.
      */
     std::map<otf2::reference<otf2::definition::location>, std::vector<Slot::Builder> *> slotsBuilding;
 
+    /**
+     * Vectors for building the blocking communication datatypes. Key is the location id of the sender.
+     */
     std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> pendingSends;
+
+    /**
+     * Vectors for building the blocking communication datatypes. Key is the location id of the receiver.
+     */
     std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> pendingReceives;
 
+    std::map<otf2::reference<otf2::definition::location>, CollectiveCommunicationEvent::Member::Builder> ongoingCollectiveCommunicationMembers;
+    CollectiveCommunicationEvent::Builder* ongoingCollectiveCommunication = nullptr;
+
+    /**
+     * Vectors for building the non blocking communication datatypes. Key is the request id.
+     */
     std::map<uint64_t, NonBlockingCommunicationEventBuilder> uncompletedRequests;
 
     otf2::chrono::time_point program_start_;
@@ -71,13 +86,23 @@ public:
 
 public:
     /**
-     * @brief Returns all read communications
+     * @brief Returns all read point to point communications
      *
      * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
      *
-     * @return All read communications
+     * @return All read point to point communications
      */
     std::shared_ptr<std::vector<Communication>> getCommunications();
+
+
+    /**
+     * @brief Returns all read collective communications
+     *
+     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     *
+     * @return All read collective communications
+     */
+    std::shared_ptr<std::vector<CollectiveCommunicationEvent>> getCollectiveCommunications();
 
     /**
      * @brief Returns all read slots

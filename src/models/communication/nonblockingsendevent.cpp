@@ -5,6 +5,6 @@ NonBlockingSendEvent::NonBlockingSendEvent(const otf2::chrono::duration &start, 
                                            const types::communicator &communicator) : NonBlockingP2PCommunicationEvent(
     start, end, location, communicator) {}
 
-CommunicationKind NonBlockingSendEvent::getKind() {
+CommunicationKind NonBlockingSendEvent::getKind() const {
     return NonBlockingSend;
 }

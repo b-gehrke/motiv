@@ -6,6 +6,6 @@ NonBlockingReceiveEvent::NonBlockingReceiveEvent(const otf2::chrono::duration &s
                                                  const types::communicator &communicator)
     : NonBlockingP2PCommunicationEvent(start, anEnd, location, communicator) {}
 
-CommunicationKind NonBlockingReceiveEvent::getKind() {
+CommunicationKind NonBlockingReceiveEvent::getKind() const {
     return NonBlockingReceive;
 }

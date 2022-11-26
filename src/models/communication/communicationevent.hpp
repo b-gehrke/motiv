@@ -16,31 +16,31 @@ public:
      * Gets the location of the recorded event.
      * @return Location of the recorded event
      */
-    virtual otf2::definition::location getLocation() = 0;
+    [[nodiscard]] virtual otf2::definition::location getLocation() const = 0;
 
     /**
      * Gets the start time of the recorded event. The time is relative to the star time of the program.
      * @return Start time of the recorded event
      */
-    virtual otf2::chrono::duration getStart() = 0;
+    [[nodiscard]] virtual otf2::chrono::duration getStart() const = 0;
 
     /**
      * Gets the end time of the recorded even. The time is relative to the star time of the program.
      * @return End time of the recorded event
      */
-    virtual otf2::chrono::duration getEnd() = 0;
+    [[nodiscard]] virtual otf2::chrono::duration getEnd() const = 0;
 
     /**
      * Gets the communicator the recorded event took place in.
      * @return Communicator of the event
      */
-    virtual types::communicator getCommunicator() = 0;
+    [[nodiscard]] virtual types::communicator getCommunicator() const = 0;
 
     /**
      * Gets the kind of communication event. Implemented by each derived class.
      * @return Kind of event.
      */
-    virtual CommunicationKind getKind() = 0;
+    [[nodiscard]] virtual CommunicationKind getKind() const = 0;
 };
 
 #endif //MOTIV_COMMUNICATIONEVENT_HPP
