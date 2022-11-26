@@ -18,6 +18,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(PROJECT_SOURCES
         src/main.cpp
         src/ui/views/selectiondetails.cpp
+        src/ui/views/TraceInformationDock.cpp
         src/ui/views/tracelist.cpp
         src/ui/views/traceselection.cpp
         src/ui/views/preview.cpp
@@ -60,9 +61,6 @@ else()
 endif()
 
 target_compile_options(${PROJECT_NAME} PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
     -DQT_NO_KEYWORDS
     )
 

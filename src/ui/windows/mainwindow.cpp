@@ -59,7 +59,8 @@ void MainWindow::createToolBar() {
 }
 
 void MainWindow::createDockWidgets() {
-
+    auto traceInformation = new view::TraceInformationDock(trace, this);
+    addDockWidget(Qt::RightDockWidgetArea, traceInformation);
 }
 
 void MainWindow::createCentralWidget() {
