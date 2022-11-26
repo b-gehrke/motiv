@@ -54,8 +54,8 @@ void MainWindow::createToolBar() {
     toolbar = addToolBar(tr("&Toolbar"));
     toolbar->setMovable(false);
 
-    traceOverview = new view::Preview(this);
-    toolbar->addWidget(traceOverview);
+    preview = new view::Preview(trace, this);
+    toolbar->addWidget(preview);
 }
 
 void MainWindow::createDockWidgets() {
@@ -64,6 +64,6 @@ void MainWindow::createDockWidgets() {
 }
 
 void MainWindow::createCentralWidget() {
-  traceList = new view::TraceList(this);
-  setCentralWidget(traceList);
+    traceList = new view::TraceList(trace, this);
+    setCentralWidget(traceList);
 }

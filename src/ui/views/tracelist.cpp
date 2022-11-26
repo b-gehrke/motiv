@@ -7,8 +7,9 @@
 
 using namespace view;
 
-TraceList::TraceList(QWidget *parent, std::shared_ptr<Trace> trace)
-: trace(std::move(trace)) {
+TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
+: trace(std::move(tracePtr)) {
+    // TODO qgraphicsview?
     auto widget = new QWidget(this);
     auto vLayout = new QVBoxLayout(this);
 

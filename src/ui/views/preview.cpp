@@ -9,8 +9,8 @@
 
 using namespace view;
 
-Preview::Preview(QWidget *parent, FileTrace *trace) : QGraphicsView(parent),
-                                                      scene(new QGraphicsScene(this)) {
+Preview::Preview(std::shared_ptr<Trace> trace, QWidget *parent) : QGraphicsView(parent),
+                                                                  scene(new QGraphicsScene(this)), trace(std::move(trace)) {
     setScene(scene);
     scene->addText("Placeholder");
 //    const auto slots = trace->getSlots();

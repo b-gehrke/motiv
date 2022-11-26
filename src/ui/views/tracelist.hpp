@@ -9,8 +9,9 @@ namespace view {
 
 class TraceList : public QScrollArea {
     Q_OBJECT
+
 public:
-    TraceList(QWidget *parent, std::shared_ptr<Trace>);
+    TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent);
 
 private:
     std::shared_ptr<Trace> trace;

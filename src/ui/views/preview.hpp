@@ -12,10 +12,16 @@ class Preview : public QGraphicsView {
     Q_OBJECT
 
 public:
-    Preview(QWidget *parent, FileTrace *trace);
+    Preview(std::shared_ptr<Trace> trace, QWidget *parent);
 
-private:
-    QGraphicsScene *scene;
+public: // slots
+    void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
+
+private: // Qt
+    QGraphicsScene *scene = nullptr;
+
+private: // data
+    std::shared_ptr<Trace> trace = nullptr;
 };
 
 } // namespace view
