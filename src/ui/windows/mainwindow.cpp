@@ -1,4 +1,6 @@
 #include "mainwindow.hpp"
+#include "src/readercallbacks.hpp"
+#include "src/ui/views/TraceInformationDock.hpp"
 
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -6,15 +8,16 @@
 #include <QMenuBar>
 #include <QStringListModel>
 #include <QWidget>
+#include <QLineEdit>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), dockWidgets() {
-  createMenus();
-  // contains buttons and overview
-  createToolBar();
-  // contains details
-  createDockWidgets();
-  // contains list of processes
-  createCentralWidget();
+   createMenus();
+    // contains buttons and overview
+    createToolBars();
+    // contains details
+    createDockWidgets();
+    // contains list of processes
+    createCentralWidget();
 }
 
 void MainWindow::createMenus() {
@@ -50,12 +53,28 @@ void MainWindow::createMenus() {
   helpMenu->addAction(aboutAction);
 }
 
-void MainWindow::createToolBar() {
-    toolbar = addToolBar(tr("&Toolbar"));
-    toolbar->setMovable(false);
+void MainWindow::createToolBars() {
+    // Top toolbar contains preview/control of whole trace
+    topToolbar = new QToolBar(this);
+    topToolbar->setMovable(false);
+    addToolBar(Qt::TopToolBarArea, topToolbar);
 
     preview = new view::Preview(trace, this);
-    toolbar->addWidget(preview);
+    topToolbar->addWidget(preview);
+
+    // Bottom toolbar contains control fields
+    bottomToolbar = new QToolBar(this);
+    bottomToolbar->setMovable(false);
+    addToolBar(Qt::BottomToolBarArea, bottomToolbar);
+
+    auto containerWidget = new QWidget(bottomToolbar);
+    auto containerLayout = new QHBoxLayout(containerWidget);
+    containerWidget->setLayout(containerLayout);
+    containerLayout->addWidget(new QLabel("Start:", containerWidget));
+    containerLayout->addWidget(new QLineEdit("0", containerWidget));
+    containerLayout->addWidget(new QLabel("End:", containerWidget));
+    containerLayout->addWidget(new QLineEdit("0", containerWidget));
+    bottomToolbar->addWidget(containerWidget);
 }
 
 void MainWindow::createDockWidgets() {
@@ -66,4 +85,9 @@ void MainWindow::createDockWidgets() {
 void MainWindow::createCentralWidget() {
     traceList = new view::TraceList(trace, this);
     setCentralWidget(traceList);
+}
+
+void MainWindow::updateView(otf2::chrono::duration start, otf2::chrono::duration end) {
+    viewStart = start;
+    viewEnd = end;
 }

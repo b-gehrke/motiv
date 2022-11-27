@@ -13,7 +13,10 @@ class TraceList : public QScrollArea {
 public:
     TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent);
 
-private:
+public: // slots
+    void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
+
+private: // data
     std::shared_ptr<Trace> trace;
 };
 

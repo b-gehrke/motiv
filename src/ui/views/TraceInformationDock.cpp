@@ -9,9 +9,11 @@ TraceInformationDock::TraceInformationDock(std::shared_ptr<Trace> tracePtr, QWid
 
     auto child = new QWidget(this);
     setWidget(child);
-    auto layout = new QGridLayout(this);
+    auto layout = new QGridLayout(child);
     layout->setAlignment(Qt::AlignTop);
+
     layout->addWidget(new QLabel(tr("Runtime:"), this), 0, 0);
     layout->addWidget(new QLabel(QString::number(runtime), this), 0, 1);
+
     child->setLayout(layout);
 }
