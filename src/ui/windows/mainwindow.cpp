@@ -10,8 +10,13 @@
 #include <QWidget>
 #include <QLineEdit>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), dockWidgets() {
-   createMenus();
+MainWindow::MainWindow(QString path, QWidget *parent) : filePath(std::move(path)) {
+    if (filePath.isEmpty()) {
+        getTraceFilePath();
+    }
+    loadTraceFile(filePath);
+
+    createMenus();
     // contains buttons and overview
     createToolBars();
     // contains details
@@ -101,11 +106,37 @@ void MainWindow::createDockWidgets() {
 }
 
 void MainWindow::createCentralWidget() {
-    traceList = new view::TraceList(trace, this);
+    traceList = new view::TraceList(selection, this);
     setCentralWidget(traceList);
 }
 
 void MainWindow::updateView(otf2::chrono::duration start, otf2::chrono::duration end) {
-    viewStart = start;
-    viewEnd = end;
+//    viewStart = start;
+//    viewEnd = end;
+}
+
+void MainWindow::loadTraceFile(const QString &path) {
+    otf2::reader::reader reader(filePath.toStdString());
+    ReaderCallbacks cb(reader);
+
+    reader.set_callback(cb);
+    reader.read_definitions();
+    reader.read_events();
+
+    trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), cb.duration());
+    selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(), trace->getRuntime());
+
+    viewStart = 0;
+    viewEnd = selection->getRuntime().count();
+}
+
+QString MainWindow::getTraceFilePath() {
+    filePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
+                                            QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
+
+    if (filePath.isEmpty()) {
+        // TODO
+    }
+
+    return filePath;
 }

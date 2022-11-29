@@ -13,10 +13,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = nullptr);
+public: //constructors
+    explicit MainWindow(QString filePath = QString(), QWidget *parent = nullptr);
 
 public Q_SLOTS: // slots
+    QString getTraceFilePath();
+    void loadTraceFile(const QString &path);
     void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
 
 private: //methods
@@ -35,10 +37,12 @@ private: // ui elements
     view::SelectionDetails *details = nullptr;
 
 private: // data
+    QString filePath;
     std::shared_ptr<Trace> trace = nullptr;
+    std::shared_ptr<SubTrace> selection = nullptr;
     // start and endpoint of the current view on the trace
-    otf2::chrono::duration viewStart;
-    otf2::chrono::duration viewEnd;
+    long long int viewStart;
+    long long int viewEnd;
 };
 
 
