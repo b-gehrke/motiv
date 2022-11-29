@@ -1,4 +1,4 @@
-#include "license.hpp"
+#include "License.hpp"
 
 #include <QFile>
 #include <QLabel>

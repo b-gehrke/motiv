@@ -17,12 +17,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/ui/views/selectiondetails.cpp
+        src/ui/views/SelectionDetails.cpp
         src/ui/views/TraceInformationDock.cpp
-        src/ui/views/tracelist.cpp
-        src/ui/views/traceselection.cpp
-        src/ui/views/preview.cpp
-        src/ui/windows/mainwindow.cpp
+        src/ui/views/TraceList.cpp
+        src/ui/views/Preview.cpp
+        src/ui/windows/MainWindow.cpp
         src/readercallbacks.cpp
         src/models/slot.cpp
         src/models/communication.cpp

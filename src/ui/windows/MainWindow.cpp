@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "MainWindow.hpp"
 #include "src/readercallbacks.hpp"
 #include "src/ui/views/TraceInformationDock.hpp"
 

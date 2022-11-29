@@ -1,4 +1,4 @@
-#include "selectiondetails.hpp"
+#include "SelectionDetails.hpp"
 
 #include <QGroupBox>
 #include <QLabel>

@@ -5,9 +5,9 @@
 #include <QToolBar>
 
 #include "src/models/trace.hpp"
-#include "src/ui/views/selectiondetails.hpp"
-#include "src/ui/views/tracelist.hpp"
-#include "src/ui/views/preview.hpp"
+#include "src/ui/views/SelectionDetails.hpp"
+#include "src/ui/views/TraceList.hpp"
+#include "src/ui/views/Preview.hpp"
 
 class MainWindow : public QMainWindow
 {

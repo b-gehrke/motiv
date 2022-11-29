@@ -1,6 +1,6 @@
-#include "preview.hpp"
+#include "Preview.hpp"
 
-#include "src/ui/colors.hpp"
+#include "src/ui/Colors.hpp"
 #include "src/models/filetrace.hpp"
 
 #include <QGraphicsScene>
