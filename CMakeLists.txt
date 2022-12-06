@@ -24,9 +24,10 @@ set(PROJECT_SOURCES
         src/ui/windows/MainWindow.cpp
         src/readercallbacks.cpp
         src/models/slot.cpp
-        src/models/communication.cpp
+        src/models/communication/communication.cpp
         src/models/subtrace.cpp
-        src/models/filetrace.cpp)
+        src/models/filetrace.cpp
+        src/models/communication/blockingp2pcommunicationevent.cpp src/models/communication/nonblockingp2pcommunicationevent.cpp src/models/communication/blockingsendevent.cpp src/models/communication/blockingsendevent.hpp src/models/communication/blockingreceiveevent.cpp src/models/communication/blockingreceiveevent.hpp src/models/communication/nonblockingsendevent.cpp src/models/communication/nonblockingsendevent.hpp src/models/communication/nonblockingreceiveevent.cpp src/models/communication/nonblockingreceiveevent.hpp src/models/communication/requestcancelledevent.cpp src/models/communication/requestcancelledevent.hpp src/models/communication/collectivecommunicationevent.cpp src/models/communication/collectivecommunicationevent.hpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

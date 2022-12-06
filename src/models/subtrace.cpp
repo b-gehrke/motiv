@@ -1,72 +1,94 @@
 #include "subtrace.hpp"
 
-SubTrace::SubTrace(const Range<Slot> &slots, const Range<Communication> &communications,
-                   otf2::chrono::duration runtime) :
+
+SubTrace::SubTrace(const Range<Slot> &slots,
+                   const Range<Communication> &communications,
+                   const Range<CollectiveCommunicationEvent> &collectiveCommunications,
+                   const otf2::chrono::duration &runtime,
+                   const otf2::chrono::duration &startTime) :
     slots_(slots),
     communications_(communications),
-    runtime_(runtime) {}
+    collectiveCommunications_(collectiveCommunications),
+    runtime_(runtime),
+    startTime_(startTime) {}
+
+SubTrace::SubTrace()
+    : slots_(),
+      communications_(),
+      collectiveCommunications_(),
+      runtime_(),
+      startTime_() {};
 
 Range<Slot> SubTrace::getSlots() const {
     return slots_;
-}
-
-Range<Communication> SubTrace::getCommunications() const {
-    return communications_;
 }
 
 otf2::chrono::duration SubTrace::getRuntime() const {
     return runtime_;
 }
 
-template<typename T>
-static bool compareStart(otf2::chrono::duration val, T x) {
-    return val < x.start;
+Range<Communication> SubTrace::getCommunications() const {
+    return communications_;
 }
 
-template<typename T>
-static bool compareEnd(otf2::chrono::duration val, T x) {
-    return val < x.end;
+Range<CollectiveCommunicationEvent> SubTrace::getCollectiveCommunications() const {
+    return collectiveCommunications_;
 }
 
+otf2::chrono::duration SubTrace::getStartTime() const {
+    return startTime_;
+}
+
+
+template<typename T>
+using TimeAccessor = std::function<otf2::chrono::duration(T const &)>;
+
+namespace accessors {
+    const TimeAccessor<Slot> slotStart = &Slot::start;
+    const TimeAccessor<Slot> slotEnd = &Slot::end;
+
+    const TimeAccessor<CommunicationEvent> communicationEventStart = &CommunicationEvent::getStart;
+    const TimeAccessor<CommunicationEvent> communicationEventEnd = &CommunicationEvent::getEnd;
+
+
+    const TimeAccessor<CollectiveCommunicationEvent> colelctiveCommunicationEventStart = &CollectiveCommunicationEvent::getStart;
+    const TimeAccessor<CollectiveCommunicationEvent> colelctiveCommunicationEventEnd = &CollectiveCommunicationEvent::getEnd;
+
+    const TimeAccessor<Communication> communicationStart = [](
+        const Communication &e) { return e.getStart()->getStart(); };
+    const TimeAccessor<Communication> communicationEnd = [](const Communication &e) { return e.getEnd()->getEnd(); };
+};
+
+template<typename T>
+static Range<T> subRange(Range<T> r, otf2::chrono::duration from, otf2::chrono::duration to, TimeAccessor<T> getStart,
+                         TimeAccessor<T> getEnd) {
+    auto start = std::upper_bound(r.begin(), r.end(), from,
+                                  [getStart](otf2::chrono::duration val, T x) { return val < getStart(x); });
+    auto end = std::upper_bound(r.begin(), r.end(), to,
+                                [getEnd](otf2::chrono::duration val, T x) { return val < getEnd(x); });
+
+    // No start element found. Start range with first element.
+    if (start == r.end()) {
+        start = r.begin();
+    }
+
+    Range<T> newRange(start, end);
+
+    return newRange;
+}
 
 std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const {
-    auto slots = getSlots();
-    auto communications = getCommunications();
+    auto newSlots = subRange(getSlots(), from, to, accessors::slotStart, accessors::slotEnd);
+    auto newCommunications = subRange(getCommunications(), from, to, accessors::communicationStart,
+                                      accessors::communicationEnd);
+    auto newCollectiveCommunications = subRange<CollectiveCommunicationEvent>(getCollectiveCommunications(),
+                                                                              from,
+                                                                              to,
+                                                                              accessors::communicationEventStart,
+                                                                              accessors::communicationEventEnd);
 
-    auto newSlotsStart = std::upper_bound(slots.begin(), slots.end(), from, &compareStart<Slot>);
-    auto newSlotsEnd = std::upper_bound(slots.begin(), slots.end(), to, &compareEnd<Slot>);
-    auto newComsStart = std::upper_bound(communications.begin(), communications.end(), from, &compareStart<Communication>);
-    auto newComsEnd = std::upper_bound(communications.begin(), communications.end(), to, &compareEnd<Communication>);
-
-    // No start element found. Start subtrace with first element
-    if(newSlotsStart == slots.end()){
-        newSlotsStart = slots.begin();
-    }
-
-    if(newComsStart == communications.end()) {
-        newComsStart = communications.begin();
-    }
-
-    Range<Slot> newSlots(newSlotsStart, newSlotsEnd);
-    Range<Communication> newComs(newComsStart, newComsEnd);
-
-    auto slotStartTime = !newSlots.empty() ? newSlotsStart->start : otf2::chrono::duration::max();
-    auto slotEndTime = !newSlots.empty() ? (newSlotsEnd - 1)->end : otf2::chrono::duration::min();
-
-    auto comStartTime = !newComs.empty() ? newComsStart->start : otf2::chrono::duration::max();
-    auto comEndTime = !newComs.empty() ? (newComsEnd - 1)->end : otf2::chrono::duration::min();
-
-    auto startTime = std::min(slotStartTime, comStartTime);
-    auto endTime = std::max(slotEndTime, comEndTime);
-
-    auto subRuntime = endTime - startTime;
-
-    std::shared_ptr<SubTrace> trace(new SubTrace(newSlots, newComs, subRuntime));
+    std::shared_ptr<SubTrace> trace(new SubTrace(newSlots, newCommunications, newCollectiveCommunications, to - from, from));
 
     return trace;
-
 }
 
-SubTrace::SubTrace() : slots_(), communications_(), runtime_() {
-
-}

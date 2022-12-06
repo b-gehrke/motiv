@@ -57,6 +57,19 @@ public:                                                                 \
     Builder * name(type & s) {                                          \
         name ## _ = std::make_shared<type>(s);                          \
         return this;                                                    \
+    }                                                                   \
+    std::shared_ptr<type> name() {                                                     \
+        return name ## _;                                               \
+    }
+
+#define BUILDER_OPTIONAL_FIELD(type, name)                              \
+private:                                                                \
+    std::shared_ptr<type> name ## _;                                    \
+public:                                                                 \
+    type name() const { return *name ## _; }                            \
+    Builder * name(type & s) {                                          \
+        name ## _ = std::make_shared<type>(s);                          \
+        return this;                                                    \
     }
 
 /**
@@ -85,6 +98,11 @@ public:                                                 \
         MAP(BUILDER_CHECK, __VA_ARGS__)                 \
         return {MAP_LIST(BUILDER_DREF, __VA_ARGS__)};   \
     };                                                  \
+    std::shared_ptr<type> build_shared() {              \
+        MAP(BUILDER_CHECK, __VA_ARGS__)                 \
+        return std::make_shared<type>(                  \
+            MAP_LIST(BUILDER_DREF, __VA_ARGS__));       \
+    }                                                   \
     content                                             \
 };
 
