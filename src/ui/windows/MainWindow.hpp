@@ -8,6 +8,7 @@
 #include "src/ui/views/SelectionDetails.hpp"
 #include "src/ui/views/TraceList.hpp"
 #include "src/ui/views/Preview.hpp"
+#include "src/readercallbacks.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -39,6 +40,8 @@ private: // ui elements
     view::SelectionDetails *details = nullptr;
 
 private: // data
+    std::shared_ptr<otf2::reader::reader> reader;
+    std::shared_ptr<ReaderCallbacks> reader_callbacks;
     QString filePath;
     std::shared_ptr<Trace> trace = nullptr;
     std::shared_ptr<SubTrace> selection = nullptr;

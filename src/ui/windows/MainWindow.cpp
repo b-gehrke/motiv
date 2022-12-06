@@ -116,16 +116,18 @@ void MainWindow::updateView(otf2::chrono::duration start, otf2::chrono::duration
 }
 
 void MainWindow::loadTraceFile(const QString &path) {
-    otf2::reader::reader reader(filePath.toStdString());
-    ReaderCallbacks cb(reader);
+    reader = std::make_shared<otf2::reader::reader>(filePath.toStdString());
+    reader_callbacks = std::make_shared<ReaderCallbacks>(*reader);
 
-    reader.set_callback(cb);
-    reader.read_definitions();
-    reader.read_events();
+    reader->set_callback(*reader_callbacks);
+    reader->read_definitions();
+    reader->read_events();
 
-    trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), *cb.getCollectiveCommunications(), cb.duration());
-    selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(), trace->getCollectiveCommunications(),
-                trace->getRuntime(), trace->getStartTime());
+    trace = std::make_shared<FileTrace>(*reader_callbacks->getSlots(), *reader_callbacks->getCommunications(),
+                                        *reader_callbacks->getCollectiveCommunications(), reader_callbacks->duration());
+    selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(),
+                                           trace->getCollectiveCommunications(),
+                                           trace->getRuntime(), trace->getStartTime());
 
     viewStart = 0;
     viewEnd = selection->getRuntime().count();
