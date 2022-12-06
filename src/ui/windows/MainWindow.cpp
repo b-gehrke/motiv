@@ -67,6 +67,15 @@ void MainWindow::createMenus() {
     viewMenu->addAction(filterAction);
     viewMenu->addAction(searchAction);
 
+    /// Window menu
+    // "Minimize" menu entry
+    auto minimizeAction = new QAction(tr("&Minimize"), this);
+    minimizeAction->setShortcut(tr("Ctrl+M"));
+    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(showMinimized()));
+
+    auto windowMenu = menuBar()->addMenu(tr("&Window"));
+    windowMenu->addAction(minimizeAction);
+
     /// Help menu
     // "View license" menu entry
     auto aboutAction = new QAction(tr("&View license"), this);
