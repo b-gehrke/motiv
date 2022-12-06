@@ -3,13 +3,25 @@
 #include <QFile>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QPlainTextEdit>
 
 using namespace view;
 
 License::License(QWidget *parent) {
-    QFile licenseText(":/COPYING");
+    auto layout = new QGridLayout(this);
+    setLayout(layout);
 
-    // TODO display
+    QFile licenseFile(":text/COPYING");
+    if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "license file could not be opened";
+        return;
+    }
+
+    QTextStream licenseTextStream(&licenseFile);
+    QString licenseText = licenseTextStream.readAll();
+    licenseFile.close();
+
+    auto textField = new QPlainTextEdit(licenseText, this);
+    textField->setReadOnly(true);
+    layout->addWidget(textField);
 }
-
-License::~License() {}

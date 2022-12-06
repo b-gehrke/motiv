@@ -21,6 +21,8 @@ public Q_SLOTS: // slots
     void loadTraceFile(const QString &path);
     void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
 
+    void openLicenseView();
+
 private: //methods
     void createMenus();
     void createToolBars();

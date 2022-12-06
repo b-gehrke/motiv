@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/text">
         <file>COPYING</file>
     </qresource>
 </RCC>

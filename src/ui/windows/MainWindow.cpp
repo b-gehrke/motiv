@@ -1,6 +1,7 @@
 #include "MainWindow.hpp"
 #include "src/readercallbacks.hpp"
 #include "src/ui/views/TraceInformationDock.hpp"
+#include "src/ui/views/License.hpp"
 
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -69,8 +70,7 @@ void MainWindow::createMenus() {
     /// Help menu
     // "View license" menu entry
     auto aboutAction = new QAction(tr("&View license"), this);
-    // TODO connect to actual action
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(openLicenseView()));
 
     auto helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
@@ -140,4 +140,9 @@ QString MainWindow::getTraceFilePath() {
     }
 
     return filePath;
+}
+
+void MainWindow::openLicenseView() {
+    auto licenseWindow = new view::License(nullptr);
+    licenseWindow->show();
 }

@@ -10,8 +10,7 @@ class License : public QWidget {
     Q_OBJECT
 
 public:
-    License(QWidget *parent = nullptr);
-    ~License();
+    explicit License(QWidget *parent = nullptr);
 };
 
 } // namespace view

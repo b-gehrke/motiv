@@ -16,11 +16,13 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
+        resources.qrc
         src/main.cpp
+        src/ui/views/License.cpp
+        src/ui/views/Preview.cpp
         src/ui/views/SelectionDetails.cpp
         src/ui/views/TraceInformationDock.cpp
         src/ui/views/TraceList.cpp
-        src/ui/views/Preview.cpp
         src/ui/windows/MainWindow.cpp
         src/readercallbacks.cpp
         src/models/slot.cpp
