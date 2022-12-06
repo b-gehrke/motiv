@@ -123,8 +123,9 @@ void MainWindow::loadTraceFile(const QString &path) {
     reader.read_definitions();
     reader.read_events();
 
-    trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), cb.duration());
-    selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(), trace->getRuntime());
+    trace = std::make_shared<FileTrace>(*cb.getSlots(), *cb.getCommunications(), *cb.getCollectiveCommunications(), cb.duration());
+    selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(), trace->getCollectiveCommunications(),
+                trace->getRuntime(), trace->getStartTime());
 
     viewStart = 0;
     viewEnd = selection->getRuntime().count();
