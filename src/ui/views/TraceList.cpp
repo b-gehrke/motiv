@@ -1,4 +1,5 @@
 #include "TraceList.hpp"
+#include "TraceListItem.hpp"
 
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -20,22 +21,8 @@ TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    std::set<std::string> set;
     for (const auto& slot : trace->getSlots()) {
-        for (const auto &item: slot.second) {
-        auto locationName = slot.first.name().str();
-        set.insert(locationName);
-        }
-
-//        auto label = new QLabel(QString::fromStdString(slot.region.name().str()), widget);
-//        layout->addWidget(label);
-    }
-
-    int i = 0;
-    // TODO ordered lexicographically :(
-    for (const auto& name : set) {
-        auto label = new QLabel(QString::fromStdString(name), widget);
-        layout->addWidget(label, i, 0);
-        ++i;
+        auto item = new TraceListItem(QString::fromStdString(slot.first.name().str()), slot.second, *this);
+        layout->addWidget(item);
     }
 }
