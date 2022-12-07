@@ -12,7 +12,7 @@ public:
     /**
      * @copydoc Trace::getSlots()
      */
-    [[nodiscard]] Range<Slot> getSlots() const override;
+    [[nodiscard]] std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> getSlots() const override;
 
     /**
      * @copydoc Trace::getRuntime()
@@ -45,7 +45,7 @@ protected:
     /**
      * Backing field for the range of slots of this subtrace
      */
-    Range<Slot> slots_;
+    std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slots_;
 
     /**
      * Backing field for communications of this subtrace
@@ -79,7 +79,7 @@ public:
      * @param communications Range of communications this subtrace covers
      * @param runtime Runtime of this subtrace
      */
-    SubTrace(const Range<Slot> &slots,
+    SubTrace(std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slots,
              const Range<Communication> &communications,
              const Range<CollectiveCommunicationEvent> &collectiveCommunications,
              const otf2::chrono::duration &runtime,

@@ -8,7 +8,7 @@
  */
 class FileTrace : public SubTrace {
 private:
-    std::vector<Slot> &slots_;
+    std::map<otf2::definition::location_group, std::vector<Slot>, LocationGroupCmp> slots_;
     std::vector<Communication> &communications_;
     std::vector<CollectiveCommunicationEvent> &collectiveCommunications_;
 public:
@@ -27,7 +27,7 @@ public:
     /**
      * @copydoc Trace::getSlots()
      */
-    [[nodiscard]] Range<Slot> getSlots() const override;
+    [[nodiscard]] std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> getSlots() const override;
 
     [[nodiscard]] Range<Communication> getCommunications() const override;
 

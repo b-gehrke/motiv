@@ -1,12 +1,14 @@
 #include "subtrace.hpp"
 
+#include <utility>
 
-SubTrace::SubTrace(const Range<Slot> &slots,
+
+SubTrace::SubTrace(std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slots,
                    const Range<Communication> &communications,
                    const Range<CollectiveCommunicationEvent> &collectiveCommunications,
                    const otf2::chrono::duration &runtime,
                    const otf2::chrono::duration &startTime) :
-    slots_(slots),
+    slots_(std::move(slots)),
     communications_(communications),
     collectiveCommunications_(collectiveCommunications),
     runtime_(runtime),
@@ -19,7 +21,7 @@ SubTrace::SubTrace()
       runtime_(),
       startTime_() {};
 
-Range<Slot> SubTrace::getSlots() const {
+std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> SubTrace::getSlots() const {
     return slots_;
 }
 
@@ -77,8 +79,13 @@ static Range<T> subRange(Range<T> r, otf2::chrono::duration from, otf2::chrono::
     return newRange;
 }
 
+
 std::shared_ptr<Trace> SubTrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const {
-    auto newSlots = subRange(getSlots(), from, to, accessors::slotStart, accessors::slotEnd);
+    std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> newSlots;
+    for (const auto &item: getSlots()) {
+        Range<Slot> slots = subRange(item.second, from, to, accessors::slotStart, accessors::slotEnd);
+        newSlots.insert({item.first, slots});
+    }
     auto newCommunications = subRange(getCommunications(), from, to, accessors::communicationStart,
                                       accessors::communicationEnd);
     auto newCollectiveCommunications = subRange<CollectiveCommunicationEvent>(getCollectiveCommunications(),

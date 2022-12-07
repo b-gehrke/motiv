@@ -22,8 +22,10 @@ TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
 
     std::set<std::string> set;
     for (const auto& slot : trace->getSlots()) {
-        auto locationName = slot.location.location_group().name().str();
+        for (const auto &item: slot.second) {
+        auto locationName = slot.first.name().str();
         set.insert(locationName);
+        }
 
 //        auto label = new QLabel(QString::fromStdString(slot.region.name().str()), widget);
 //        layout->addWidget(label);
