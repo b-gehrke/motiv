@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QPlainTextEdit>
+#include <QTextStream>
 
 using namespace view;
 
@@ -13,7 +14,7 @@ License::License(QWidget *parent) {
 
     QFile licenseFile(":text/COPYING");
     if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "license file could not be opened";
+        qDebug("license file could not be opened");
         return;
     }
 
