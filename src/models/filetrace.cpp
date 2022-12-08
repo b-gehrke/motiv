@@ -4,29 +4,44 @@ FileTrace::FileTrace(std::vector<Slot> &slotss,
                      std::vector<Communication> &communications,
                      std::vector<CollectiveCommunicationEvent> &collectiveCommunications_,
                      otf2::chrono::duration runtime) :
-    slots_(std::map<otf2::definition::location_group, std::vector<Slot>, LocationGroupCmp>()), 
+    slotsVec_(std::map<otf2::definition::location_group, std::vector<Slot>, LocationGroupCmp>()),
     communications_(communications),
     collectiveCommunications_(collectiveCommunications_){
     runtime_ = runtime;
     startTime_ = otf2::chrono::duration(0);
 
-    for (const auto &slot: slotss) {
-        auto group = slot.location.location_group();
-        if(!slots_.contains(group)) {
-            slots_.insert({group, std::vector<Slot>()});
+    // Sort first by location group aka MPI Rank, second by start time
+    std::sort(slotss.begin(), slotss.end(), [](const Slot& l, const Slot& r) {
+        auto groupL = l.location.location_group();
+        auto groupR = r.location.location_group();
+
+        if(groupL.ref() == groupR.ref()) {
+            return l.start < r.start;
         }
-        slots_[group].push_back(slot);
+
+        return groupL.ref() < groupR.ref();
+    });
+
+    if(slotss.empty()) {
+        return;
     }
+
+    // group by location group aka MPI Rank
+    auto start = slotss.begin();
+    auto it = slotss.begin() + 1;
+    while(it != slotss.end()) {
+        if(it->location.location_group() != start->location.location_group()) {
+            slots_[start->location.location_group()] = Range<Slot>(start, it);
+            start = it;
+        }
+
+        it++;
+    }
+    slots_[start->location.location_group()] = Range<Slot>(start, it);
 }
 
 std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> FileTrace::getSlots() const {
-    std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slotss;
-    for (const auto &item: slots_){
-        std::vector<Slot> v = item.second;
-        slotss.insert({item.first, Range<Slot>(v)});
-    }
-
-    return slotss;
+    return slots_;
 }
 
 Range<Communication> FileTrace::getCommunications() const {

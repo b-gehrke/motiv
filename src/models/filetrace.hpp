@@ -8,7 +8,7 @@
  */
 class FileTrace : public SubTrace {
 private:
-    std::map<otf2::definition::location_group, std::vector<Slot>, LocationGroupCmp> slots_;
+    std::map<otf2::definition::location_group, std::vector<Slot>, LocationGroupCmp> slotsVec_;
     std::vector<Communication> &communications_;
     std::vector<CollectiveCommunicationEvent> &collectiveCommunications_;
 public:
