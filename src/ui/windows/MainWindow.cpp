@@ -3,6 +3,7 @@
 #include "src/ui/views/TraceInformationDock.hpp"
 #include "src/ui/views/License.hpp"
 
+#include "QDropEvent"
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -10,8 +11,12 @@
 #include <QStringListModel>
 #include <QWidget>
 #include <QLineEdit>
+#include <QErrorMessage>
 
 MainWindow::MainWindow(QString path, QWidget *parent) : filePath(std::move(path)) {
+    // TODO delete object on close properly
+    //setAttribute(Qt::WA_DeleteOnClose);
+
     if (filePath.isEmpty()) {
         getTraceFilePath();
     }
@@ -29,14 +34,9 @@ MainWindow::MainWindow(QString path, QWidget *parent) : filePath(std::move(path)
 void MainWindow::createMenus() {
     /// File menu
     // "Open Trace" menu entry
-    auto openTraceAction = new QAction(tr("&Open Trace"), this);
+    auto openTraceAction = new QAction(tr("&Open..."), this);
     openTraceAction->setShortcut(tr("Ctrl+O"));
     connect(openTraceAction, SIGNAL(triggered()), this, SLOT(openTrace()));
-
-    // "Close Trace" menu entry
-    auto closeTraceAction = new QAction(tr("&Close Trace"), this);
-    closeTraceAction->setShortcut(tr("Ctrl+W"));
-    connect(closeTraceAction, SIGNAL(triggered()), this, SLOT(closeTrace()));
 
     // "Quit" menu entry
     auto quitAction = new QAction(tr("&Quit"), this);
@@ -46,7 +46,6 @@ void MainWindow::createMenus() {
     auto fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openTraceAction);
     fileMenu->addSeparator();
-    fileMenu->addAction(closeTraceAction);
     fileMenu->addAction(quitAction);
 
     /// View Menu
@@ -58,7 +57,7 @@ void MainWindow::createMenus() {
     connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     // "Search" menu entry
-    auto searchAction = new QAction(tr("&Search"));
+    auto searchAction = new QAction(tr("&Find"));
     searchAction->setShortcut(tr("Ctrl+F"));
     // TODO add actual slot
     connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
@@ -143,17 +142,26 @@ void MainWindow::loadTraceFile(const QString &path) {
 }
 
 QString MainWindow::getTraceFilePath() {
-    filePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
-                                            QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
+    auto newFilePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
+                                                    QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
 
-    if (filePath.isEmpty()) {
-        // TODO
+    // TODO this is not really a great way to deal with that
+    if (newFilePath.isEmpty()) {
+        auto errorMsg = new QErrorMessage(this);
+        errorMsg->showMessage("The chosen file is invalid!");
+    } else {
+        filePath = newFilePath;
     }
 
     return filePath;
 }
 
 void MainWindow::openLicenseView() {
-    auto licenseWindow = new view::License(nullptr);
+    licenseWindow = new view::License(nullptr);
     licenseWindow->show();
+}
+
+void MainWindow::openTrace() {
+    filePath = getTraceFilePath();
+    loadTraceFile(filePath);
 }

@@ -9,6 +9,7 @@
 #include "src/ui/views/TraceList.hpp"
 #include "src/ui/views/Preview.hpp"
 #include "src/readercallbacks.hpp"
+#include "src/ui/views/License.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -18,8 +19,7 @@ public: //constructors
     explicit MainWindow(QString filePath = QString(), QWidget *parent = nullptr);
 
 public Q_SLOTS: // slots
-    QString getTraceFilePath();
-    void loadTraceFile(const QString &path);
+    void openTrace();
     void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
 
     void openLicenseView();
@@ -30,6 +30,9 @@ private: //methods
     void createDockWidgets();
     void createCentralWidget();
 
+    QString getTraceFilePath();
+    void loadTraceFile(const QString &path);
+
 private: // ui elements
     QToolBar *topToolbar = nullptr;
     QToolBar *bottomToolbar = nullptr;
@@ -38,6 +41,8 @@ private: // ui elements
     view::Preview *preview = nullptr;
     view::TraceList *traceList = nullptr;
     view::SelectionDetails *details = nullptr;
+
+    view::License *licenseWindow = nullptr;
 
 private: // data
     std::shared_ptr<otf2::reader::reader> reader;
