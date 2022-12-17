@@ -5,7 +5,6 @@
 #include <QDockWidget>
 #include "src/models/trace.hpp"
 
-namespace view {
 
     class TraceInformationDock : public QDockWidget {
     public: // constructors
@@ -15,6 +14,6 @@ namespace view {
         std::shared_ptr<Trace> trace;
     };
 
-} // view
+
 
 #endif //MOTIV_TRACEINFORMATIONDOCK_HPP

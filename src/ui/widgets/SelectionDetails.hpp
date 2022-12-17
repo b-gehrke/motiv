@@ -4,7 +4,6 @@
 #include <QStringList>
 #include <QWidget>
 
-namespace view {
 
 class SelectionDetails : public QWidget {
     Q_OBJECT
@@ -18,6 +17,5 @@ private:
     QStringList information;
 };
 
-} // namespace view
 
 #endif // MOTIV_SELECTIONDETAILS_HPP

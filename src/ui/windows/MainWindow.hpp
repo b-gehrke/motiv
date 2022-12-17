@@ -6,11 +6,11 @@
 #include <QToolBar>
 
 #include "src/models/trace.hpp"
-#include "src/ui/views/SelectionDetails.hpp"
-#include "src/ui/views/TraceList.hpp"
-#include "src/ui/views/Preview.hpp"
+#include "src/ui/widgets/SelectionDetails.hpp"
+#include "src/ui/widgets/TraceList.hpp"
+#include "src/ui/widgets/Preview.hpp"
 #include "src/readercallbacks.hpp"
-#include "src/ui/views/License.hpp"
+#include "src/ui/widgets/License.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -43,11 +43,11 @@ private: // ui elements
     QToolBar *bottomToolbar = nullptr;
     QList<QDockWidget *> dockWidgets;
 
-    view::Preview *preview = nullptr;
-    view::TraceList *traceList = nullptr;
-    view::SelectionDetails *details = nullptr;
+    Preview *preview = nullptr;
+    TraceList *traceList = nullptr;
+    SelectionDetails *details = nullptr;
 
-    view::License *licenseWindow = nullptr;
+    License *licenseWindow = nullptr;
 
     QLineEdit *intervalBegin = nullptr;
     QLineEdit *intervalEnd = nullptr;

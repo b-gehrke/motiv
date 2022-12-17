@@ -6,7 +6,6 @@
 #include <QGraphicsView>
 #include <QWidget>
 
-namespace view {
 
 class Preview : public QGraphicsView {
     Q_OBJECT
@@ -24,6 +23,5 @@ private: // data
     std::shared_ptr<Trace> trace = nullptr;
 };
 
-} // namespace view
 
 #endif // MOTIV_PREVIEW_HPP

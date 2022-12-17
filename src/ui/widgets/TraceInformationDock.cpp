@@ -2,7 +2,6 @@
 #include <QLabel>
 #include "TraceInformationDock.hpp"
 
-using namespace view;
 
 TraceInformationDock::TraceInformationDock(std::shared_ptr<Trace> tracePtr, QWidget *parent) : QDockWidget(tr("Trace Information"), parent), trace(std::move(tracePtr)) {
     auto runtime = trace->getRuntime().count();

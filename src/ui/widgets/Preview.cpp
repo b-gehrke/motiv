@@ -7,7 +7,6 @@
 #include <QRect>
 #include <QLabel>
 
-using namespace view;
 
 Preview::Preview(std::shared_ptr<Trace> trace, QWidget *parent) : QGraphicsView(parent),
                                                                   scene(new QGraphicsScene(this)), trace(std::move(trace)) {

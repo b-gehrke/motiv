@@ -6,7 +6,6 @@
 #include "src/models/trace.hpp"
 #include "TraceListItem.hpp"
 
-namespace view {
 
 class TraceList : public QScrollArea {
     Q_OBJECT
@@ -25,6 +24,5 @@ private: // data
     std::vector<TraceListItem *> items;
 };
 
-} // namespace view
 
 #endif // MOTIV_TRACELIST_HPP

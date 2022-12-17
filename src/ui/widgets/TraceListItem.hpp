@@ -6,7 +6,6 @@
 #include "src/models/slot.hpp"
 #include "src/models/trace.hpp"
 
-namespace view {
 
     class TraceListItem : public QWidget {
     public:
@@ -37,7 +36,5 @@ namespace view {
         QBrush brush;
         QPen pen;
     };
-
-} // view
 
 #endif //MOTIV_TRACELISTITEM_HPP

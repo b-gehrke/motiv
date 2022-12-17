@@ -4,7 +4,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-using namespace view;
 
 SelectionDetails::SelectionDetails(QWidget *parent) : SelectionDetails(parent, QStringList()) {}
 

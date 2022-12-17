@@ -6,7 +6,6 @@
 #include <utility>
 #include "TraceListItem.hpp"
 
-using namespace view;
 
 TraceListItem::TraceListItem(QString name, const Range<Slot> slots, const long long min, const long long max, const QWidget *parent)
 : name(std::move(name)), slots(slots), min(min), max(max) {

@@ -18,18 +18,28 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(PROJECT_SOURCES
         resources.qrc
         src/main.cpp
-        src/ui/views/License.cpp
-        src/ui/views/Preview.cpp
-        src/ui/views/SelectionDetails.cpp
-        src/ui/views/TraceInformationDock.cpp
-        src/ui/views/TraceList.cpp
+        src/ui/models/TraceModel.cpp
+        src/ui/widgets/License.cpp
+        src/ui/widgets/Preview.cpp
+        src/ui/widgets/SelectionDetails.cpp
+        src/ui/widgets/TraceInformationDock.cpp
+        src/ui/widgets/TraceList.cpp
+        src/ui/widgets/TraceListItem.cpp
         src/ui/windows/MainWindow.cpp
         src/readercallbacks.cpp
         src/models/slot.cpp
         src/models/communication/communication.cpp
         src/models/subtrace.cpp
         src/models/filetrace.cpp
-        src/models/communication/blockingp2pcommunicationevent.cpp src/models/communication/nonblockingp2pcommunicationevent.cpp src/models/communication/blockingsendevent.cpp src/models/communication/blockingsendevent.hpp src/models/communication/blockingreceiveevent.cpp src/models/communication/blockingreceiveevent.hpp src/models/communication/nonblockingsendevent.cpp src/models/communication/nonblockingsendevent.hpp src/models/communication/nonblockingreceiveevent.cpp src/models/communication/nonblockingreceiveevent.hpp src/models/communication/requestcancelledevent.cpp src/models/communication/requestcancelledevent.hpp src/models/communication/collectivecommunicationevent.cpp src/models/communication/collectivecommunicationevent.hpp src/ui/views/TraceListItem.cpp src/ui/views/TraceListItem.hpp)
+        src/models/communication/blockingp2pcommunicationevent.cpp
+        src/models/communication/nonblockingp2pcommunicationevent.cpp
+        src/models/communication/blockingsendevent.cpp
+        src/models/communication/blockingreceiveevent.cpp
+        src/models/communication/nonblockingsendevent.cpp
+        src/models/communication/nonblockingreceiveevent.cpp
+        src/models/communication/requestcancelledevent.cpp
+        src/models/communication/collectivecommunicationevent.cpp
+        )
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

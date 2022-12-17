@@ -1,7 +1,7 @@
 #include "MainWindow.hpp"
 #include "src/readercallbacks.hpp"
-#include "src/ui/views/TraceInformationDock.hpp"
-#include "src/ui/views/License.hpp"
+#include "src/ui/widgets/TraceInformationDock.hpp"
+#include "src/ui/widgets/License.hpp"
 
 #include "QDropEvent"
 #include <QFileDialog>
@@ -92,7 +92,7 @@ void MainWindow::createToolBars() {
     topToolbar->setMovable(false);
     addToolBar(Qt::TopToolBarArea, topToolbar);
 
-    preview = new view::Preview(trace, this);
+    preview = new Preview(trace, this);
     topToolbar->addWidget(preview);
 
     // Bottom toolbar contains control fields
@@ -127,12 +127,12 @@ void MainWindow::createToolBars() {
 }
 
 void MainWindow::createDockWidgets() {
-    auto traceInformation = new view::TraceInformationDock(trace, this);
+    auto traceInformation = new TraceInformationDock(trace, this);
     addDockWidget(Qt::RightDockWidgetArea, traceInformation);
 }
 
 void MainWindow::createCentralWidget() {
-    traceList = new view::TraceList(selection, this);
+    traceList = new TraceList(selection, this);
     setCentralWidget(traceList);
 
     connect(this, SIGNAL(selectionUpdated()), traceList, SLOT(updateView()));
@@ -187,7 +187,7 @@ QString MainWindow::getTraceFilePath() {
 }
 
 void MainWindow::openLicenseView() {
-    licenseWindow = new view::License(nullptr);
+    licenseWindow = new License(nullptr);
     licenseWindow->show();
 }
 

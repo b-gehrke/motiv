@@ -7,7 +7,6 @@
 #include <QGraphicsView>
 #include <set>
 
-using namespace view;
 
 TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
 : trace(std::move(tracePtr)), items() {

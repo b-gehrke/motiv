@@ -6,7 +6,6 @@
 #include <QPlainTextEdit>
 #include <QTextStream>
 
-using namespace view;
 
 License::License(QWidget *parent) {
     auto layout = new QGridLayout(this);
