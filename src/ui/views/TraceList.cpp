@@ -10,7 +10,7 @@
 using namespace view;
 
 TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
-: trace(std::move(tracePtr)) {
+: trace(std::move(tracePtr)), items() {
     auto widget = new QWidget(this);
     auto layout = new QGridLayout(widget);
     layout->setAlignment(Qt::AlignTop);
@@ -21,8 +21,10 @@ TraceList::TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+
     for (const auto& slot : trace->getSlots()) {
-        auto item = new TraceListItem(QString::fromStdString(slot.first.name().str()), slot.second, *this);
+        auto item = new TraceListItem(QString::fromStdString(slot.first.name().str()), slot.second, trace->getStartTime().count(), trace->getRuntime().count(), this);
         layout->addWidget(item);
+        items.push_back(item);
     }
 }

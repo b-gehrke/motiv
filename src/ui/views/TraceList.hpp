@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QScrollArea>
 #include "src/models/trace.hpp"
+#include "TraceListItem.hpp"
 
 namespace view {
 
@@ -13,11 +14,15 @@ class TraceList : public QScrollArea {
 public:
     TraceList(std::shared_ptr<Trace> tracePtr, QWidget *parent);
 
-public: // slots
-    void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
+Q_SIGNALS:
+    void selectionUpdated();
+
+public Q_SLOTS: // slots
+    void updateView() { for (auto &item: items) {item->repaint(); item->update(); } };
 
 private: // data
     std::shared_ptr<Trace> trace;
+    std::vector<TraceListItem *> items;
 };
 
 } // namespace view

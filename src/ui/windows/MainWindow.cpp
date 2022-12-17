@@ -8,10 +8,12 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenuBar>
+#include <QPushButton>
 #include <QStringListModel>
 #include <QWidget>
 #include <QLineEdit>
 #include <QErrorMessage>
+#include <QIntValidator>
 
 MainWindow::MainWindow(QString path, QWidget *parent) : filePath(std::move(path)) {
     // TODO delete object on close properly
@@ -101,10 +103,26 @@ void MainWindow::createToolBars() {
     auto containerWidget = new QWidget(bottomToolbar);
     auto containerLayout = new QHBoxLayout(containerWidget);
     containerWidget->setLayout(containerLayout);
+
+    // TODO customize: (e.g. start < end; not out of bounds)
+    auto validator = new QIntValidator(containerWidget);
+
     containerLayout->addWidget(new QLabel("Start:", containerWidget));
-    containerLayout->addWidget(new QLineEdit("0", containerWidget));
+    intervalBegin = new QLineEdit(QString::number(viewStart), containerWidget);
+    intervalBegin->setValidator(validator);
+    connect(intervalBegin, SIGNAL(returnPressed()), this, SLOT(applyIntervalText()));
+//    connect(this, SIGNAL(selectionUpdated()), intervalBegin,
+//            SLOT([this]{intervalBegin->setText(QString::number(this->viewStart));}));
+    containerLayout->addWidget(intervalBegin);
+
     containerLayout->addWidget(new QLabel("End:", containerWidget));
-    containerLayout->addWidget(new QLineEdit("0", containerWidget));
+    intervalEnd = new QLineEdit(QString::number(viewEnd), containerWidget);
+    connect(intervalEnd, SIGNAL(returnPressed()), this, SLOT(applyIntervalText()));
+//    connect(this, SIGNAL(selectionUpdated()), intervalEnd,
+//            SLOT([this]{intervalEnd->setText(QString::number(this->viewEnd));});
+    intervalEnd->setValidator(validator);
+    containerLayout->addWidget(intervalEnd);
+
     bottomToolbar->addWidget(containerWidget);
 }
 
@@ -116,11 +134,16 @@ void MainWindow::createDockWidgets() {
 void MainWindow::createCentralWidget() {
     traceList = new view::TraceList(selection, this);
     setCentralWidget(traceList);
+
+    connect(this, SIGNAL(selectionUpdated()), traceList, SLOT(updateView()));
 }
 
-void MainWindow::updateView(otf2::chrono::duration start, otf2::chrono::duration end) {
+void MainWindow::updateView() {
 //    viewStart = start;
 //    viewEnd = end;
+    traceList->updateView();
+    traceList->update();
+    update();
 }
 
 void MainWindow::loadTraceFile(const QString &path) {
@@ -133,12 +156,19 @@ void MainWindow::loadTraceFile(const QString &path) {
 
     trace = std::make_shared<FileTrace>(*reader_callbacks->getSlots(), *reader_callbacks->getCommunications(),
                                         *reader_callbacks->getCollectiveCommunications(), reader_callbacks->duration());
+
+    viewStart = trace->getRuntime().count()/4;
+    // TODO create getter and setter
+    viewEnd = trace->getRuntime().count()/2;
+
     selection = std::make_shared<SubTrace>(trace->getSlots(), trace->getCommunications(),
                                            trace->getCollectiveCommunications(),
                                            trace->getRuntime(), trace->getStartTime());
+//    auto newTrace = trace->subtrace(otf2::chrono::duration(viewStart), otf2::chrono::duration(viewEnd));
+//    selection = std::make_shared<SubTrace>(newTrace->getSlots(), newTrace->getCommunications(),
+//                                           newTrace->getCollectiveCommunications(),
+//                                           newTrace->getRuntime(), newTrace->getStartTime());
 
-    viewStart = 0;
-    viewEnd = selection->getRuntime().count();
 }
 
 QString MainWindow::getTraceFilePath() {
@@ -164,4 +194,18 @@ void MainWindow::openLicenseView() {
 void MainWindow::openTrace() {
     filePath = getTraceFilePath();
     loadTraceFile(filePath);
+}
+
+void MainWindow::applyIntervalText() {
+    viewStart = intervalBegin->text().toLongLong();
+    viewEnd = intervalEnd->text().toLongLong();
+
+    // TODO copy constructor please
+    //selection = trace->subtrace(otf2::chrono::duration(viewStart), otf2::chrono::duration(viewEnd));
+    auto newTrace = trace->subtrace(otf2::chrono::duration(viewStart), otf2::chrono::duration(viewEnd));
+    selection = std::make_shared<SubTrace>(newTrace->getSlots(), newTrace->getCommunications(),
+                               newTrace->getCollectiveCommunications(),
+                               newTrace->getRuntime(), newTrace->getStartTime());
+
+    Q_EMIT selectionUpdated();
 }

@@ -1,6 +1,7 @@
 #ifndef MOTIV_MAINWINDOW_HPP
 #define MOTIV_MAINWINDOW_HPP
 
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QToolBar>
 
@@ -18,9 +19,13 @@ class MainWindow : public QMainWindow
 public: //constructors
     explicit MainWindow(QString filePath = QString(), QWidget *parent = nullptr);
 
+Q_SIGNALS:
+    void selectionUpdated();
+
 public Q_SLOTS: // slots
     void openTrace();
-    void updateView(otf2::chrono::duration start, otf2::chrono::duration end);
+    void updateView();
+    void applyIntervalText();
 
     void openLicenseView();
 
@@ -43,6 +48,9 @@ private: // ui elements
     view::SelectionDetails *details = nullptr;
 
     view::License *licenseWindow = nullptr;
+
+    QLineEdit *intervalBegin = nullptr;
+    QLineEdit *intervalEnd = nullptr;
 
 private: // data
     std::shared_ptr<otf2::reader::reader> reader;
