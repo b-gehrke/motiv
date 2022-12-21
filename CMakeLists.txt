@@ -18,7 +18,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(PROJECT_SOURCES
         resources.qrc
         src/main.cpp
-        src/ui/models/TraceModel.cpp
+        src/ui/TraceDataModel.hpp
+        src/ui/views/TraceListView.cpp
         src/ui/widgets/License.cpp
         src/ui/widgets/Preview.cpp
         src/ui/widgets/SelectionDetails.cpp
