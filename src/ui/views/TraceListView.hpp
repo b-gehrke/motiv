@@ -13,6 +13,14 @@ class TraceListView : public QGraphicsView {
     Q_OBJECT
 public:
     TraceListView(TraceDataModel *data, QWidget *parent = nullptr);
+
+    void resizeEvent(QResizeEvent *event) override;
+
+private: // methods
+    void populateScene(QGraphicsScene *);
+
+private: //data
+    TraceDataModel *data = nullptr;
 };
 
 
