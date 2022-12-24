@@ -3,6 +3,7 @@
 
 
 #include <QtCore/QObject>
+#include <QDebug>
 #include "src/models/filetrace.hpp"
 
 class TraceDataModel : public QObject {
@@ -73,6 +74,7 @@ protected: //methods
     void updateSelection() {
         selection = std::static_pointer_cast<SubTrace>(fullTrace->subtrace(begin, end));
         Q_EMIT selectionUpdated();
+        qDebug() << "Selection updated";
     }
 
 private: // data

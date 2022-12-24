@@ -16,6 +16,9 @@ public:
 
     void resizeEvent(QResizeEvent *event) override;
 
+public Q_SLOTS:
+    void updateView();
+
 private: // methods
     void populateScene(QGraphicsScene *);
 

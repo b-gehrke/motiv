@@ -27,7 +27,7 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
     auto markNum = 4;
     for (size_t i = 0; i < markNum; i++) {
         auto time = (data->getBegin() + static_cast<qreal>(i)/markNum * total) / 1000000000;
-        auto textItem = scene->addText(QString::number(time));
+        auto textItem = scene->addText(QString::number(time).append('s'));
 
         // TODO swap 100 for begin of column
         qreal x = 100 + static_cast<qreal>(i)/markNum * sceneWidth;
@@ -79,6 +79,11 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
 }
 
 void TraceListView::resizeEvent(QResizeEvent *event) {
+    updateView();
+    QGraphicsView::resizeEvent(event);
+}
+
+void TraceListView::updateView()  {
     // TODO This seems pretty inefficient, no?
     delete scene();
     auto scene = new QGraphicsScene(this);
@@ -86,5 +91,4 @@ void TraceListView::resizeEvent(QResizeEvent *event) {
     scene->setSceneRect(rect().toRectF());
     populateScene(scene);
     setScene(scene);
-    QGraphicsView::resizeEvent(event);
 }

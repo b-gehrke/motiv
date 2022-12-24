@@ -53,13 +53,13 @@ void MainWindow::createMenus() {
     // TODO S for sieve? what might be more intuitive?
     filterAction->setShortcut(tr("Ctrl+S"));
     // TODO add actual slot
-    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+//    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     // "Search" menu entry
     auto searchAction = new QAction(tr("&Find"));
     searchAction->setShortcut(tr("Ctrl+F"));
     // TODO add actual slot
-    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+//    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     auto viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction(filterAction);
@@ -107,14 +107,18 @@ void MainWindow::createToolBars() {
     containerLayout->addWidget(new QLabel("Start:", containerWidget));
     intervalBegin = new QLineEdit(QString::number(data->getBegin()), containerWidget);
     intervalBegin->setValidator(validator);
-    connect(intervalBegin, SIGNAL(returnPressed()), this, SLOT(applyIntervalText()));
+    connect(intervalBegin, &QLineEdit::returnPressed, [=] {
+        data->setBegin(intervalBegin->text().toInt());
+    });
 //    connect(this, SIGNAL(selectionUpdated()), intervalBegin,
 //            SLOT([this]{intervalBegin->setText(QString::number(this->viewStart));}));
     containerLayout->addWidget(intervalBegin);
 
     containerLayout->addWidget(new QLabel("End:", containerWidget));
     intervalEnd = new QLineEdit(QString::number(data->getEnd()), containerWidget);
-    connect(intervalEnd, SIGNAL(returnPressed()), this, SLOT(applyIntervalText()));
+    connect(intervalEnd, &QLineEdit::returnPressed, [=] {
+        data->setEnd(intervalEnd->text().toInt());
+    });
 //    connect(this, SIGNAL(selectionUpdated()), intervalEnd,
 //            SLOT([this]{intervalEnd->setText(QString::number(this->viewEnd));});
     intervalEnd->setValidator(validator);
@@ -132,7 +136,7 @@ void MainWindow::createCentralWidget() {
     traceList = new TraceListView(data, this);
     setCentralWidget(traceList);
 
-    connect(this, SIGNAL(selectionUpdated()), traceList, SLOT(updateView()));
+    connect(data, SIGNAL(selectionUpdated()), traceList, SLOT(updateView()));
 }
 
 void MainWindow::loadTraceFile(const QString &path) {
