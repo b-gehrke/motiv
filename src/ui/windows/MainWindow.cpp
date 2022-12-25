@@ -2,6 +2,7 @@
 #include "src/readercallbacks.hpp"
 #include "src/ui/widgets/TraceInformationDock.hpp"
 #include "src/ui/widgets/License.hpp"
+#include "src/util/LongLongValidator.hpp"
 
 #include "QDropEvent"
 #include <QFileDialog>
@@ -102,13 +103,13 @@ void MainWindow::createToolBars() {
     containerWidget->setLayout(containerLayout);
 
     // TODO customize: (e.g. start < end; not out of bounds)
-    auto validator = new QIntValidator(containerWidget);
+    auto validator = new LongLongValidator(containerWidget);
 
     containerLayout->addWidget(new QLabel("Start:", containerWidget));
     intervalBegin = new QLineEdit(QString::number(data->getBegin()), containerWidget);
     intervalBegin->setValidator(validator);
     connect(intervalBegin, &QLineEdit::returnPressed, [=] {
-        data->setBegin(intervalBegin->text().toInt());
+        data->setBegin(intervalBegin->text().toLongLong());
     });
 //    connect(this, SIGNAL(selectionUpdated()), intervalBegin,
 //            SLOT([this]{intervalBegin->setText(QString::number(this->viewStart));}));
@@ -117,7 +118,7 @@ void MainWindow::createToolBars() {
     containerLayout->addWidget(new QLabel("End:", containerWidget));
     intervalEnd = new QLineEdit(QString::number(data->getEnd()), containerWidget);
     connect(intervalEnd, &QLineEdit::returnPressed, [=] {
-        data->setEnd(intervalEnd->text().toInt());
+        data->setEnd(intervalEnd->text().toLongLong());
     });
 //    connect(this, SIGNAL(selectionUpdated()), intervalEnd,
 //            SLOT([this]{intervalEnd->setText(QString::number(this->viewEnd));});
