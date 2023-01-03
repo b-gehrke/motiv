@@ -88,7 +88,7 @@ void TraceListView::updateView()  {
     delete scene();
     auto scene = new QGraphicsScene(this);
     // TODO this fucks up the height
-    scene->setSceneRect(rect().toRectF());
+    scene->setSceneRect(rect());
     populateScene(scene);
     setScene(scene);
 }
