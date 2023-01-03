@@ -4,17 +4,16 @@
 #include "src/ui/widgets/License.hpp"
 #include "src/util/LongLongValidator.hpp"
 
+#include <QComboBox>
 #include "QDropEvent"
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenuBar>
 #include <QPushButton>
-#include <QStringListModel>
 #include <QWidget>
 #include <QLineEdit>
 #include <QErrorMessage>
-#include <QIntValidator>
 
 MainWindow::MainWindow(QString path, QWidget *parent) : filePath(std::move(path)) {
     if (filePath.isEmpty()) {
@@ -114,6 +113,12 @@ void MainWindow::createToolBars() {
 //    connect(this, SIGNAL(selectionUpdated()), intervalBegin,
 //            SLOT([this]{intervalBegin->setText(QString::number(this->viewStart));}));
     containerLayout->addWidget(intervalBegin);
+    auto intervalBeginUnit = new QComboBox(containerWidget);
+    intervalBeginUnit->addItem("ns");
+    intervalBeginUnit->addItem("μs");
+    intervalBeginUnit->addItem("ms");
+    intervalBeginUnit->addItem("s");
+    containerLayout->addWidget(intervalBeginUnit);
 
     containerLayout->addWidget(new QLabel("End:", containerWidget));
     intervalEnd = new QLineEdit(QString::number(data->getEnd()), containerWidget);
@@ -124,6 +129,12 @@ void MainWindow::createToolBars() {
 //            SLOT([this]{intervalEnd->setText(QString::number(this->viewEnd));});
     intervalEnd->setValidator(validator);
     containerLayout->addWidget(intervalEnd);
+    auto intervalEndUnit = new QComboBox(containerWidget);
+    intervalEndUnit->addItem("ns");
+    intervalEndUnit->addItem("μs");
+    intervalEndUnit->addItem("ms");
+    intervalEndUnit->addItem("s");
+    containerLayout->addWidget(intervalEndUnit);
 
     bottomToolbar->addWidget(containerWidget);
 }
