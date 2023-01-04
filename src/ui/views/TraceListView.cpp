@@ -28,7 +28,9 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
     auto selection = data->getSelection();
     auto sceneWidth = width() - LEADING_MARGIN - Y_AXIS_WIDTH - TRAILING_MARGIN;
 
-    auto selectionRuntime = data->getEnd() - data->getBegin();
+    auto selectionBegin = data->getBegin();
+    auto selectionEnd = data->getEnd();
+    auto selectionRuntime = selectionEnd - selectionBegin;
 
     // Create header/x-axis
     auto markerCount = 4;
@@ -43,8 +45,6 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
         textItem->setPos({x, y});
         // TODO set font size or make header height variable
     }
-    // TODO font size
-    top+=25;
 
     // Create rows
     auto top = TOP_MARGIN + X_AXIS_HEIGHT;
@@ -63,7 +63,7 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
             auto endTime = slot.end;
 
             auto slotBeginPos = (LEADING_MARGIN + Y_AXIS_WIDTH)
-                    + (static_cast<qreal>(startTime.count()) / static_cast<qreal>(selectionRuntime)) * sceneWidth;
+                    + (static_cast<qreal>(startTime.count() - selectionBegin) / static_cast<qreal>(selectionRuntime)) * sceneWidth;
 
             auto slotRuntime = static_cast<qreal>((endTime - startTime).count());
             auto rectWidth = (slotRuntime / static_cast<qreal>(selectionRuntime)) * sceneWidth;
@@ -84,8 +84,6 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
                 rectColor = Qt::lightGray;
             }
             rectItem->setBrush(rectColor);
-
-            left += rectWidth;
         }
 
         top += ROW_HEIGHT;
