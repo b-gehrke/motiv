@@ -1,7 +1,3 @@
-//
-// Created by Florian Gallrein on 19.12.22.
-//
-
 #ifndef MOTIV_TRACELISTVIEW_HPP
 #define MOTIV_TRACELISTVIEW_HPP
 
@@ -12,7 +8,7 @@
 class TraceListView : public QGraphicsView {
     Q_OBJECT
 public:
-    TraceListView(TraceDataModel *data, QWidget *parent = nullptr);
+    explicit TraceListView(TraceDataModel *data, QWidget *parent = nullptr);
 
     void resizeEvent(QResizeEvent *event) override;
 

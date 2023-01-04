@@ -2,6 +2,14 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
 
+static const int X_AXIS_HEIGHT = 30;
+static const int Y_AXIS_WIDTH = 100;
+static const int LEADING_MARGIN = 5;
+static const int TRAILING_MARGIN = 5;
+static const int TOP_MARGIN = 5;
+static const int BOTTOM_MARGIN = 5;
+static const int ROW_HEIGHT = 30;
+
 TraceListView::TraceListView(TraceDataModel *data, QWidget *parent) : data(data) {
     // TODO optionally use OpenGL to speed up rendering
     // setViewport(new QOpenGLWidget(this));
@@ -18,48 +26,55 @@ TraceListView::TraceListView(TraceDataModel *data, QWidget *parent) : data(data)
 
 void TraceListView::populateScene(QGraphicsScene *scene) {
     auto selection = data->getSelection();
-    auto sceneWidth = width() - 10; // padding at the right
-    auto top = 5;
+    auto sceneWidth = width() - LEADING_MARGIN - Y_AXIS_WIDTH - TRAILING_MARGIN;
 
-    auto total = data->getEnd() - data->getBegin();
+    auto selectionRuntime = data->getEnd() - data->getBegin();
 
-    // Create header
-    auto markNum = 4;
-    for (size_t i = 0; i < markNum; i++) {
-        auto time = (data->getBegin() + static_cast<qreal>(i)/markNum * total) / 1000000000;
+    // Create header/x-axis
+    auto markerCount = 4;
+    for (size_t i = 0; i < markerCount; i++) {
+        auto time = (static_cast<qreal>(data->getBegin())
+                + (static_cast<qreal>(i) / markerCount) * static_cast<qreal>(selectionRuntime)) / 1000000000;
         auto textItem = scene->addText(QString::number(time).append('s'));
 
-        // TODO swap 100 for begin of column
-        qreal x = 100 + static_cast<qreal>(i)/markNum * sceneWidth;
-        qreal y = top;
+        qreal x = (TRAILING_MARGIN + Y_AXIS_WIDTH) + static_cast<qreal>(i) / markerCount * sceneWidth;
+        qreal y = TOP_MARGIN;
 
         textItem->setPos({x, y});
+        // TODO set font size or make header height variable
     }
     // TODO font size
     top+=25;
 
+    // Create rows
+    auto top = TOP_MARGIN + X_AXIS_HEIGHT;
     for (const auto& item : selection->getSlots()) {
         auto location = item.first;
 
+        // Display name at the beginning of a row
         auto locationNameLabel = scene->addText(QString(location.name().str().c_str()));
-        locationNameLabel->setPos({5, static_cast<qreal>(top)});
+        locationNameLabel->setPos({LEADING_MARGIN, static_cast<qreal>(top)});
         locationNameLabel->setToolTip(location.name().str().c_str());
 
-        auto left = 90;
+        // Display slots
         for (const auto& slot : item.second) {
             auto region_name = slot.region.name().str();
-            auto start = slot.start;
-            auto end = slot.end;
+            auto startTime = slot.start;
+            auto endTime = slot.end;
 
-            auto runtime = static_cast<double>((end - start).count());
-            auto rectWidth = runtime/total * sceneWidth;
-            rectWidth = qMin(rectWidth, static_cast<double>(sceneWidth - left));
+            auto slotBeginPos = (LEADING_MARGIN + Y_AXIS_WIDTH)
+                    + (static_cast<qreal>(startTime.count()) / static_cast<qreal>(selectionRuntime)) * sceneWidth;
 
-            QRect rect(left, top, qMax(rectWidth, 5.0), 30);
+            auto slotRuntime = static_cast<qreal>((endTime - startTime).count());
+            auto rectWidth = (slotRuntime / static_cast<qreal>(selectionRuntime)) * sceneWidth;
+            rectWidth = qMin(rectWidth, static_cast<qreal>(sceneWidth - slotBeginPos - 1));
+
+            QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
             auto rectItem = scene->addRect(rect);
             rectItem->setToolTip(region_name.c_str());
             rectItem->setZValue(1);
 
+            // Determine color based on name
             QColor rectColor;
             if(region_name.starts_with("MPI_")) {
                 rectColor = Qt::green;
@@ -68,13 +83,12 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
             } else {
                 rectColor = Qt::lightGray;
             }
-
             rectItem->setBrush(rectColor);
 
             left += rectWidth;
         }
 
-        top += 30;
+        top += ROW_HEIGHT;
     }
 }
 
@@ -87,8 +101,14 @@ void TraceListView::updateView()  {
     // TODO This seems pretty inefficient, no?
     delete scene();
     auto scene = new QGraphicsScene(this);
-    // TODO this fucks up the height
-    scene->setSceneRect(rect());
+
+    auto sceneHeight = TOP_MARGIN + X_AXIS_HEIGHT
+            + data->getSelection()->getSlots().size() * ROW_HEIGHT
+            + BOTTOM_MARGIN;
+    auto sceneRect = rect();
+    sceneRect.setHeight(sceneHeight);
+
+    scene->setSceneRect(sceneRect);
     populateScene(scene);
     setScene(scene);
 }
