@@ -17,6 +17,8 @@ public: // constructors
 
 public: Q_SIGNALS:
     void selectionUpdated();
+    void slotUpdated();
+    void communicationUpdated();
 
 public Q_SLOTS:
     void setBegin(size_t newBegin) {
@@ -32,6 +34,10 @@ public Q_SLOTS:
     }
 
 public: //methods
+    size_t getBegin() const {
+        return begin.count();
+    }
+
     void setBegin(otf2::chrono::duration newBegin) {
         assert(newBegin < fullTrace->getRuntime());
         assert(newBegin <= end);
@@ -40,12 +46,20 @@ public: //methods
         updateSelection();
     }
 
+    size_t getEnd() const {
+        return end.count();
+    }
+
     void setEnd(otf2::chrono::duration newEnd) {
         assert(newEnd < fullTrace->getRuntime());
         assert(newEnd >= begin);
         end = newEnd;
 
         updateSelection();
+    }
+
+    std::shared_ptr<Trace> getSelection() const {
+        return selection;
     }
 
     void setPeriod(otf2::chrono::duration newBegin, otf2::chrono::duration newEnd) {
@@ -58,16 +72,24 @@ public: //methods
         updateSelection();
     }
 
-    size_t getBegin() const {
-        return begin.count();
+    Slot *getSlotSelection() const {
+        return selectedSlot;
     }
 
-    size_t getEnd() const {
-        return end.count();
+    void setSlotSelection(Slot *newSlot) {
+        selectedSlot = newSlot;
+        Q_EMIT slotUpdated();
+        qDebug() << "Selected slot updated";
     }
 
-    std::shared_ptr<Trace> getSelection() const {
-        return selection;
+    Communication *getCommunicationSelection() const {
+        return selectedCommunication;
+    }
+
+    void setCommunicationSelection(Communication *newCommunication) {
+        selectedCommunication = newCommunication;
+        Q_EMIT communicationUpdated();
+        qDebug() << "Selected communication updated";
     }
 
 protected: //methods
@@ -82,6 +104,8 @@ private: // data
     std::shared_ptr<SubTrace> selection = nullptr;
     otf2::chrono::duration begin{0};
     otf2::chrono::duration end{0};
+    Slot *selectedSlot = nullptr;
+    Communication *selectedCommunication = nullptr;
 
 };
 
