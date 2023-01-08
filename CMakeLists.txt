@@ -41,7 +41,7 @@ set(PROJECT_SOURCES
         src/ui/widgets/TraceListItem.cpp
         src/ui/windows/MainWindow.cpp
         src/util/LongLongValidator.cpp
-        )
+        src/ui/views/SettingsView.cpp src/ui/views/SettingsView.hpp src/ui/views/SettingsModel.cpp src/ui/views/SettingsModel.hpp src/ui/views/TraceListSlotItem.cpp src/ui/views/TraceListSlotItem.hpp src/ui/views/TraceListScene.cpp src/ui/views/TraceListScene.hpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

@@ -2,13 +2,10 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
 
-static const int X_AXIS_HEIGHT = 30;
-static const int Y_AXIS_WIDTH = 100;
-static const int LEADING_MARGIN = 5;
-static const int TRAILING_MARGIN = 5;
-static const int TOP_MARGIN = 5;
-static const int BOTTOM_MARGIN = 5;
-static const int ROW_HEIGHT = 30;
+/*
+ * TODO
+ * - filtering (e.g. don't display barriers)
+ */
 
 TraceListView::TraceListView(TraceDataModel *data, QWidget *parent) : data(data) {
     // TODO optionally use OpenGL to speed up rendering
@@ -22,6 +19,12 @@ TraceListView::TraceListView(TraceDataModel *data, QWidget *parent) : data(data)
     setScene(scene);
 
     populateScene(scene);
+}
+
+int calculateScenePosition(unsigned long selectionBegin, unsigned long selectionRuntime,
+                           unsigned long timepoint, int sceneWidth) {
+    return (LEADING_MARGIN + Y_AXIS_WIDTH)
+    + (static_cast<qreal>(timepoint - selectionBegin) / static_cast<qreal>(selectionRuntime)) * sceneWidth;
 }
 
 void TraceListView::populateScene(QGraphicsScene *scene) {
@@ -58,35 +61,89 @@ void TraceListView::populateScene(QGraphicsScene *scene) {
 
         // Display slots
         for (const auto& slot : item.second) {
-            auto region_name = slot.region.name().str();
-            auto startTime = slot.start;
-            auto endTime = slot.end;
-
-            auto slotBeginPos = (LEADING_MARGIN + Y_AXIS_WIDTH)
-                    + (static_cast<qreal>(startTime.count() - selectionBegin) / static_cast<qreal>(selectionRuntime)) * sceneWidth;
-
-            auto slotRuntime = static_cast<qreal>((endTime - startTime).count());
-            auto rectWidth = (slotRuntime / static_cast<qreal>(selectionRuntime)) * sceneWidth;
-            rectWidth = qMin(rectWidth, static_cast<qreal>(sceneWidth - slotBeginPos - 1));
-
-            QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
-            auto rectItem = scene->addRect(rect);
-            rectItem->setToolTip(region_name.c_str());
-            rectItem->setZValue(1);
-
-            // Determine color based on name
-            QColor rectColor;
-            if(region_name.starts_with("MPI_")) {
-                rectColor = Qt::green;
-            } else if(region_name.starts_with("!$omp")) {
-                rectColor = Qt::red;
-            } else {
-                rectColor = Qt::lightGray;
-            }
-            rectItem->setBrush(rectColor);
+            // addSlot
         }
 
         top += ROW_HEIGHT;
+    }
+
+    // Create P2P communications
+    for (const auto& comm : selection->getCommunications()) {
+        auto source = comm.getStart();
+        auto destination = comm.getEnd();
+
+        qDebug() << "[Communication]"
+            << "Source:" << source->getLocation().location_group().name().str().c_str()
+            << "Destination:" << destination->getLocation().location_group().name().str().c_str();
+    }
+
+    // Create collective communications
+    for (const auto& comm : selection->getCollectiveCommunications()) {
+        qDebug() << "[CollectiveCommunicationsEvent]"
+                 << "Start:" << comm.getStart().count()
+                 << "End:" << comm.getEnd().count()
+                 << "Root:" << comm.getRoot()
+                 << "Location:" << comm.getLocation().name().str().c_str()
+                 << "Location Group:" << comm.getLocation().location_group().name().str().c_str()
+                 << "Events:" << comm.getLocation().num_events();
+        auto op = comm.getOperation();
+        switch (op) {
+            case otf2::common::collective_type::barrier: {
+                qDebug() << "Barrier";
+                auto begin = calculateScenePosition(selectionBegin, selectionRuntime, comm.getStart().count(), sceneWidth);
+                auto end = calculateScenePosition(selectionBegin, selectionRuntime, comm.getEnd().count(), sceneWidth);
+
+                QRect barrierRect(begin, (TOP_MARGIN + X_AXIS_HEIGHT), end - begin, height());
+                auto rectItem = scene->addRect(barrierRect);
+                rectItem->setBrush(Qt::darkCyan);
+                rectItem->setZValue(2);
+                break;
+            }
+            case otf2::common::collective_type::broadcast:
+                break;
+            case otf2::common::collective_type::gather:
+                break;
+            case otf2::common::collective_type::gatherv:
+                break;
+            case otf2::common::collective_type::scatter:
+                break;
+            case otf2::common::collective_type::scatterv:
+                break;
+            case otf2::common::collective_type::all_gather:
+                break;
+            case otf2::common::collective_type::all_gatherv:
+                break;
+            case otf2::common::collective_type::all_to_all:
+                break;
+            case otf2::common::collective_type::all_to_allv:
+                break;
+            case otf2::common::collective_type::all_to_allw:
+                break;
+            case otf2::common::collective_type::all_reduce:
+                break;
+            case otf2::common::collective_type::reduce:
+                break;
+            case otf2::common::collective_type::reduce_scatter:
+                break;
+            case otf2::common::collective_type::scan:
+                break;
+            case otf2::common::collective_type::exscan:
+                break;
+            case otf2::common::collective_type::reduce_scatter_block:
+                break;
+            case otf2::common::collective_type::create_handle:
+                break;
+            case otf2::common::collective_type::destroy_handle:
+                break;
+            case otf2::common::collective_type::allocate:
+                break;
+            case otf2::common::collective_type::deallocate:
+                break;
+            case otf2::common::collective_type::create_handle_and_allocate:
+                break;
+            case otf2::common::collective_type::destroy_handle_and_deallocate:
+                break;
+        }
     }
 }
 
