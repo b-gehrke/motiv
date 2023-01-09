@@ -34,6 +34,7 @@ set(PROJECT_SOURCES
         src/ui/MainWindow.cpp
         src/ui/TimeInputField.cpp
         src/ui/TraceDataProxy.cpp
+        src/ui/TimeUnit.cpp
         )
 
 # XXX this would require qt version 6
