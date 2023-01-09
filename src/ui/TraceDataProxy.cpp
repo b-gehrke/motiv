@@ -8,6 +8,18 @@ TraceDataProxy::~TraceDataProxy() {
     delete this->trace;
 }
 
+SubTrace *TraceDataProxy::getSelection() const {
+    return nullptr;
+}
+
+types::TraceTime TraceDataProxy::getBegin() const {
+    return types::TraceTime();
+}
+
+types::TraceTime TraceDataProxy::getEnd() const {
+    return types::TraceTime();
+}
+
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
     assert(newBegin < trace->getRuntime());
     assert(newBegin <= end);

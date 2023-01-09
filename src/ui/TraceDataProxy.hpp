@@ -26,6 +26,9 @@ public: //constructors
 
 
 public: // methods
+    SubTrace *getSelection() const;
+    types::TraceTime getBegin() const;
+    types::TraceTime getEnd() const;
 
 public: Q_SIGNALS:
     /**
