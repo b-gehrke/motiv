@@ -4,6 +4,8 @@
 
 #include <QMainWindow>
 
+#include "TimeInputField.hpp"
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -27,6 +29,9 @@ private: // widgets
     QToolBar *bottomToolbar = nullptr;
 
     QList<QDockWidget *> *docks = nullptr;
+
+    TimeInputField *startTimeInputField = nullptr;
+    TimeInputField *endTimeInputField = nullptr;
 
 private: // properties
     QString filepath;

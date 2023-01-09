@@ -31,7 +31,9 @@ set(PROJECT_SOURCES
         src/models/communication/nonblockingreceiveevent.cpp
         src/models/communication/requestcancelledevent.cpp
         src/models/communication/collectivecommunicationevent.cpp
-        src/ui/MainWindow.cpp)
+        src/ui/MainWindow.cpp
+        src/ui/TimeInputField.cpp
+        )
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

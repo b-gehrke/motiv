@@ -1,6 +1,11 @@
 #include "MainWindow.hpp"
 
+#include <QHBoxLayout>
 #include <QMenuBar>
+#include <QToolBar>
+
+#include "TimeInputField.hpp"
+
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
     this->createMenus();
@@ -59,6 +64,26 @@ void MainWindow::createMenus() {
 }
 
 void MainWindow::createToolBars() {
+    // Top toolbar contains preview/control of whole trace
+    this->topToolbar = new QToolBar(this);
+    this->topToolbar->setMovable(false);
+    addToolBar(Qt::TopToolBarArea, this->topToolbar);
+
+    // Bottom toolbar contains control fields
+    this->bottomToolbar = new QToolBar(this);
+    this->bottomToolbar->setMovable(false);
+    addToolBar(Qt::BottomToolBarArea, this->bottomToolbar);
+
+    auto bottomContainerWidget = new QWidget(this->bottomToolbar);
+    auto containerLayout = new QHBoxLayout(bottomContainerWidget);
+    bottomContainerWidget->setLayout(containerLayout);
+
+    this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    containerLayout->addWidget(this->startTimeInputField);
+    this->endTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    containerLayout->addWidget(this->endTimeInputField);
+
+    this->bottomToolbar->addWidget(bottomContainerWidget);
 
 }
 
