@@ -33,6 +33,7 @@ set(PROJECT_SOURCES
         src/models/communication/collectivecommunicationevent.cpp
         src/ui/MainWindow.cpp
         src/ui/TimeInputField.cpp
+        src/ui/TraceDataProxy.cpp
         )
 
 # XXX this would require qt version 6
