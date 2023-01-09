@@ -2,20 +2,20 @@
 
 #include <utility>
 
-CollectiveCommunicationEvent::CollectiveCommunicationEvent(std::vector<Member> members,
-                                                           otf2::definition::location location,
-                                                           types::communicator communicator,
+CollectiveCommunicationEvent::CollectiveCommunicationEvent(std::vector<Member *> members,
+                                                           otf2::definition::location *location,
+                                                           types::communicator *communicator,
                                                            otf2::collective_type operation, uint32_t root) :
-    members(std::move(members)), location(std::move(location)), communicator(std::move(communicator)), operation(operation),
+    members(std::move(members)), location(location), communicator(communicator), operation(operation),
     root(root), start(0), end(0) {
-    auto starting = std::min_element(this->members.begin(), this->members.end(), [](const Member& lhs, const Member& rhs) {return lhs.start < rhs.start;});
-    auto ending = std::max_element(this->members.begin(), this->members.end(), [](const Member& lhs, const Member& rhs) {return lhs.end < rhs.end;});
+    auto starting = std::min_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->start < rhs->start;});
+    auto ending = std::max_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->end < rhs->end;});
 
-    this->start = starting->start;
-    this->end = ending->end;
+    this->start = (*starting)->start;
+    this->end = (*ending)->end;
 }
 
-otf2::definition::location CollectiveCommunicationEvent::getLocation() const {
+otf2::definition::location * CollectiveCommunicationEvent::getLocation() const {
     return location;
 }
 
@@ -27,7 +27,7 @@ otf2::chrono::duration CollectiveCommunicationEvent::getEnd() const {
     return end;
 }
 
-types::communicator CollectiveCommunicationEvent::getCommunicator() const {
+types::communicator * CollectiveCommunicationEvent::getCommunicator() const {
     return communicator;
 }
 

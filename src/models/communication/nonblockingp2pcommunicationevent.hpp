@@ -24,17 +24,17 @@ protected:
      * @param communicator Communicator the event took place in
      */
     NonBlockingP2PCommunicationEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
-                                     const otf2::definition::location &location, const types::communicator &communicator);
+                                     otf2::definition::location* location, types::communicator* communicator);
 
     otf2::chrono::duration start;
     otf2::chrono::duration end;
-    otf2::definition::location location;
-    types::communicator communicator;
+    otf2::definition::location* location;
+    types::communicator* communicator;
 public:
-    otf2::definition::location getLocation() const override;
+    otf2::definition::location * getLocation() const override;
     otf2::chrono::duration getStart() const override;
     otf2::chrono::duration getEnd() const override;
-    types::communicator getCommunicator() const override;
+    types::communicator * getCommunicator() const override;
 };
 
 #endif //MOTIV_NONBLOCKINGP2PCOMMUNICATIONEVENT_HPP

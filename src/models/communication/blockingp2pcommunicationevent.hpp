@@ -32,18 +32,18 @@ protected:
      * @param location Location of the event
      * @param communicator Communicator the event took place in
      */
-    BlockingP2PCommunicationEvent(const otf2::chrono::duration &timepoint, otf2::definition::location location,
-                                  types::communicator communicator);
+    BlockingP2PCommunicationEvent(const otf2::chrono::duration &timepoint, otf2::definition::location* location,
+                                  types::communicator* communicator);
 
 protected:
     otf2::chrono::duration timepoint;
-    otf2::definition::location location;
-    types::communicator communicator;
+    otf2::definition::location* location;
+    types::communicator* communicator;
 public:
-    otf2::definition::location getLocation() const override;
+    otf2::definition::location * getLocation() const override;
     otf2::chrono::duration getStart() const override;
     otf2::chrono::duration getEnd() const override;
-    types::communicator getCommunicator() const override;
+    types::communicator * getCommunicator() const override;
 };
 
 #endif //MOTIV_BLOCKINGP2PCOMMUNICATIONEVENT_HPP
