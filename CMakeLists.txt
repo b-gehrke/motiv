@@ -12,8 +12,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # configure qt
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 
 set(PROJECT_SOURCES
         resources.qrc
@@ -31,17 +31,7 @@ set(PROJECT_SOURCES
         src/models/communication/nonblockingreceiveevent.cpp
         src/models/communication/requestcancelledevent.cpp
         src/models/communication/collectivecommunicationevent.cpp
-        src/ui/TraceDataModel.hpp
-        src/ui/views/TraceListView.cpp
-        src/ui/widgets/License.cpp
-        src/ui/widgets/Preview.cpp
-        src/ui/widgets/SelectionDetails.cpp
-        src/ui/widgets/TraceInformationDock.cpp
-        src/ui/widgets/TraceList.cpp
-        src/ui/widgets/TraceListItem.cpp
-        src/ui/windows/MainWindow.cpp
-        src/util/LongLongValidator.cpp
-        src/ui/views/SettingsView.cpp src/ui/views/SettingsView.hpp src/ui/views/SettingsModel.cpp src/ui/views/SettingsModel.hpp src/ui/views/TraceListSlotItem.cpp src/ui/views/TraceListSlotItem.hpp src/ui/views/TraceListScene.cpp src/ui/views/TraceListScene.hpp)
+        src/ui/MainWindow.cpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

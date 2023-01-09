@@ -1,22 +1,35 @@
-#include "src/ui/windows/MainWindow.hpp"
+#include "src/ui/MainWindow.hpp"
 
 #include <QApplication>
+#include <QCommandLineParser>
 
 int main(int argc, char *argv[])
 {
-    // TODO Make this more sophisticated
-    QString path;
-    if (argc > 1) {
-        auto arg = QString::fromUtf8(argv[1]);
-        if (!arg.endsWith(".otf2")) {
-            std::cout << "Invalid path: " << argv[1] << std::endl;
-            return EXIT_FAILURE;
-        }
-        path = arg;
-    }
     QApplication app(argc, argv);
+    QApplication::setApplicationName("Motiv");
+    QApplication::setApplicationVersion("0.1.0" /* TODO macro via CMakeLists.txt*/);
 
-    MainWindow mainWindow(path, nullptr);
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Visualizer for OTF2 trace files");
+
+    QCommandLineOption helpOption = parser.addHelpOption();
+    QCommandLineOption versionOption = parser.addVersionOption();
+    parser.addPositionalArgument("file", QCoreApplication::translate("main", "filepath of the .otf2 trace file to open"), "[file]");
+    parser.process(app);
+
+    // Early return if help or version is shown
+    if (parser.isSet(helpOption) || parser.isSet(versionOption)) {
+        return EXIT_SUCCESS;
+    }
+
+    QStringList positionalArguments = parser.positionalArguments();
+    QString filepath;
+    if (!positionalArguments.isEmpty()) {
+        filepath = positionalArguments.first();
+    }
+    // TODO send to app
+
+    MainWindow mainWindow;
     mainWindow.show();
 
     return app.exec();
