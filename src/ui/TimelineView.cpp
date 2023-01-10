@@ -4,15 +4,15 @@
 
 TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsView(parent), data(data) {
     auto scene = new QGraphicsScene(this);
+    this->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     this->setAutoFillBackground(false);
     this->setStyleSheet("background: transparent");
     this->setScene(scene);
 
-    populateScene();
+    populateScene(scene);
 }
 
-void TimelineView::populateScene() {
-    auto scene = this->scene();
+void TimelineView::populateScene(QGraphicsScene *scene) {
     auto width = scene->width();
     auto selection = this->data->getSelection();
     auto runtime = selection->getRuntime().count();
@@ -55,4 +55,24 @@ void TimelineView::populateScene() {
 
         top += ROW_HEIGHT;
     }
+}
+
+void TimelineView::resizeEvent(QResizeEvent *event) {
+    this->updateView();
+    QGraphicsView::resizeEvent(event);
+}
+
+void TimelineView::updateView() {
+    // TODO it might be more performant to keep track of items and add/remove new/leaving items and resizing them
+    delete this->scene();
+    auto scene = new QGraphicsScene(this);
+
+    auto ROW_HEIGHT = 30;
+    auto sceneHeight = this->data->getSelection()->getSlots().size() * ROW_HEIGHT;
+    auto sceneRect = this->rect();
+    sceneRect.setHeight(sceneHeight);
+
+    scene->setSceneRect(sceneRect);
+    this->populateScene(scene);
+    this->setScene(scene);
 }

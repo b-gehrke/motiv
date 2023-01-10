@@ -12,8 +12,12 @@ class TimelineView : public QGraphicsView {
 public:
     TimelineView(TraceDataProxy *data, QWidget *parent = nullptr);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private:
-    void populateScene();
+    void populateScene(QGraphicsScene *scene);
+    void updateView();
 
 private:
     TraceDataProxy *data = nullptr;
