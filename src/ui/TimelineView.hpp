@@ -4,12 +4,19 @@
 
 #include <QGraphicsView>
 
+#include "TraceDataProxy.hpp"
+
 class TimelineView : public QGraphicsView {
     Q_OBJECT
 
 public:
-    TimelineView(QWidget *parent = nullptr);
+    TimelineView(TraceDataProxy *data, QWidget *parent = nullptr);
 
+private:
+    void populateScene();
+
+private:
+    TraceDataProxy *data = nullptr;
 };
 
 

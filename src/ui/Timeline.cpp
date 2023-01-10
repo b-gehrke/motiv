@@ -11,6 +11,6 @@ Timeline::Timeline(TraceDataProxy *data, QWidget *parent) : QWidget(parent), dat
     this->labelList = new TimelineLabelList(this);
     layout->addWidget(this->labelList, 1, 0);
 
-    this->view = new TimelineView(this);
+    this->view = new TimelineView(this->data, this);
     layout->addWidget(this->view, 1, 1);
 }
