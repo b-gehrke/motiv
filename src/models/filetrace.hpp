@@ -8,6 +8,7 @@
  */
 class FileTrace : public SubTrace {
 private:
+    std::vector<Slot *> slotsVec_;
     std::vector<Communication*> communications_;
     std::vector<CollectiveCommunicationEvent*> collectiveCommunications_;
 public:
@@ -33,6 +34,7 @@ public:
     [[nodiscard]] Range<Communication*> getCommunications() override;
 
     [[nodiscard]] Range<CollectiveCommunicationEvent*> getCollectiveCommunications() override;
+
 };
 
 #endif //MOTIV_FILETRACE_HPP
