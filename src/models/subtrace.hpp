@@ -12,7 +12,7 @@ public:
     /**
      * @copydoc Trace::getSlots()
      */
-    [[nodiscard]] std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> getSlots() const override;
+    [[nodiscard]] std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> getSlots() const override;
 
     /**
      * @copydoc Trace::getRuntime()
@@ -22,18 +22,18 @@ public:
     /**
      * @copydoc Trace::subtrace()
      */
-    [[nodiscard]] std::shared_ptr<Trace> subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const override;
+    [[nodiscard]] Trace* subtrace(otf2::chrono::duration from, otf2::chrono::duration to) override;
 
     /**
      * @copydoc Trace::getCommunications()
      */
-    [[nodiscard]] Range<Communication> getCommunications() const override;
+    [[nodiscard]] Range<Communication*> getCommunications() override;
 
 
     /**
      * @copydoc Trace::getCommunications()
      */
-    [[nodiscard]] Range<CollectiveCommunicationEvent> getCollectiveCommunications() const override;
+    [[nodiscard]] Range<CollectiveCommunicationEvent*> getCollectiveCommunications() override;
 
 
     /**
@@ -45,17 +45,17 @@ protected:
     /**
      * Backing field for the range of slots of this subtrace
      */
-    std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slots_;
+    std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> slots_;
 
     /**
      * Backing field for communications of this subtrace
      */
-    Range<Communication> communications_;
+    Range<Communication*> communications_;
 
     /**
      * Backing field for collective communications of this subtrace
      */
-    Range<CollectiveCommunicationEvent> collectiveCommunications_;
+    Range<CollectiveCommunicationEvent*> collectiveCommunications_;
 
     /**
      * Backing field for the runtime of this subtrace
@@ -79,9 +79,9 @@ public:
      * @param communications Range of communications this subtrace covers
      * @param runtime Runtime of this subtrace
      */
-    SubTrace(std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> slots,
-             const Range<Communication> &communications,
-             const Range<CollectiveCommunicationEvent> &collectiveCommunications,
+    SubTrace(std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> &slots,
+             const Range<Communication*> &communications,
+             const Range<CollectiveCommunicationEvent*> &collectiveCommunications,
              const otf2::chrono::duration &runtime,
              const otf2::chrono::duration &startTime);
 };

@@ -29,8 +29,8 @@ struct Range {
 
 
 struct LocationGroupCmp {
-    bool operator ()(const otf2::definition::location_group& l, const otf2::definition::location_group& r) const {
-        return l.ref() < r.ref();
+    bool operator ()(const otf2::definition::location_group* l, const otf2::definition::location_group* r) const {
+        return l->ref() < r->ref();
     }
 };
 
@@ -40,13 +40,13 @@ public:
      * Gets the slots
      * @return The slots
      */
-    [[nodiscard]] virtual std::map<otf2::definition::location_group, Range<Slot>, LocationGroupCmp> getSlots() const = 0;
-    [[nodiscard]] virtual Range<Communication> getCommunications() const = 0;
-    [[nodiscard]] virtual Range<CollectiveCommunicationEvent> getCollectiveCommunications() const = 0;
+    [[nodiscard]] virtual std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> getSlots() const = 0;
+    [[nodiscard]] virtual Range<Communication*> getCommunications() = 0;
+    [[nodiscard]] virtual Range<CollectiveCommunicationEvent*> getCollectiveCommunications() = 0;
     [[nodiscard]] virtual otf2::chrono::duration getStartTime() const = 0;
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;
 
-    [[nodiscard]] virtual std::shared_ptr<Trace> subtrace(otf2::chrono::duration from, otf2::chrono::duration to) const = 0;
+    [[nodiscard]] virtual Trace* subtrace(otf2::chrono::duration from, otf2::chrono::duration to) = 0;
 };
 
 

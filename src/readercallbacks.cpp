@@ -12,16 +12,16 @@
 
 ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
     rdr_(rdr),
-    slots_(std::make_shared<std::vector<Slot>>()),
-    communications_(std::make_shared<std::vector<Communication>>()),
-    collectiveCommunications_(std::make_shared<std::vector<CollectiveCommunicationEvent>>()),
+    slots_(std::vector<Slot*>()),
+    communications_(std::vector<Communication*>()),
+    collectiveCommunications_(std::vector<CollectiveCommunicationEvent*>()),
     slotsBuilding(),
     program_start_() {
 
 }
 
 
-std::shared_ptr<std::vector<Slot>> ReaderCallbacks::getSlots() {
+std::vector<Slot*> ReaderCallbacks::getSlots() {
     return this->slots_;
 }
 
@@ -46,15 +46,15 @@ void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::e
     auto start = event.timestamp() - this->program_start_;
 
     Slot::Builder builder{};
-    auto region = event.region();
-    auto location = loc;
+    auto region = new otf2::definition::region(event.region());
+    auto location = new otf2::definition::location(loc);
     builder.start(start)->location(location)->region(region);
 
     std::vector<Slot::Builder> *builders;
-    auto buildersIt = this->slotsBuilding.find(location.ref());
+    auto buildersIt = this->slotsBuilding.find(location->ref());
     if (buildersIt == this->slotsBuilding.end()) {
         builders = new std::vector<Slot::Builder>();
-        this->slotsBuilding.insert({location.ref(), builders});
+        this->slotsBuilding.insert({location->ref(), builders});
     } else {
         builders = buildersIt->second;
     }
@@ -70,24 +70,24 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     auto end = event.timestamp() - this->program_start_;
     builder.end(end);
 
-    this->slots_->push_back(builder.build());
+    this->slots_.push_back(new Slot(builder.build()));
 
     builders->pop_back();
 }
 
 
-template<typename T, typename>
-void ReaderCallbacks::communicationEvent(std::shared_ptr<T> self, uint32_t matching,
-                                         std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &selfPending,
-                                         std::map<uint32_t, std::vector<std::shared_ptr<CommunicationEvent>> *> &matchingPending
+template<typename T>
+void ReaderCallbacks::communicationEvent(T* self, uint32_t matching,
+                                         std::map<uint32_t, std::vector<CommunicationEvent*> *> &selfPending,
+                                         std::map<uint32_t, std::vector<CommunicationEvent*> *> &matchingPending
 ) {
     // Check for a pending matching call
     if (matchingPending.contains(matching)) {
         auto& matchingEvents = matchingPending[matching];
         auto matchingEvent = matchingEvents->back();
 
-        Communication communication(matchingEvent, self);
-        communications_->push_back(communication);
+        auto communication = new Communication(matchingEvent, self);
+        communications_.push_back(communication);
 
         matchingEvents->pop_back();
         if (matchingEvents->empty()) {
@@ -95,12 +95,12 @@ void ReaderCallbacks::communicationEvent(std::shared_ptr<T> self, uint32_t match
             matchingPending.erase(matching);
         }
     } else {
-        std::vector<std::shared_ptr<CommunicationEvent>> *matchingEvents;
-        auto id = self->getLocation().ref().get();
+        std::vector<CommunicationEvent*> *matchingEvents;
+        auto id = self->getLocation()->ref().get();
         if (selfPending.contains(id)) {
             matchingEvents = selfPending[id];
         } else {
-            matchingEvents = new std::vector<std::shared_ptr<CommunicationEvent>>();
+            matchingEvents = new std::vector<CommunicationEvent*>();
             selfPending[id] = matchingEvents;
         }
 
@@ -109,21 +109,25 @@ void ReaderCallbacks::communicationEvent(std::shared_ptr<T> self, uint32_t match
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_send &send) {
-    auto ev = std::make_shared<BlockingSendEvent>(relative(send.timestamp()), loc, send.comm());
+    auto location = new otf2::definition::location(loc);
+    auto comm = new types::communicator(send.comm());
+    auto ev = new BlockingSendEvent(relative(send.timestamp()), location, comm);
 
-    this->communicationEvent(ev, send.receiver(), pendingSends, pendingReceives);
+    this->communicationEvent<BlockingSendEvent>(ev, send.receiver(), pendingSends, pendingReceives);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::event::mpi_receive &receive) {
-    auto ev = std::make_shared<BlockingReceiveEvent>(relative(receive.timestamp()), loc, receive.comm());
+    auto location = new otf2::definition::location(loc);
+    auto comm = new types::communicator(receive.comm());
+    auto ev = new BlockingReceiveEvent(relative(receive.timestamp()), location, comm);
 
     this->communicationEvent(ev, receive.sender(), pendingSends, pendingReceives);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_request &request) {
     NonBlockingSendEvent::Builder builder;
-    auto comm = request.comm();
-    auto loc = location;
+    auto comm = new types::communicator (request.comm());
+    auto loc = new otf2::definition::location(location);
     auto start = relative(request.timestamp());
     auto receiver = request.receiver();
     builder.communicator(comm);
@@ -150,7 +154,7 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
     auto end = relative(complete.timestamp());
     builder.end(end);
 
-    auto ev = builder.build_shared();
+    auto ev = new NonBlockingSendEvent(builder.build());
 
     communicationEvent(ev, builder.receiver(), pendingSends, pendingReceives);
 }
@@ -171,7 +175,7 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
     auto end = relative(complete.timestamp());
     builder.end(end);
 
-    auto ev = builder.build_shared();
+    auto ev = new NonBlockingReceiveEvent(builder.build());
 
     communicationEvent(ev, builder.sender(), pendingReceives, pendingSends);
 }
@@ -180,8 +184,8 @@ void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_ireceive_request &request) {
 
     NonBlockingReceiveEvent::Builder builder;
-    auto comm = request.comm();
-    auto loc = location;
+    auto comm = new types::communicator (request.comm());
+    auto loc = new otf2::definition::location(location);
     auto start = relative(request.timestamp());
     auto sender = request.sender();
     builder.communicator(comm);
@@ -204,21 +208,21 @@ void ReaderCallbacks::event(const otf2::definition::location &location,
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_collective_begin &begin) {
     CollectiveCommunicationEvent::Member::Builder builder;
-    auto loc = location;
+    auto loc = new otf2::definition::location(location);
     auto start = relative(begin.timestamp());
     
     builder.location(loc);
     builder.start(start);
     
-    this->ongoingCollectiveCommunicationMembers.insert({loc.ref(), builder});
+    this->ongoingCollectiveCommunicationMembers.insert({loc->ref(), builder});
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_collective_end &anEnd) {
     if(ongoingCollectiveCommunication == nullptr) {
         ongoingCollectiveCommunication = new CollectiveCommunicationEvent::Builder();
-        std::vector<CollectiveCommunicationEvent::Member> members;
-        auto loc = location;
-        auto comm = anEnd.comm();
+        std::vector<CollectiveCommunicationEvent::Member*> members;
+        auto loc = new otf2::definition::location( location);
+        auto comm = new types::communicator (anEnd.comm());
         auto operation = anEnd.type();
         auto root = anEnd.root();
         ongoingCollectiveCommunication->members(members);
@@ -232,13 +236,13 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     auto end = relative(anEnd.timestamp());
     member.end(end);
 
-    ongoingCollectiveCommunication->members()->push_back(member.build());
+    ongoingCollectiveCommunication->members()->push_back(new CollectiveCommunicationEvent::Member(member.build()));
     ongoingCollectiveCommunicationMembers.erase(location.ref());
 
     // If the map is now empty, all ranks have completed the collective operation and the communication event can be build
     if(ongoingCollectiveCommunicationMembers.empty()){
-        auto event = ongoingCollectiveCommunication->build();
-        collectiveCommunications_->push_back(event);
+        auto event = new CollectiveCommunicationEvent(ongoingCollectiveCommunication->build());
+        collectiveCommunications_.push_back(event);
         delete ongoingCollectiveCommunication;
         ongoingCollectiveCommunication = nullptr;
     }
@@ -246,12 +250,12 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
 
 
 void ReaderCallbacks::events_done(const otf2::reader::reader &) {
-    std::sort(this->slots_->begin(), this->slots_->end(), [](Slot &rhs, Slot &lhs) {
-        return rhs.start < lhs.start;
+    std::sort(this->slots_.begin(), this->slots_.end(), [](Slot *rhs, Slot *lhs) {
+        return rhs->start < lhs->start;
     });
-    std::sort(this->communications_->begin(), this->communications_->end(),
-              [](Communication &rhs, Communication &lhs) {
-                  return rhs.getStart()->getStart() < lhs.getStart()->getStart();
+    std::sort(this->communications_.begin(), this->communications_.end(),
+              [](Communication *rhs, Communication *lhs) {
+                  return rhs->getStart()->getStart() < lhs->getStart()->getStart();
               });
 
     for (const auto &item: this->slotsBuilding) {
@@ -280,10 +284,10 @@ otf2::chrono::duration ReaderCallbacks::relative(otf2::chrono::time_point timepo
     return timepoint - program_start_;
 }
 
-std::shared_ptr<std::vector<Communication>> ReaderCallbacks::getCommunications() {
+std::vector<Communication*> ReaderCallbacks::getCommunications() {
     return communications_;
 }
 
-std::shared_ptr<std::vector<CollectiveCommunicationEvent>> ReaderCallbacks::getCollectiveCommunications() {
+std::vector<CollectiveCommunicationEvent*> ReaderCallbacks::getCollectiveCommunications() {
     return collectiveCommunications_;
 }

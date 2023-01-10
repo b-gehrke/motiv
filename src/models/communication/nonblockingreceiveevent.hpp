@@ -19,15 +19,15 @@ public:
      * @param communicator Communicator the event took place in
      */
     NonBlockingReceiveEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &anEnd,
-                            const otf2::definition::location &location, const types::communicator &communicator);
+                            otf2::definition::location *location, types::communicator *communicator);
 
     CommunicationKind getKind() const override;
 
     BUILDER(NonBlockingReceiveEvent,
             BUILDER_FIELD(otf2::chrono::duration, start)
             BUILDER_FIELD(otf2::chrono::duration, end)
-            BUILDER_FIELD(otf2::definition::location, location)
-            BUILDER_FIELD(types::communicator, communicator)
+            BUILDER_FIELD(otf2::definition::location*, location)
+            BUILDER_FIELD(types::communicator*, communicator)
             BUILDER_OPTIONAL_FIELD(uint32_t, sender), // The sender field is needed to match the sending call. The
                                                       // location instance of the sender is only known in the
                                                       // send event.

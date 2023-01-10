@@ -22,23 +22,23 @@ public:
      * @param start The event initiating the communication
      * @param end The event ending the communication
      */
-    Communication(const std::shared_ptr<CommunicationEvent> &start, const std::shared_ptr<CommunicationEvent> &end);
+    Communication(const CommunicationEvent *start, const CommunicationEvent *end);
 
     /**
      * Gets the event that initiated the communication.
      * @return Event that initiated the communication
      */
-    [[nodiscard]] std::shared_ptr<CommunicationEvent> getStart() const;
+    [[nodiscard]] CommunicationEvent * getStart() const;
 
     /**
      * Gets the event that ended the communication
      * @return event that ended the communication
      */
-    [[nodiscard]] std::shared_ptr<CommunicationEvent> getEnd() const;
+    [[nodiscard]] CommunicationEvent * getEnd() const;
 
 private:
-    std::shared_ptr<CommunicationEvent> start;
-    std::shared_ptr<CommunicationEvent> end;
+    CommunicationEvent* start;
+    CommunicationEvent* end;
 };
 
 #endif //MOTIV_COMMUNICATION_HPP

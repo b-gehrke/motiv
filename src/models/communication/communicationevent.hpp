@@ -16,7 +16,7 @@ public:
      * Gets the location of the recorded event.
      * @return Location of the recorded event
      */
-    [[nodiscard]] virtual otf2::definition::location getLocation() const = 0;
+    [[nodiscard]] virtual otf2::definition::location * getLocation() const = 0;
 
     /**
      * Gets the start time of the recorded event. The time is relative to the star time of the program.
@@ -34,7 +34,7 @@ public:
      * Gets the communicator the recorded event took place in.
      * @return Communicator of the event
      */
-    [[nodiscard]] virtual types::communicator getCommunicator() const = 0;
+    [[nodiscard]] virtual types::communicator * getCommunicator() const = 0;
 
     /**
      * Gets the kind of communication event. Implemented by each derived class.
