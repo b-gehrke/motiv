@@ -208,21 +208,21 @@ void ReaderCallbacks::event(const otf2::definition::location &location,
 void
 ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_collective_begin &begin) {
     CollectiveCommunicationEvent::Member::Builder builder;
-    auto loc = location;
+    auto loc = new otf2::definition::location(location);
     auto start = relative(begin.timestamp());
     
     builder.location(loc);
     builder.start(start);
     
-    this->ongoingCollectiveCommunicationMembers.insert({loc.ref(), builder});
+    this->ongoingCollectiveCommunicationMembers.insert({loc->ref(), builder});
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_collective_end &anEnd) {
     if(ongoingCollectiveCommunication == nullptr) {
         ongoingCollectiveCommunication = new CollectiveCommunicationEvent::Builder();
-        std::vector<CollectiveCommunicationEvent::Member> members;
-        auto loc = location;
-        auto comm = anEnd.comm();
+        std::vector<CollectiveCommunicationEvent::Member*> members;
+        auto loc = new otf2::definition::location( location);
+        auto comm = new types::communicator (anEnd.comm());
         auto operation = anEnd.type();
         auto root = anEnd.root();
         ongoingCollectiveCommunication->members(members);
@@ -236,7 +236,7 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
     auto end = relative(anEnd.timestamp());
     member.end(end);
 
-    ongoingCollectiveCommunication->members()->push_back(member.build());
+    ongoingCollectiveCommunication->members()->push_back(new CollectiveCommunicationEvent::Member(member.build()));
     ongoingCollectiveCommunicationMembers.erase(location.ref());
 
     // If the map is now empty, all ranks have completed the collective operation and the communication event can be build
