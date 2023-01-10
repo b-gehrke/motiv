@@ -12,7 +12,13 @@ class TimelineHeader : public QWidget {
 public:
     TimelineHeader(TraceDataProxy *data, QWidget *parent = nullptr);
 
-private:
+public Q_SLOTS:
+    void updateView();
+
+private: // widgets
+    std::vector<QWidget *> labels;
+
+private: // data
     TraceDataProxy *data = nullptr;
 };
 

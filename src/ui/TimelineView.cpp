@@ -10,6 +10,8 @@ TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsVie
     this->setScene(scene);
 
     populateScene(scene);
+
+    connect(this->data, SIGNAL(selectionChanged()), this, SLOT(updateView()));
 }
 
 void TimelineView::populateScene(QGraphicsScene *scene) {

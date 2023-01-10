@@ -95,8 +95,10 @@ void MainWindow::createToolBars() {
     bottomContainerWidget->setLayout(containerLayout);
 
     this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    this->startTimeInputField->setUpdateFunction([this](auto newStartTime){this->data->setSelectionBegin(newStartTime);});
     containerLayout->addWidget(this->startTimeInputField);
-    this->endTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    this->endTimeInputField->setUpdateFunction([this](auto newEndTime){this->data->setSelectionEnd(newEndTime);});
     containerLayout->addWidget(this->endTimeInputField);
 
     this->bottomToolbar->addWidget(bottomContainerWidget);

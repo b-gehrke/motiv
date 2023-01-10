@@ -8,6 +8,7 @@
 
 #include "src/types.h"
 #include "TimeUnit.hpp"
+#include "TraceDataProxy.hpp"
 
 /**
  * TimeInputField provides a combination of a QLabel, QLineEdit and QComboBox.
@@ -21,6 +22,10 @@ public: // constructors
     TimeInputField(QString labelText, TimeUnit timeResolution, types::TraceTime initialTime, QWidget *parent = nullptr);
 
 public: // methods
+    void setUpdateFunction(std::function<void (types::TraceTime)>);
+
+private: // methods
+    void setTime(types::TraceTime);
 
 private: // widgets
     QLabel *textLabel = nullptr;
@@ -30,7 +35,13 @@ private: // widgets
 private: // data
     QString text;
     TimeUnit resolution;
+
+    /**
+     * DO NOT set this manually. Always use setTime()!
+     */
     types::TraceTime time;
+
+    std::function<void (types::TraceTime)> updateFunction;
 };
 
 

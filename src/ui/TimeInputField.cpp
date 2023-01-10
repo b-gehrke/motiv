@@ -34,6 +34,17 @@ TimeInputField::TimeInputField(QString text, TimeUnit resolution, types::TraceTi
     connect(this->lineEdit, &QLineEdit::returnPressed, [this] {
         double newValue = this->lineEdit->text().toDouble();
         auto newTotalValue = static_cast<u_int64_t>(newValue * this->resolution.multiplier());
-        this->time = types::TraceTime(newTotalValue);
+        this->setTime(types::TraceTime(newTotalValue));
     });
+}
+
+void TimeInputField::setUpdateFunction(std::function<void(types::TraceTime)> newUpdateFunction) {
+    this->updateFunction = std::move(newUpdateFunction);
+}
+
+void TimeInputField::setTime(types::TraceTime newTime) {
+    this->time = newTime;
+    if (this->updateFunction) {
+        this->updateFunction(this->time);
+    }
 }
