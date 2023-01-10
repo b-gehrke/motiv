@@ -9,15 +9,15 @@ TraceDataProxy::~TraceDataProxy() {
 }
 
 SubTrace *TraceDataProxy::getSelection() const {
-    return nullptr;
+    return this->selection;
 }
 
 types::TraceTime TraceDataProxy::getBegin() const {
-    return types::TraceTime();
+    return this->begin;
 }
 
 types::TraceTime TraceDataProxy::getEnd() const {
-    return types::TraceTime();
+    return this->end;
 }
 
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
@@ -41,6 +41,6 @@ void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
 }
 
 void TraceDataProxy::updateSelection() {
-    selection = dynamic_cast<SubTrace *>(trace->subtrace(begin, end).get());
+    selection = dynamic_cast<SubTrace *>(trace->subtrace(begin, end));
     Q_EMIT selectionChanged();
 }
