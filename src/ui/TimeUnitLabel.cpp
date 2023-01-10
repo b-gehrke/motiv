@@ -4,7 +4,7 @@
 
 TimeUnitLabel::TimeUnitLabel(double time, QWidget *parent) : QLabel(parent), time(time) {
     QString unitStr;
-    QString timeStr;
+    QString timeStr = "0";
 
     for(const auto &unit : TIME_UNITS) {
         auto m = unit.multiplier();
