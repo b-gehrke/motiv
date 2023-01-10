@@ -40,16 +40,18 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
             auto rectItem = scene->addRect(rect);
             rectItem->setToolTip(regionNameStr.c_str());
-            rectItem->setZValue(1);
 
             // Determine color based on name
             QColor rectColor;
             if(regionNameStr.starts_with("MPI_")) {
                 rectColor = Qt::green;
+                rectItem->setZValue(3);
             } else if(regionNameStr.starts_with("!$omp")) {
                 rectColor = Qt::red;
+                rectItem->setZValue(2);
             } else {
                 rectColor = Qt::lightGray;
+                rectItem->setZValue(1);
             }
             rectItem->setBrush(rectColor);
         }
