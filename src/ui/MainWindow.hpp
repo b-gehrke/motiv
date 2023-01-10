@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public: // constructors
-    MainWindow();
+    MainWindow(QString filepath = QString());
     ~MainWindow() override;
 
 public: // methods

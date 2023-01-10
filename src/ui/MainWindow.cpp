@@ -12,8 +12,7 @@
 #include "TimeUnit.hpp"
 
 
-MainWindow::MainWindow() : QMainWindow(nullptr) {
-    // TODO won't work here
+MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::move(filepath)) {
     if (this->filepath.isEmpty()) {
         this->promptFile();
     }

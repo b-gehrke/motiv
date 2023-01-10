@@ -28,8 +28,7 @@ int main(int argc, char *argv[])
         filepath = positionalArguments.first();
     }
 
-    MainWindow mainWindow;
-    mainWindow.setFilepath(filepath);
+    MainWindow mainWindow(filepath);
     mainWindow.show();
 
     return app.exec();
