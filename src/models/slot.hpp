@@ -4,6 +4,11 @@
 #include <otf2xx/otf2.hpp>
 #include "builder.hpp"
 
+enum SlotKind {
+    MPI,
+    OpenMP,
+    Plain
+};
 
 class Slot {
 public:
@@ -14,6 +19,8 @@ public:
     otf2::chrono::duration end;
     otf2::definition::location *location;
     otf2::definition::region *region;
+
+    [[nodiscard]] SlotKind getKind() const;
 
     BUILDER(Slot,
             BUILDER_FIELD(otf2::chrono::duration, start)

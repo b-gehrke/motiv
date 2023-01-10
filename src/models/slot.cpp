@@ -7,4 +7,16 @@ Slot::Slot(const otf2::chrono::duration &start, const otf2::chrono::duration &an
     start(start),
     end(anEnd),
     location(location),
-    region(region) {}
+    region(region) {
+}
+
+SlotKind Slot::getKind() const {
+    auto regionName = this->region->name().str();
+    if(regionName.starts_with("MPI_")) {
+        return MPI;
+    } else if(regionName.starts_with("!$omp")) {
+        return OpenMP;
+    } else {
+        return Plain;
+    }
+}
