@@ -31,11 +31,11 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto startTime = slot->start.count();
             auto endTime = slot->end.count();
 
-            auto slotBeginPos = (static_cast<qreal>(startTime - begin) / static_cast<qreal>(runtime)) * width;
+            auto slotBeginPos = qMin(0.0, (static_cast<qreal>(startTime - begin) / static_cast<qreal>(runtime)) * width);
 
             auto slotRuntime = static_cast<qreal>(endTime - startTime);
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
-            rectWidth = qMin(rectWidth, static_cast<qreal>(width - slotBeginPos - 1));
+            rectWidth = qMin(rectWidth, static_cast<qreal>(width - slotBeginPos));
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
             auto rectItem = scene->addRect(rect);
