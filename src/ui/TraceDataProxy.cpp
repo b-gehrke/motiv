@@ -5,6 +5,7 @@ TraceDataProxy::TraceDataProxy(FileTrace *trace, QObject *parent) : QObject(pare
 }
 
 TraceDataProxy::~TraceDataProxy() {
+    delete this->selection;
     delete this->trace;
 }
 
