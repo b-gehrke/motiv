@@ -115,7 +115,7 @@ void MainWindow::createCentralWidget() {
 }
 
 void MainWindow::setFilepath(QString newFilepath) {
-    this->filepath = std::move(filepath);
+    this->filepath = std::move(newFilepath);
 }
 
 void MainWindow::promptFile() {

@@ -19,7 +19,6 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     auto selection = this->data->getSelection();
     auto runtime = selection->getRuntime().count();
     auto begin = this->data->getBegin().count();
-    auto end = this->data->getEnd().count();
 
     auto top = 0;
     auto ROW_HEIGHT = 30;

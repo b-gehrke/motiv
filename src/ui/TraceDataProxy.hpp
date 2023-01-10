@@ -26,7 +26,7 @@ public: //constructors
 
 
 public: // methods
-    SubTrace *getSelection() const;
+    Trace *getSelection() const;
     types::TraceTime getBegin() const;
     types::TraceTime getEnd() const;
 
@@ -63,7 +63,7 @@ private: // methods
 
 private: // data
     FileTrace *trace = nullptr;
-    SubTrace *selection = nullptr;
+    Trace *selection = nullptr;
 
     types::TraceTime begin{0};
     types::TraceTime end{0};

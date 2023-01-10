@@ -9,7 +9,7 @@ TraceDataProxy::~TraceDataProxy() {
     delete this->trace;
 }
 
-SubTrace *TraceDataProxy::getSelection() const {
+Trace *TraceDataProxy::getSelection() const {
     return this->selection;
 }
 
@@ -42,6 +42,6 @@ void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
 }
 
 void TraceDataProxy::updateSelection() {
-    selection = dynamic_cast<SubTrace *>(trace->subtrace(begin, end));
+    selection = trace->subtrace(begin, end);
     Q_EMIT selectionChanged();
 }
