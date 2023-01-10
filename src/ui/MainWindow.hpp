@@ -5,14 +5,20 @@
 #include <QMainWindow>
 
 #include "TimeInputField.hpp"
+#include "TraceDataProxy.hpp"
+#include "src/readercallbacks.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
+public: // constructors
     MainWindow();
+    ~MainWindow() override;
 
-Q_SIGNALS:
+public: // methods
+    void setFilepath(QString newFilepath);
+
+public: Q_SIGNALS:
     // TODO
 
 public Q_SLOTS:
@@ -23,6 +29,9 @@ private: // methods
     void createToolBars();
     void createDockWidgets();
     void createCentralWidget();
+
+    void promptFile();
+    void loadTrace();
 
 private: // widgets
     QToolBar *topToolbar = nullptr;
@@ -35,6 +44,10 @@ private: // widgets
 
 private: // properties
     QString filepath;
+    TraceDataProxy *data = nullptr;
+
+    otf2::reader::reader *reader = nullptr;
+    ReaderCallbacks *callbacks = nullptr;
 };
 
 

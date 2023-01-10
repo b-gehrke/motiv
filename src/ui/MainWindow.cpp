@@ -1,17 +1,34 @@
 #include "MainWindow.hpp"
 
+#include <QErrorMessage>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QToolBar>
+#include <utility>
 
 #include "TimeInputField.hpp"
+#include "Timeline.hpp"
+#include "TimeUnit.hpp"
 
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
+    // TODO won't work here
+    if (this->filepath.isEmpty()) {
+        this->promptFile();
+    }
+    this->loadTrace();
+
     this->createMenus();
     this->createToolBars();
     this->createDockWidgets();
     this->createCentralWidget();
+}
+
+MainWindow::~MainWindow() {
+    delete data;
+    delete callbacks;
+    delete reader;
 }
 
 void MainWindow::createMenus() {
@@ -92,5 +109,39 @@ void MainWindow::createDockWidgets() {
 }
 
 void MainWindow::createCentralWidget() {
+    auto timeline = new Timeline(data, this);
+    this->setCentralWidget(timeline);
+}
 
+void MainWindow::setFilepath(QString newFilepath) {
+    this->filepath = std::move(filepath);
+}
+
+void MainWindow::promptFile() {
+    auto newFilePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
+                                                    QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
+
+    // TODO this is still not really a great way to deal with that, especially for the initial open
+    if (newFilePath.isEmpty()) {
+        auto errorMsg = new QErrorMessage(nullptr);
+        errorMsg->showMessage("The chosen file is invalid!");
+    } else {
+        this->filepath = newFilePath;
+    }
+}
+
+void MainWindow::loadTrace() {
+    reader = new otf2::reader::reader(this->filepath.toStdString());
+    callbacks = new ReaderCallbacks(*reader);
+
+    reader->set_callback(*callbacks);
+    reader->read_definitions();
+    reader->read_events();
+
+    auto slots = callbacks->getSlots();
+    auto communications = callbacks->getCommunications();
+    auto collectives = callbacks->getCollectiveCommunications();
+    auto trace = new FileTrace(slots, communications, collectives, callbacks->duration());
+
+    data = new TraceDataProxy(trace, this);
 }

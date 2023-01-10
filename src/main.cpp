@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
     if (!positionalArguments.isEmpty()) {
         filepath = positionalArguments.first();
     }
-    // TODO send to app
 
     MainWindow mainWindow;
+    mainWindow.setFilepath(filepath);
     mainWindow.show();
 
     return app.exec();

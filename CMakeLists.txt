@@ -34,7 +34,12 @@ set(PROJECT_SOURCES
         src/ui/MainWindow.cpp
         src/ui/TimeInputField.cpp
         src/ui/TraceDataProxy.cpp
+        src/ui/Timeline.cpp
+        src/ui/TimelineHeader.cpp
+        src/ui/TimelineLabelList.cpp
+        src/ui/TimelineView.cpp
         src/ui/TimeUnit.cpp
+        src/ui/TimeUnitLabel.cpp
         )
 
 # XXX this would require qt version 6
