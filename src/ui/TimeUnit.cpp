@@ -22,7 +22,7 @@ QString TimeUnit::str() const {
 }
 
 TimeUnit::TimeUnit(QString unit) {
-    std::__1::map<QString, Unit> lut = {
+    std::map<QString, Unit> lut = {
             {"ns", NanoSecond},
             {"μs", MicroSecond},
             {"ms", MilliSecond},
