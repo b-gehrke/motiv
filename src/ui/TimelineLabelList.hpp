@@ -3,12 +3,16 @@
 
 
 #include <QWidget>
+#include "TraceDataProxy.hpp"
 
 class TimelineLabelList : public QWidget {
     Q_OBJECT
 
 public:
-    TimelineLabelList(QWidget *parent = nullptr);
+    TimelineLabelList(TraceDataProxy *data, QWidget *parent = nullptr);
+
+private:
+    TraceDataProxy *data = nullptr;
 };
 
 
