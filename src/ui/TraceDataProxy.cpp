@@ -1,4 +1,5 @@
 #include "TraceDataProxy.hpp"
+#include "src/models/uitrace.hpp"
 
 TraceDataProxy::TraceDataProxy(FileTrace *trace, QObject *parent) : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()) {
     updateSelection();
@@ -42,6 +43,8 @@ void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
 }
 
 void TraceDataProxy::updateSelection() {
-    selection = trace->subtrace(begin, end);
+    auto subtrace = trace->subtrace(begin, end);
+    selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
+//    selection = subtrace;
     Q_EMIT selectionChanged();
 }

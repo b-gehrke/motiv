@@ -12,11 +12,15 @@ Slot::Slot(const otf2::chrono::duration &start, const otf2::chrono::duration &an
 
 SlotKind Slot::getKind() const {
     auto regionName = this->region->name().str();
-    if(regionName.starts_with("MPI_")) {
+    if (regionName.starts_with("MPI_")) {
         return MPI;
-    } else if(regionName.starts_with("!$omp")) {
+    } else if (regionName.starts_with("!$omp")) {
         return OpenMP;
     } else {
         return Plain;
     }
+}
+
+otf2::chrono::duration Slot::getDuration() const {
+    return end - start;
 }
