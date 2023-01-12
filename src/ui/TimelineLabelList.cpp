@@ -1,15 +1,31 @@
 #include "TimelineLabelList.hpp"
 
 #include <QLabel>
+#include <QSizePolicy>
 #include <QVBoxLayout>
 
-TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QWidget(parent), data(data) {
-    auto layout = new QVBoxLayout(this);
-    layout->setAlignment(Qt::AlignTop);
+TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QListWidget(parent), data(data) {
+    this->setFrameShape(QFrame::NoFrame);
+    this->setStyleSheet("background: transparent");
 
     for (const auto &ranks : this->data->getSelection()->getSlots()) {
         const auto &rankName = ranks.first->name().str();
-        auto label = new QLabel(QString::fromStdString(rankName), this);
-        layout->addWidget(label);
+        auto item = new QListWidgetItem(this);
+        item->setText(QString::fromStdString(rankName));
+        item->setSizeHint(QSize(0, 30 /* TODO ROW_HEIGHT */));
+        item->setTextAlignment(Qt::AlignCenter);
+        this->addItem(item);
     }
+}
+
+void TimelineLabelList::mousePressEvent(QMouseEvent *event) {
+    return;
+}
+
+void TimelineLabelList::mouseReleaseEvent(QMouseEvent *event) {
+    return;
+}
+
+void TimelineLabelList::mouseMoveEvent(QMouseEvent *event) {
+    return;
 }

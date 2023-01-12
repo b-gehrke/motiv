@@ -13,4 +13,9 @@ Timeline::Timeline(TraceDataProxy *data, QWidget *parent) : QWidget(parent), dat
 
     this->view = new TimelineView(this->data, this);
     layout->addWidget(this->view, 1, 1);
+
+    // This prevents the labelList from expanding to 50% of the width.
+    // Not really a satisfactory solution.
+    layout->setColumnStretch(0, 1);
+    layout->setColumnStretch(1, 9);
 }
