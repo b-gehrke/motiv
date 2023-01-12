@@ -1,4 +1,5 @@
 #include "Timeline.hpp"
+#include "ScrollSynchronizer.hpp"
 
 #include <QGridLayout>
 
@@ -18,4 +19,8 @@ Timeline::Timeline(TraceDataProxy *data, QWidget *parent) : QWidget(parent), dat
     // Not really a satisfactory solution.
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 9);
+
+    auto scrollSyncer = new ScrollSynchronizer(this);
+    scrollSyncer->addWidget(this->labelList);
+    scrollSyncer->addWidget(this->view);
 }

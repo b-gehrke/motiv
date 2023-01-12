@@ -40,7 +40,9 @@ set(PROJECT_SOURCES
         src/ui/TimelineView.cpp
         src/ui/TimeUnit.cpp
         src/ui/TimeUnitLabel.cpp
-        src/models/uitrace.cpp src/models/uitrace.hpp)
+        src/models/uitrace.cpp
+        src/ui/ScrollSynchronizer.cpp
+        )
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

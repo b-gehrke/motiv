@@ -8,6 +8,7 @@ TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsVie
     this->setAutoFillBackground(false);
     this->setStyleSheet("background: transparent");
     this->setScene(scene);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     populateScene(scene);
 

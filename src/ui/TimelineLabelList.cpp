@@ -6,6 +6,7 @@
 
 TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QListWidget(parent), data(data) {
     this->setFrameShape(QFrame::NoFrame);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setStyleSheet("background: transparent");
 
     for (const auto &ranks : this->data->getSelection()->getSlots()) {
