@@ -1,4 +1,5 @@
 #include "subtrace.hpp"
+#include "range.hpp"
 
 #include <utility>
 
