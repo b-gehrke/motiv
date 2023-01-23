@@ -7,16 +7,19 @@
 #include "TraceDataProxy.hpp"
 
 class TimelineView : public QGraphicsView {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     TimelineView(TraceDataProxy *data, QWidget *parent = nullptr);
 
 public Q_SLOTS:
+
     void updateView();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+
+    void wheelEvent(QWheelEvent *event) override;
 
 private:
     void populateScene(QGraphicsScene *scene);

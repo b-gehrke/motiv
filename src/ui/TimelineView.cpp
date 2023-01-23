@@ -3,6 +3,8 @@
 #include "SlotIndicator.hpp"
 
 #include <QGraphicsRectItem>
+#include <QApplication>
+#include <QWheelEvent>
 
 TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsView(parent), data(data) {
     auto scene = new QGraphicsScene(this);
@@ -127,4 +129,37 @@ void TimelineView::updateView() {
     scene->setSceneRect(sceneRect);
     this->populateScene(scene);
     this->setScene(scene);
+}
+
+void TimelineView::wheelEvent(QWheelEvent *event) {
+    QPoint numDegrees = event->angleDelta() / 8;
+
+    if (!numDegrees.isNull() && QApplication::keyboardModifiers() & (Qt::CTRL | Qt::SHIFT)) {
+        QPoint numSteps = numDegrees / 15;
+        auto stepSize = data->getSelection()->getRuntime() / 50;
+        auto deltaDuration = stepSize * numSteps.y();
+        auto delta = static_cast<double>(deltaDuration.count());
+
+        types::TraceTime newBegin;
+        types::TraceTime newEnd;
+        if (QApplication::keyboardModifiers() == Qt::CTRL) {
+            // Calculate the position of the mouse relative to the scene to zoom to where the mouse is pointed
+            auto originFactor = event->scenePosition().x() / this->scene()->width();
+
+            auto leftDelta = types::TraceTime(static_cast<long>(originFactor * 2 * delta));
+            auto rightDelta = types::TraceTime(static_cast<long>((1 - originFactor) * 2 * delta));
+
+            newBegin = data->getSelection()->getStartTime() + leftDelta;
+            newEnd = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - rightDelta;
+        } else {
+            newBegin = data->getSelection()->getStartTime() - deltaDuration;
+            newEnd = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
+        }
+
+        data->setSelectionBegin(newBegin);
+        data->setSelectionEnd(newEnd);
+        event->accept();
+    }
+
+    QGraphicsView::wheelEvent(event);
 }
