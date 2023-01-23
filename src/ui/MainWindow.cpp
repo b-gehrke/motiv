@@ -22,6 +22,8 @@ MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::m
     this->createToolBars();
     this->createDockWidgets();
     this->createCentralWidget();
+
+    this->setStyleSheet("QToolTip { background-color: black; color: white; border: black solid 1px }");
 }
 
 MainWindow::~MainWindow() {
