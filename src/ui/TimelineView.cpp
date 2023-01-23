@@ -20,6 +20,7 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     auto selection = this->data->getSelection();
     auto runtime = selection->getRuntime().count();
     auto begin = this->data->getBegin().count();
+    auto end = begin + runtime;
 
     auto top = 0;
     auto ROW_HEIGHT = 30;
@@ -32,11 +33,15 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto startTime = slot->start.count();
             auto endTime = slot->end.count();
 
-            auto slotBeginPos = qMin(0.0, (static_cast<qreal>(startTime - begin) / static_cast<qreal>(runtime)) * width);
 
-            auto slotRuntime = static_cast<qreal>(endTime - startTime);
+            // Ensures slots starting before `begin` (like main) are considered to start at begin
+            auto effectiveStartTime = qMax(begin, startTime);
+            // Ensures slots ending after `end` (like main) are considered to end at end
+            auto effectiveEndTime = qMin(end, endTime);
+
+            auto slotBeginPos = qMax(0.0, (static_cast<qreal>(effectiveStartTime - begin) / static_cast<qreal>(runtime)) * width);
+            auto slotRuntime = static_cast<qreal>(effectiveEndTime - effectiveStartTime);
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
-            rectWidth = qMin(rectWidth, static_cast<qreal>(width - slotBeginPos));
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
             auto rectItem = scene->addRect(rect);
