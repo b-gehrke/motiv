@@ -80,7 +80,7 @@ public:
                         auto mpiStats = stats->at(MPI);
                         newSlot = aggregateSlots(minDuration, intervalStarter, mpiStats);
                     } else if (stats->contains(OpenMP)) {
-                        auto openMpStats = stats->at(MPI);
+                        auto openMpStats = stats->at(OpenMP);
                         newSlot = aggregateSlots(minDuration, intervalStarter, openMpStats);
                     } else {
                         auto plainStats = stats->at(Plain);
