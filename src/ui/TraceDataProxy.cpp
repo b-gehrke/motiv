@@ -23,8 +23,8 @@ types::TraceTime TraceDataProxy::getEnd() const {
 }
 
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
-    assert(newBegin < trace->getRuntime());
-    assert(newBegin <= end);
+//    assert(newBegin < trace->getRuntime());
+//    assert(newBegin <= end);
     begin = newBegin;
 
     Q_EMIT beginChanged();
@@ -33,8 +33,8 @@ void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
 }
 
 void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
-    assert(newEnd < trace->getRuntime());
-    assert(newEnd >= begin);
+//    assert(newEnd < trace->getRuntime());
+//    assert(newEnd >= begin);
     end = newEnd;
 
     Q_EMIT endChanged();

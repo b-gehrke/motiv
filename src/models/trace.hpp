@@ -25,7 +25,7 @@ public:
     [[nodiscard]] virtual std::map<otf2::definition::location_group *, Range<Slot *>, LocationGroupCmp>
     getSlots() const = 0;
 
-    [[nodiscard]] virtual Range<Communication *> getCommunications() = 0;
+[[nodiscard]] virtual Range<Communication *> getCommunications() = 0;
 
     [[nodiscard]] virtual Range<CollectiveCommunicationEvent *> getCollectiveCommunications() = 0;
 

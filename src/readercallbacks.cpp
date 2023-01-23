@@ -51,10 +51,10 @@ void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::e
     builder.start(start)->location(location)->region(region);
 
     std::vector<Slot::Builder> *builders;
-    auto buildersIt = this->slotsBuilding.find(location->ref());
+    auto buildersIt = this->slotsBuilding.find(location->ref().get());
     if (buildersIt == this->slotsBuilding.end()) {
         builders = new std::vector<Slot::Builder>();
-        this->slotsBuilding.insert({location->ref(), builders});
+        this->slotsBuilding.insert({location->ref().get(), builders});
     } else {
         builders = buildersIt->second;
     }
@@ -63,7 +63,7 @@ void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::e
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::leave &event) {
-    auto builders = this->slotsBuilding.at(location.ref());
+    auto builders = this->slotsBuilding.at(location.ref().get());
 
     Slot::Builder &builder = builders->back();
 
@@ -121,7 +121,7 @@ void ReaderCallbacks::event(const otf2::definition::location &loc, const otf2::e
     auto comm = new types::communicator(receive.comm());
     auto ev = new BlockingReceiveEvent(relative(receive.timestamp()), location, comm);
 
-    this->communicationEvent(ev, receive.sender(), pendingSends, pendingReceives);
+    this->communicationEvent(ev, receive.sender(), pendingReceives, pendingSends);
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_request &request) {
@@ -214,7 +214,7 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
     builder.location(loc);
     builder.start(start);
     
-    this->ongoingCollectiveCommunicationMembers.insert({loc->ref(), builder});
+    this->ongoingCollectiveCommunicationMembers.insert({loc->ref().get(), builder});
 }
 
 void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_collective_end &anEnd) {
@@ -232,12 +232,12 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
         ongoingCollectiveCommunication->root(root);
     }
 
-    auto member = ongoingCollectiveCommunicationMembers[location.ref()];
+    auto member = ongoingCollectiveCommunicationMembers[location.ref().get()];
     auto end = relative(anEnd.timestamp());
     member.end(end);
 
     ongoingCollectiveCommunication->members()->push_back(new CollectiveCommunicationEvent::Member(member.build()));
-    ongoingCollectiveCommunicationMembers.erase(location.ref());
+    ongoingCollectiveCommunicationMembers.erase(location.ref().get());
 
     // If the map is now empty, all ranks have completed the collective operation and the communication event can be build
     if(ongoingCollectiveCommunicationMembers.empty()){
