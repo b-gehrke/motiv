@@ -48,6 +48,8 @@ void SlotIndicator::setOnSelected(std::function<void(Slot *)> fn) {
 }
 
 void SlotIndicator::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    this->data->setSlotSelection(this->slot_);
+    if (this->isUnderMouse()) {
+        this->data->setSlotSelection(this->slot_);
+    }
     QGraphicsItem::mousePressEvent(event);
 }
