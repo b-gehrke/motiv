@@ -55,16 +55,21 @@ void MainWindow::createMenus() {
     // TODO S for sieve? what might be more intuitive?
     filterAction->setShortcut(tr("Ctrl+S"));
     // TODO add actual slot
-//    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     auto searchAction = new QAction(tr("&Find"));
     searchAction->setShortcut(tr("Ctrl+F"));
     // TODO add actual slot
-//    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+
+    auto resetZoomAction = new QAction(tr("&Reset zoom"));
+    connect(resetZoomAction, SIGNAL(triggered()), this, SLOT(resetZoom()));
+    resetZoomAction->setShortcut(tr("Ctrl+R"));
 
     auto viewMenu = menuBar->addMenu(tr("&View"));
     viewMenu->addAction(filterAction);
     viewMenu->addAction(searchAction);
+    viewMenu->addAction(resetZoomAction);
 
     /// Window menu
     auto minimizeAction = new QAction(tr("&Minimize"), this);
@@ -156,3 +161,8 @@ void MainWindow::loadTrace() {
 void MainWindow::loadSettings() {
     settings = new ViewSettings();
 }
+
+void MainWindow::resetZoom() {
+    data->setSelection(types::TraceTime(0), data->getTotalRuntime());
+}
+

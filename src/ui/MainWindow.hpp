@@ -22,7 +22,7 @@ public: Q_SIGNALS:
     // TODO
 
 public Q_SLOTS:
-    // TODO
+    void resetZoom();
 
 private: // methods
     void createMenus();
