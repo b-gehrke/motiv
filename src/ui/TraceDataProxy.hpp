@@ -46,11 +46,11 @@ public: Q_SIGNALS:
     /**
      * Signals the begin was changed
      */
-    void beginChanged();
+    void beginChanged(types::TraceTime newBegin);
     /**
      * Signal the end was changed
      */
-    void endChanged();
+    void endChanged(types::TraceTime newEnd);
 
 public Q_SLOTS:
     /**
@@ -65,6 +65,15 @@ public Q_SLOTS:
      * @invariant may not be smaller than begin and not larger than runtime
      */
     void setSelectionEnd(types::TraceTime newEnd);
+
+    /**
+     * Change the start and end time of the selection
+     * @param newBegin
+     * @param newEnd
+     * @invariant @c newBegin may not be larger than end or total runtime
+     * @invariant @c newEnd may not be smaller than begin and not larger than runtime
+     */
+    void setSelection(types::TraceTime newBegin, types::TraceTime newEnd);
 
 private: // methods
     void updateSelection();

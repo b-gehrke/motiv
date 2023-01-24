@@ -104,6 +104,9 @@ void MainWindow::createToolBars() {
     this->endTimeInputField->setUpdateFunction([this](auto newEndTime){this->data->setSelectionEnd(newEndTime);});
     containerLayout->addWidget(this->endTimeInputField);
 
+    connect(data, SIGNAL(beginChanged(types::TraceTime)), this->startTimeInputField, SLOT(setTime(types::TraceTime)));
+    connect(data, SIGNAL(endChanged(types::TraceTime)), this->endTimeInputField, SLOT(setTime(types::TraceTime)));
+
     this->bottomToolbar->addWidget(bottomContainerWidget);
 
 }

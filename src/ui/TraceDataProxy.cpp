@@ -25,25 +25,20 @@ types::TraceTime TraceDataProxy::getEnd() const {
 }
 
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
-//    assert(newBegin < trace->getRuntime());
-//    assert(newBegin <= end);
-    begin = newBegin;
-
-    Q_EMIT beginChanged();
-
-    updateSelection();
+    setSelection(newBegin, end);
 }
 
 void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
-//    assert(newEnd < trace->getRuntime());
-//    assert(newEnd >= begin);
-    end = newEnd;
+    setSelection(begin, newEnd);
+}
 
 ViewSettings *TraceDataProxy::getSettings() const {
     return settings;
 }
 
-    updateSelection();
+
+types::TraceTime TraceDataProxy::getTotalRuntime() const {
+    return trace->getRuntime();
 }
 
 void TraceDataProxy::updateSelection() {
@@ -51,4 +46,28 @@ void TraceDataProxy::updateSelection() {
     selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
 //    selection = subtrace;
     Q_EMIT selectionChanged();
+}
+
+void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime newEnd) {
+    newBegin = qMax(types::TraceTime(0), newBegin);
+    newEnd = qMin(getTotalRuntime(), newEnd);
+
+    newBegin = qMin(newEnd, newBegin);
+    newEnd = qMax(newBegin, newEnd);
+
+    auto oldBegin = begin;
+    auto oldEnd = end;
+
+    begin = newBegin;
+    end=newEnd;
+
+    if(oldBegin != begin) {
+        Q_EMIT beginChanged(begin);
+    }
+
+    if(oldEnd != end) {
+        Q_EMIT endChanged(end);
+    }
+
+    updateSelection();
 }
