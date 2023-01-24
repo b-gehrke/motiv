@@ -1,8 +1,9 @@
 #include <QPen>
 #include "SlotIndicator.hpp"
 
-SlotIndicator::SlotIndicator(const QRectF &rect, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent) {
-    setAcceptHoverEvents(true);
+SlotIndicator::SlotIndicator(const QRectF &rect, TraceDataProxy* data, Slot* representedSlot, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent), data(data), slot(representedSlot) {
+    this->setAcceptHoverEvents(true);
+    this->setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 
@@ -24,4 +25,9 @@ void SlotIndicator::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     setZValue(zValue() - 10);
 
     QGraphicsItem::hoverLeaveEvent(event);
+}
+
+void SlotIndicator::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    this->data->setSlotSelection(this->slot);
+    QGraphicsItem::mousePressEvent(event);
 }

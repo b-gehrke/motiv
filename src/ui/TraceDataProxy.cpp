@@ -23,7 +23,6 @@ types::TraceTime TraceDataProxy::getEnd() const {
 }
 
 Slot *TraceDataProxy::getSelectedSlot() const {
-    return *this->selection->getSlots().begin()->second.begin();
     return this->selectedSlot;
 }
 

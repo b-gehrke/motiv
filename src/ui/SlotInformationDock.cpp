@@ -25,7 +25,6 @@ void SlotInformationDock::addInformation() {
     auto end = slot->end.count();
     auto runtime = slot->getDuration().count();
 
-    // TODO this seems redundant
     auto child = new QWidget(this);
     this->setWidget(child);
     auto childLayout = new QFormLayout(child);
@@ -49,7 +48,9 @@ void SlotInformationDock::updateInformation() {
     if (this->data->getSelectedSlot()) {
         this->clearInformation();
         this->addInformation();
+        this->show();
+    } else {
+        this->hide();
     }
-//    this->close();
 }
 

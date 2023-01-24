@@ -54,7 +54,7 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
-            auto rectItem = new SlotIndicator(rect);
+            auto rectItem = new SlotIndicator(rect, this->data, slot);
             rectItem->setToolTip(regionNameStr.c_str());
 
             // Determine color based on name
