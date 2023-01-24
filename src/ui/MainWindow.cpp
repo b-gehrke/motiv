@@ -7,6 +7,7 @@
 #include <QToolBar>
 #include <utility>
 
+#include "License.hpp"
 #include "TimeInputField.hpp"
 #include "Timeline.hpp"
 #include "TimeUnit.hpp"
@@ -82,7 +83,10 @@ void MainWindow::createMenus() {
 
     /// Help menu
     auto aboutAction = new QAction(tr("&View license"), this);
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(openLicenseView()));
+    connect(aboutAction, &QAction::triggered, this, []{
+        auto license = new License;
+        license->show();
+    });
 
     auto helpMenu = menuBar->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
