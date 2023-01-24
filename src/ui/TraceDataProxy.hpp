@@ -48,10 +48,13 @@ public: Q_SIGNALS:
      */
     void beginChanged(types::TraceTime newBegin);
     /**
-     * Signal the end was changed
+     * Signals the end was changed
      */
     void endChanged(types::TraceTime newEnd);
 
+    /**
+     * Signals the filter was changes
+     */
     void filterChanged(Filter);
 
 public Q_SLOTS:
@@ -77,6 +80,10 @@ public Q_SLOTS:
      */
     void setSelection(types::TraceTime newBegin, types::TraceTime newEnd);
 
+    /**
+     * Change the filter
+     * @param filter
+     */
     void setFilter(Filter filter);
 
 private: // methods
