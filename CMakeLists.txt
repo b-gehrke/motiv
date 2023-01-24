@@ -49,7 +49,6 @@ set(PROJECT_SOURCES
         src/models/Filter.cpp
         src/ui/SlotInformationDock.cpp
         src/ui/SlotIndicator.cpp
-        src/ui/ViewSettings.cpp
         )
 
 # XXX this would require qt version 6
