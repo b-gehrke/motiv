@@ -32,6 +32,7 @@ private: // methods
 
     void promptFile();
     void loadTrace();
+    void loadSettings();
 
 private: // widgets
     QToolBar *topToolbar = nullptr;
@@ -48,6 +49,8 @@ private: // properties
 
     otf2::reader::reader *reader = nullptr;
     ReaderCallbacks *callbacks = nullptr;
+
+    ViewSettings *settings = nullptr;
 };
 
 

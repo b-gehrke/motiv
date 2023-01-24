@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include "src/models/filetrace.hpp"
+#include "ViewSettings.hpp"
 
 
 /**
@@ -21,14 +22,21 @@ public: //constructors
      * @param trace
      * @param parent
      */
-    explicit TraceDataProxy(FileTrace *trace, QObject *parent = nullptr);
-    ~TraceDataProxy();
+    TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent = nullptr);
+    ~TraceDataProxy() override;
 
 
 public: // methods
-    Trace *getSelection() const;
-    types::TraceTime getBegin() const;
-    types::TraceTime getEnd() const;
+    [[nodiscard]] Trace *getSelection() const;
+    [[nodiscard]] types::TraceTime getBegin() const;
+    [[nodiscard]] types::TraceTime getEnd() const;
+    [[nodiscard]] ViewSettings *getSettings() const;
+
+    /**
+     * Returns the runtime of the entire loaded trace
+     * @return
+     */
+    [[nodiscard]] types::TraceTime getTotalRuntime() const;
 
 public: Q_SIGNALS:
     /**
@@ -64,6 +72,7 @@ private: // methods
 private: // data
     FileTrace *trace = nullptr;
     Trace *selection = nullptr;
+    ViewSettings *settings = nullptr;
 
     types::TraceTime begin{0};
     types::TraceTime end{0};

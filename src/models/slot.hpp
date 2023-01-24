@@ -5,9 +5,9 @@
 #include "builder.hpp"
 
 enum SlotKind {
-    MPI,
-    OpenMP,
-    Plain
+    MPI = 0b0001,
+    OpenMP = 0b0010,
+    Plain = 0b0100
 };
 
 class Slot {

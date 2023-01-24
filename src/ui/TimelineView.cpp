@@ -136,7 +136,7 @@ void TimelineView::wheelEvent(QWheelEvent *event) {
 
     if (!numDegrees.isNull() && QApplication::keyboardModifiers() & (Qt::CTRL | Qt::SHIFT)) {
         QPoint numSteps = numDegrees / 15;
-        auto stepSize = data->getSelection()->getRuntime() / 50;
+        auto stepSize = data->getSelection()->getRuntime() / data->getSettings()->getZoomQuotient();
         auto deltaDuration = stepSize * numSteps.y();
         auto delta = static_cast<double>(deltaDuration.count());
 

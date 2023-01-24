@@ -16,6 +16,7 @@ MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::m
     if (this->filepath.isEmpty()) {
         this->promptFile();
     }
+    this->loadSettings();
     this->loadTrace();
 
     this->createMenus();
@@ -146,5 +147,9 @@ void MainWindow::loadTrace() {
     auto collectives = callbacks->getCollectiveCommunications();
     auto trace = new FileTrace(slots, communications, collectives, callbacks->duration());
 
-    data = new TraceDataProxy(trace, this);
+    data = new TraceDataProxy(trace, settings, this);
+}
+
+void MainWindow::loadSettings() {
+    settings = new ViewSettings();
 }

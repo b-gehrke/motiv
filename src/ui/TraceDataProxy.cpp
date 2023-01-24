@@ -1,7 +1,9 @@
 #include "TraceDataProxy.hpp"
 #include "src/models/uitrace.hpp"
 
-TraceDataProxy::TraceDataProxy(FileTrace *trace, QObject *parent) : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()) {
+TraceDataProxy::TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent)
+    : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()),
+      settings(settings) {
     updateSelection();
 }
 
@@ -37,7 +39,9 @@ void TraceDataProxy::setSelectionEnd(types::TraceTime newEnd) {
 //    assert(newEnd >= begin);
     end = newEnd;
 
-    Q_EMIT endChanged();
+ViewSettings *TraceDataProxy::getSettings() const {
+    return settings;
+}
 
     updateSelection();
 }
