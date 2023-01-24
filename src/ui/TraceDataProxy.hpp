@@ -29,6 +29,7 @@ public: // methods
     Trace *getSelection() const;
     types::TraceTime getBegin() const;
     types::TraceTime getEnd() const;
+    Slot * getSelectedSlot() const;
 
 public: Q_SIGNALS:
     /**
@@ -40,9 +41,13 @@ public: Q_SIGNALS:
      */
     void beginChanged();
     /**
-     * Signal the end was changed
+     * Signals the end was changed
      */
     void endChanged();
+    /**
+     * Signals a change to the selected slot, nullptr if none
+     */
+     void slotSelectionChanged();
 
 public Q_SLOTS:
     /**
@@ -57,9 +62,15 @@ public Q_SLOTS:
      * @invariant may not be smaller than begin and not larger than runtime
      */
     void setSelectionEnd(types::TraceTime newEnd);
+    /**
+     * Change the selected slot
+     * @param newSlot pass nullptr if none selected
+     */
+    void setSlotSelection(Slot *newSlot);
 
 private: // methods
     void updateSelection();
+    void updateSlotSelection();
 
 private: // data
     FileTrace *trace = nullptr;
@@ -67,6 +78,8 @@ private: // data
 
     types::TraceTime begin{0};
     types::TraceTime end{0};
+
+    Slot *selectedSlot = nullptr;
 };
 
 

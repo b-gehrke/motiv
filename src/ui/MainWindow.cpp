@@ -96,6 +96,7 @@ void MainWindow::createToolBars() {
     auto containerLayout = new QHBoxLayout(bottomContainerWidget);
     bottomContainerWidget->setLayout(containerLayout);
 
+    // TODO populate with initial time stamps
     this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
     this->startTimeInputField->setUpdateFunction([this](auto newStartTime){this->data->setSelectionBegin(newStartTime);});
     containerLayout->addWidget(this->startTimeInputField);
@@ -108,7 +109,8 @@ void MainWindow::createToolBars() {
 }
 
 void MainWindow::createDockWidgets() {
-
+    this->slotInformation = new SlotInformationDock(this->data, this);
+    this->addDockWidget(Qt::RightDockWidgetArea, this->slotInformation);
 }
 
 void MainWindow::createCentralWidget() {

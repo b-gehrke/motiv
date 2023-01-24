@@ -22,6 +22,11 @@ types::TraceTime TraceDataProxy::getEnd() const {
     return this->end;
 }
 
+Slot *TraceDataProxy::getSelectedSlot() const {
+    return *this->selection->getSlots().begin()->second.begin();
+    return this->selectedSlot;
+}
+
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
 //    assert(newBegin < trace->getRuntime());
 //    assert(newBegin <= end);
@@ -47,4 +52,9 @@ void TraceDataProxy::updateSelection() {
     selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
 //    selection = subtrace;
     Q_EMIT selectionChanged();
+}
+
+void TraceDataProxy::setSlotSelection(Slot *newSlot) {
+    this->selectedSlot = newSlot;
+    Q_EMIT slotSelectionChanged();
 }
