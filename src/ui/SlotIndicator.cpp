@@ -1,11 +1,14 @@
 #include "SlotIndicator.hpp"
-#include "constants.hpp"
+
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
 
-SlotIndicator::SlotIndicator(const QRectF &rect, Slot *slot, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent),
-                                                                                      slot_(slot) {
-    setAcceptHoverEvents(true);
+#include "constants.hpp"
+
+SlotIndicator::SlotIndicator(const QRectF &rect, TraceDataProxy* data, Slot* representedSlot, QGraphicsItem *parent)
+: QGraphicsRectItem(rect, parent), data(data), slot_(representedSlot) {
+    this->setAcceptHoverEvents(true);
+    this->setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 
@@ -42,4 +45,9 @@ void SlotIndicator::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
 
 void SlotIndicator::setOnSelected(std::function<void(Slot *)> fn) {
     onSelected = std::move(fn);
+}
+
+void SlotIndicator::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    this->data->setSlotSelection(this->slot_);
+    QGraphicsItem::mousePressEvent(event);
 }
