@@ -19,18 +19,21 @@ set(PROJECT_SOURCES
         resources.qrc
         src/main.cpp
         src/readercallbacks.cpp
+        src/utils.cpp
         src/models/slot.cpp
-        src/models/communication/communication.cpp
         src/models/subtrace.cpp
         src/models/filetrace.cpp
+        src/models/uitrace.cpp
         src/models/communication/blockingp2pcommunicationevent.cpp
         src/models/communication/nonblockingp2pcommunicationevent.cpp
         src/models/communication/blockingsendevent.cpp
         src/models/communication/blockingreceiveevent.cpp
+        src/models/communication/communication.cpp
         src/models/communication/nonblockingsendevent.cpp
         src/models/communication/nonblockingreceiveevent.cpp
         src/models/communication/requestcancelledevent.cpp
         src/models/communication/collectivecommunicationevent.cpp
+        src/ui/CommunicationIndicator.cpp
         src/ui/MainWindow.cpp
         src/ui/TimeInputField.cpp
         src/ui/TraceDataProxy.cpp
@@ -40,13 +43,14 @@ set(PROJECT_SOURCES
         src/ui/TimelineView.cpp
         src/ui/TimeUnit.cpp
         src/ui/TimeUnitLabel.cpp
-        src/models/uitrace.cpp
         src/ui/ScrollSynchronizer.cpp
-        src/ui/CommunicationIndicator.cpp
-        src/ui/CommunicationIndicator.hpp
-        src/ui/SlotIndicator.cpp src/ui/SlotIndicator.hpp
-        src/models/ViewSettings.cpp src/models/ViewSettings.hpp
-        src/ui/constants.hpp src/ui/FilterPopup.cpp src/ui/FilterPopup.hpp src/models/Filter.cpp src/models/Filter.hpp)
+        src/models/ViewSettings.cpp
+        src/ui/FilterPopup.cpp
+        src/models/Filter.cpp
+        src/ui/SlotInformationDock.cpp
+        src/ui/SlotIndicator.cpp
+        src/ui/ViewSettings.cpp
+        )
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

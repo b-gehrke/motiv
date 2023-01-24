@@ -4,7 +4,7 @@
 #include <QLabel>
 
 #include "TimeUnitLabel.hpp"
-#include "src/utils.h"
+#include "src/utils.hpp"
 
 TimelineHeader::TimelineHeader(TraceDataProxy *data, QWidget *parent) : QWidget(parent), data(data) {
     this->setLayout(new QHBoxLayout(this));

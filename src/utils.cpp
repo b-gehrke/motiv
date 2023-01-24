@@ -1,17 +1,7 @@
-#ifndef MOTIV_UTILS_H
-#define MOTIV_UTILS_H
+#include "utils.hpp"
 
-#include <QLayout>
-#include <QWidget>
-
-/**
- * Resets a QLayout and deletes all child widgets.
- *
- * Source: https://stackoverflow.com/a/56966160
- *
- * @param apLayout layout to reset
- */
 void resetLayout(QLayout *apLayout) {
+    if(!apLayout) return;
     QLayoutItem *vpItem;
     while ((vpItem = apLayout->takeAt(0)) != 0) {
         if (vpItem->layout()) {
@@ -24,6 +14,3 @@ void resetLayout(QLayout *apLayout) {
         delete vpItem;
     }
 }
-
-
-#endif //MOTIV_UTILS_H
