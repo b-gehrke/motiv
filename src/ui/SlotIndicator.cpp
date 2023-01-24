@@ -1,3 +1,5 @@
+#include "SlotIndicator.hpp"
+#include "constants.hpp"
 #include <QPen>
 #include "SlotIndicator.hpp"
 
@@ -11,7 +13,7 @@ void SlotIndicator::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     p.setWidth(p.width() * 2);
     setPen(p);
 
-    setZValue(zValue() + 10);
+    setZValue(zValue() + layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverEnterEvent(event);
 }
@@ -21,7 +23,7 @@ void SlotIndicator::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     p.setWidth(p.width() / 2);
     setPen(p);
 
-    setZValue(zValue() - 10);
+    setZValue(zValue() - layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverLeaveEvent(event);
 }

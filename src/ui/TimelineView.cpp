@@ -1,6 +1,7 @@
 #include "TimelineView.hpp"
 #include "CommunicationIndicator.hpp"
 #include "SlotIndicator.hpp"
+#include "constants.hpp"
 
 #include <QGraphicsRectItem>
 #include <QApplication>
@@ -61,13 +62,13 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             QColor rectColor;
             if (regionNameStr.starts_with("MPI_")) {
                 rectColor = Qt::green;
-                rectItem->setZValue(3);
+                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 2);
             } else if (regionNameStr.starts_with("!$omp")) {
                 rectColor = Qt::red;
-                rectItem->setZValue(2);
+                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 1);
             } else {
                 rectColor = Qt::lightGray;
-                rectItem->setZValue(1);
+                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 0);
             }
             rectItem->setBrush(rectColor);
             scene->addItem(rectItem);
@@ -104,7 +105,7 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
 
         auto arrow = new CommunicationIndicator(fromX, fromY, toX, toY);
         arrow->setPen(arrowPen);
-        arrow->setZValue(5);
+        arrow->setZValue(layers::Z_LAYER_P2P_COMMUNICATIONS);
         scene->addItem(arrow);
     }
 

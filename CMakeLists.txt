@@ -41,7 +41,12 @@ set(PROJECT_SOURCES
         src/ui/TimeUnit.cpp
         src/ui/TimeUnitLabel.cpp
         src/models/uitrace.cpp
-        src/ui/ScrollSynchronizer.cpp src/ui/CommunicationIndicator.cpp src/ui/CommunicationIndicator.hpp src/ui/SlotIndicator.cpp src/ui/SlotIndicator.hpp)
+        src/ui/ScrollSynchronizer.cpp
+        src/ui/CommunicationIndicator.cpp
+        src/ui/CommunicationIndicator.hpp
+        src/ui/SlotIndicator.cpp src/ui/SlotIndicator.hpp
+        src/ui/ViewSettings.cpp src/ui/ViewSettings.hpp
+        src/ui/constants.hpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

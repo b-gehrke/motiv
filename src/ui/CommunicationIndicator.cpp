@@ -1,5 +1,6 @@
 #include <QLineF>
 #include "CommunicationIndicator.hpp"
+#include "constants.hpp"
 
 
 CommunicationIndicator::CommunicationIndicator(qreal fromX, qreal fromY, qreal toX, qreal toY, qreal headLength) : CommunicationIndicator(QPointF(fromX, fromY), QPointF(toX, toY), headLength) {
@@ -28,7 +29,7 @@ void CommunicationIndicator::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     p.setWidth(p.width() * 2);
     setPen(p);
 
-    setZValue(zValue() + 10);
+    setZValue(zValue() + layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverEnterEvent(event);
 }
@@ -38,7 +39,7 @@ void CommunicationIndicator::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     p.setWidth(p.width() / 2);
     setPen(p);
 
-    setZValue(zValue() - 10);
+    setZValue(zValue() - layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverLeaveEvent(event);
 }
