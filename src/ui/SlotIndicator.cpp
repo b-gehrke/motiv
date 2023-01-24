@@ -1,9 +1,10 @@
 #include "SlotIndicator.hpp"
 #include "constants.hpp"
 #include <QPen>
-#include "SlotIndicator.hpp"
+#include <QGraphicsSceneMouseEvent>
 
-SlotIndicator::SlotIndicator(const QRectF &rect, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent) {
+SlotIndicator::SlotIndicator(const QRectF &rect, Slot *slot, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent),
+                                                                                      slot_(slot) {
     setAcceptHoverEvents(true);
 }
 
@@ -26,4 +27,19 @@ void SlotIndicator::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     setZValue(zValue() - layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverLeaveEvent(event);
+}
+
+void SlotIndicator::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
+    // This event is fired again for overlapping elements. Only consider the top (visible) one.
+    if (onSelected && isUnderMouse()) {
+        onSelected(slot_);
+        event->accept();
+    }
+
+
+    QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
+void SlotIndicator::setOnSelected(std::function<void(Slot *)> fn) {
+    onSelected = std::move(fn);
 }

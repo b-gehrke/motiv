@@ -55,7 +55,9 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
-            auto rectItem = new SlotIndicator(rect);
+            auto rectItem = new SlotIndicator(rect, slot);
+            rectItem->setOnSelected(
+                [this](Slot *selectedSlot) { this->data->setSelection(selectedSlot->start, selectedSlot->end); });
             rectItem->setToolTip(regionNameStr.c_str());
 
             // Determine color based on name
@@ -133,9 +135,12 @@ void TimelineView::updateView() {
 }
 
 void TimelineView::wheelEvent(QWheelEvent *event) {
+    // Calculation according to https://doc.qt.io/qt-6/qwheelevent.html#angleDelta:
+    // @c angleDelta is in eights of a degree and most mouse wheels work in steps of 15 degrees.
     QPoint numDegrees = event->angleDelta() / 8;
 
     if (!numDegrees.isNull() && QApplication::keyboardModifiers() & (Qt::CTRL | Qt::SHIFT)) {
+        // See documentation and comment above
         QPoint numSteps = numDegrees / 15;
         auto stepSize = data->getSelection()->getRuntime() / data->getSettings()->getZoomQuotient();
         auto deltaDuration = stepSize * numSteps.y();
