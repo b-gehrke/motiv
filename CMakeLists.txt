@@ -45,8 +45,8 @@ set(PROJECT_SOURCES
         src/ui/CommunicationIndicator.cpp
         src/ui/CommunicationIndicator.hpp
         src/ui/SlotIndicator.cpp src/ui/SlotIndicator.hpp
-        src/ui/ViewSettings.cpp src/ui/ViewSettings.hpp
-        src/ui/constants.hpp)
+        src/models/ViewSettings.cpp src/models/ViewSettings.hpp
+        src/ui/constants.hpp src/ui/FilterPopup.cpp src/ui/FilterPopup.hpp src/models/Filter.cpp src/models/Filter.hpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)

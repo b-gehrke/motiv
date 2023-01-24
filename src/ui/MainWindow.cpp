@@ -10,6 +10,7 @@
 #include "TimeInputField.hpp"
 #include "Timeline.hpp"
 #include "TimeUnit.hpp"
+#include "FilterPopup.hpp"
 
 
 MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::move(filepath)) {
@@ -164,5 +165,15 @@ void MainWindow::loadSettings() {
 
 void MainWindow::resetZoom() {
     data->setSelection(types::TraceTime(0), data->getTotalRuntime());
+}
+
+void MainWindow::openFilterPopup() {
+    FilterPopup filterPopup(data->getSettings()->getFilter());
+
+    auto connection = connect(&filterPopup, SIGNAL(filterChanged(Filter)), this->data, SLOT(setFilter(Filter)));
+
+    filterPopup.exec();
+
+    disconnect(connection);
 }
 

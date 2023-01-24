@@ -2,15 +2,15 @@
 #define MOTIV_VIEWSETTINGS_HPP
 
 #include "src/models/slot.hpp"
+#include "Filter.hpp"
 
 #define SETTINGS_DEFAULT_ZOOM_QUOTIENT 25
-#define SETTINGS_DEFAULT_FILTER ((SlotKind) (SlotKind::MPI | SlotKind::OpenMP | SlotKind::Plain))
 
 class ViewSettings {
 public:
 
 public:
-    [[nodiscard]] SlotKind getFilter() const;
+    [[nodiscard]] Filter getFilter() const;
     /**
      * Returns the reciprocal of a zoom factor
      *
@@ -20,12 +20,12 @@ public:
     [[nodiscard]] int getZoomQuotient() const;
 
 
-    void setFilter(SlotKind filter);
+    void setFilter(Filter filter);
     void setZoomFactor(int zoomFactor);
 
 private:
-    int zoomFactor = SETTINGS_DEFAULT_ZOOM_QUOTIENT;
-    SlotKind filter = SETTINGS_DEFAULT_FILTER;
+    int zoomFactor_ = SETTINGS_DEFAULT_ZOOM_QUOTIENT;
+    Filter filter_;
 };
 
 

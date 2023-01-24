@@ -16,6 +16,7 @@ TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsVie
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(this->data, SIGNAL(selectionChanged()), this, SLOT(updateView()));
+    connect(this->data, SIGNAL(filterChanged(Filter)), this, SLOT(updateView()));
 }
 
 
@@ -36,6 +37,8 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     for (const auto &item: selection->getSlots()) {
         // Display slots
         for (const auto &slot: item.second) {
+            if(!(slot->getKind() & data->getSettings()->getFilter().getSlotKinds())) continue;
+
             auto region = slot->region;
             auto regionName = region->name();
             auto regionNameStr = regionName.str();

@@ -5,7 +5,7 @@
 #include <QObject>
 
 #include "src/models/filetrace.hpp"
-#include "ViewSettings.hpp"
+#include "src/models/ViewSettings.hpp"
 
 
 /**
@@ -52,6 +52,8 @@ public: Q_SIGNALS:
      */
     void endChanged(types::TraceTime newEnd);
 
+    void filterChanged(Filter);
+
 public Q_SLOTS:
     /**
      * Change the start time of the selection
@@ -74,6 +76,8 @@ public Q_SLOTS:
      * @invariant @c newEnd may not be smaller than begin and not larger than runtime
      */
     void setSelection(types::TraceTime newBegin, types::TraceTime newEnd);
+
+    void setFilter(Filter filter);
 
 private: // methods
     void updateSelection();

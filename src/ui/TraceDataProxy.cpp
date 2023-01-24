@@ -71,3 +71,9 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
 
     updateSelection();
 }
+
+void TraceDataProxy::setFilter(Filter filter) {
+    settings->setFilter(filter);
+
+    Q_EMIT filterChanged(filter);
+}
