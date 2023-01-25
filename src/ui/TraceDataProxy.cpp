@@ -73,7 +73,9 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
         Q_EMIT endChanged(end);
     }
 
-    updateSelection();
+    if(oldBegin != begin && oldEnd != end) {
+        updateSelection();
+    }
 }
 
 void TraceDataProxy::setSlotSelection(Slot *newSlot) {
