@@ -31,8 +31,10 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     auto endR = static_cast<qreal>(end);
 
     QPen arrowPen(Qt::black, 1);
+    QPen collectiveCommunicationPen(Qt::blue, 2);
 
-    auto top = 0;
+
+    auto top = 20;
     auto ROW_HEIGHT = 30;
     for (const auto &item: selection->getSlots()) {
         // Display slots
@@ -103,15 +105,34 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
         auto toRank = endEvent->getLocation()->ref().get();
 
         auto fromX = effectiveFromTime / runtimeR * width;
-        auto fromY = static_cast<qreal>(fromRank * ROW_HEIGHT) + .5 * ROW_HEIGHT;
+        auto fromY = static_cast<qreal>(fromRank * ROW_HEIGHT) + .5 * ROW_HEIGHT + 20;
 
         auto toX = effectiveToTime / runtimeR * width;
-        auto toY = static_cast<qreal> (toRank * ROW_HEIGHT) + .5 * ROW_HEIGHT;
+        auto toY = static_cast<qreal> (toRank * ROW_HEIGHT) + .5 * ROW_HEIGHT + 20;
 
         auto arrow = new CommunicationIndicator(fromX, fromY, toX, toY);
         arrow->setPen(arrowPen);
         arrow->setZValue(layers::Z_LAYER_P2P_COMMUNICATIONS);
         scene->addItem(arrow);
+    }
+
+    for (const auto &communication: selection->getCollectiveCommunications()) {
+        auto fromTime = static_cast<qreal>(communication->getStart().count());
+        auto effectiveFromTime = qMax(beginR, fromTime) - beginR;
+
+        auto toTime = static_cast<qreal>(communication->getEnd().count());
+        auto effectiveToTime = qMin(endR, toTime) - beginR;
+
+        auto fromX = (effectiveFromTime / runtimeR) * width;
+        auto fromY = 10;
+
+        auto toX = (effectiveToTime / runtimeR) * width;
+        auto toY = top + 10;
+
+        QRectF rect(QPointF(fromX, fromY), QPointF(toX, toY));
+        auto rectItem = scene->addRect(rect);
+        rectItem->setPen(collectiveCommunicationPen);
+        rectItem->setZValue(layers::Z_LAYER_COLLECTIVE_COMMUNICATIONS);
     }
 
 }
@@ -165,8 +186,7 @@ void TimelineView::wheelEvent(QWheelEvent *event) {
             newEnd = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
         }
 
-        data->setSelectionBegin(newBegin);
-        data->setSelectionEnd(newEnd);
+        data->setSelection(newBegin, newEnd);
         event->accept();
     }
 

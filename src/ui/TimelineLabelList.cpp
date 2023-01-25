@@ -8,6 +8,7 @@ TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QL
     this->setFrameShape(QFrame::NoFrame);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setStyleSheet("background: transparent");
+    setViewportMargins(0, 20,0,0);
 
     for (const auto &ranks : this->data->getSelection()->getSlots()) {
         const auto &rankName = ranks.first->name().str();
