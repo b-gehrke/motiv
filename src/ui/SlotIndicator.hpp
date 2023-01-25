@@ -10,10 +10,11 @@
 
 class SlotIndicator : public QGraphicsRectItem {
 public: // constructors
-    SlotIndicator(const QRectF &rect, TraceDataProxy* data, Slot* representedSlot, QGraphicsItem *parent = nullptr);
+    SlotIndicator(const QRectF &rect, Slot* representedSlot, QGraphicsItem *parent = nullptr);
 
 public: // methods
-    void setOnSelected(std::function<void(Slot *)> onSelected);
+    void setOnDoubleClick(const std::function<void(Slot *)>& fn);
+    void setOnSelected(const std::function<void(Slot *)>& fn);
 
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -24,9 +25,10 @@ protected:
 
 private:
     Slot* slot_;
-    TraceDataProxy *data;
-    std::function<void(Slot*)> onSelected;
 
+private: // event handler
+    std::function<void(Slot*)> onDoubleClick;
+    std::function<void(Slot *pSlot)>  onSelected;
 };
 
 

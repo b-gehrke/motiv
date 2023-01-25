@@ -55,7 +55,7 @@ public: Q_SIGNALS:
     /**
      * Signals a change to the selected slot, nullptr if none
      */
-     void slotSelectionChanged();
+    void slotSelected(Slot*);
 
     /**
      * Signals the filter was changes

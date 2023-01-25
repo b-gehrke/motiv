@@ -34,12 +34,18 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     QPen collectiveCommunicationPen(Qt::blue, 2);
 
 
+    auto onSlotSelected = [this](Slot *slot) { this->data->setSlotSelection(slot); };
+    auto onSlotDoubleClicked = [this](Slot *selectedSlot) {
+        this->data->setSelection(selectedSlot->start, selectedSlot->end);
+    };
+
+
     auto top = 20;
     auto ROW_HEIGHT = 30;
     for (const auto &item: selection->getSlots()) {
         // Display slots
         for (const auto &slot: item.second) {
-            if(!(slot->getKind() & data->getSettings()->getFilter().getSlotKinds())) continue;
+            if (!(slot->getKind() & data->getSettings()->getFilter().getSlotKinds())) continue;
 
             auto region = slot->region;
             auto regionName = region->name();
@@ -60,9 +66,9 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
-            auto rectItem = new SlotIndicator(rect, this->data, slot);
-            rectItem->setOnSelected(
-                [this](Slot *selectedSlot) { this->data->setSelection(selectedSlot->start, selectedSlot->end); });
+            auto rectItem = new SlotIndicator(rect, slot);
+            rectItem->setOnDoubleClick(onSlotDoubleClicked);
+            rectItem->setOnSelected(onSlotSelected);
             rectItem->setToolTip(regionNameStr.c_str());
 
             // Determine color based on name

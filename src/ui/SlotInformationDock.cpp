@@ -1,56 +1,66 @@
 #include "SlotInformationDock.hpp"
 
 #include <QFormLayout>
+#include <QPushButton>
 
 #include "src/utils.hpp"
 #include "TimeUnitLabel.hpp"
 
-SlotInformationDock::SlotInformationDock(TraceDataProxy *data, QWidget *parent) : QDockWidget(parent), data(data) {
-    auto child = new QWidget(this);
-    this->setWidget(child);
-    auto childLayout = new QFormLayout(child);
+SlotInformationDock::SlotInformationDock(QWidget *parent) : QDockWidget(parent) {
+    child = new QWidget(this);
+    childLayout = new QFormLayout(child);
     childLayout->setAlignment(Qt::AlignLeading | Qt::AlignTop);
     child->setLayout(childLayout);
+//    child->setMinimumWidth(200);
 
-    connect(data, &TraceDataProxy::slotSelectionChanged, this, &SlotInformationDock::updateInformation);
+    nameField = new QLabel();
+    rankField = new QLabel();
+    startField = new TimeUnitLabel(0);
+    endField = new TimeUnitLabel(0);
+    runtimeField = new TimeUnitLabel(0);
 
-    this->updateInformation();
+    auto zoomIntoViewButton = new QPushButton(tr("Zoom into &view"));
+    
+    childLayout->addRow(tr("Name:"), nameField);
+    childLayout->addRow(tr("Rank:"), rankField);
+    childLayout->addRow(tr("Start:"), startField);
+    childLayout->addRow(tr("End:"), endField);
+    childLayout->addRow(tr("Runtime:"), runtimeField);
+
+    childLayout->addWidget(zoomIntoViewButton);
+
+    connect(zoomIntoViewButton, SIGNAL(clicked()), this, SLOT(zoomIntoViewPressed()));
+
+
+    setWidget(child);
+    setWindowTitle(tr("Details"));
 }
 
-void SlotInformationDock::addInformation() {
-    auto slot = this->data->getSelectedSlot();
-    auto name = QString::fromStdString(slot->region->name().str());
-    auto rank = QString::fromStdString(slot->location->location_group().name().str());
-    auto start = slot->start.count();
-    auto end = slot->end.count();
-    auto runtime = slot->getDuration().count();
+void SlotInformationDock::updateView() {
+    if(!slot_) return;
 
-    auto child = new QWidget(this);
-    this->setWidget(child);
-    auto childLayout = new QFormLayout(child);
-    childLayout->setAlignment(Qt::AlignLeading | Qt::AlignTop);
-    child->setLayout(childLayout);
+    auto name = QString::fromStdString(slot_->region->name().str());
+    auto rank = QString::fromStdString(slot_->location->location_group().name().str());
+    auto start = static_cast<double>(slot_->start.count());
+    auto end = static_cast<double>(slot_->end.count());
+    auto runtime = static_cast<double>(slot_->getDuration().count());
 
-    auto layout = childLayout;
-
-    layout->addRow(tr("Name:"), new QLabel(name, this));
-    layout->addRow(tr("Rank:"), new QLabel(rank, this));
-    layout->addRow(tr("Start:"), new TimeUnitLabel(start, this));
-    layout->addRow(tr("End:"), new TimeUnitLabel(end, this));
-    layout->addRow(tr("Runtime:"), new TimeUnitLabel(runtime, this));
+    nameField->setText(name);
+    rankField->setText(rank);
+    startField->setTime(start);
+    endField->setTime(end);
+    runtimeField->setTime(runtime);
 }
 
-void SlotInformationDock::clearInformation() {
-    resetLayout(this->layout());
+void SlotInformationDock::setSlot(Slot* slot) {
+    slot_ = slot;
+
+    updateView();
 }
 
-void SlotInformationDock::updateInformation() {
-    if (this->data->getSelectedSlot()) {
-        this->clearInformation();
-        this->addInformation();
-        this->show();
-    } else {
-        this->hide();
-    }
+void SlotInformationDock::zoomIntoViewPressed() {
+    if(!slot_) return;
+
+    Q_EMIT zoomToWindow(slot_->start, slot_->end);
 }
 

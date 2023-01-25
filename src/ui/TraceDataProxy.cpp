@@ -80,7 +80,7 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
 
 void TraceDataProxy::setSlotSelection(Slot *newSlot) {
     this->selectedSlot = newSlot;
-    Q_EMIT slotSelectionChanged();
+    Q_EMIT slotSelected(newSlot);
 }
 
 void TraceDataProxy::setFilter(Filter filter) {

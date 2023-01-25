@@ -3,25 +3,39 @@
 
 
 #include <QDockWidget>
+#include <QFormLayout>
+#include <QLabel>
 
 #include "TraceDataProxy.hpp"
+#include "TimeUnitLabel.hpp"
 
 class SlotInformationDock : public QDockWidget {
     Q_OBJECT
 
 public:
-    explicit SlotInformationDock(TraceDataProxy *data, QWidget *parent = nullptr);
+    explicit SlotInformationDock(QWidget *parent = nullptr);
 
-protected Q_SLOTS:
-    void updateInformation();
+public: Q_SIGNALS:
+    void zoomToWindow(types::TraceTime from, types::TraceTime to);
 
-private:
-    void addInformation();
-    void clearInformation();
+public Q_SLOTS:
+    void setSlot(Slot *slot);
+    void zoomIntoViewPressed();
 
-private:
-    TraceDataProxy *data = nullptr;
+protected:
+    void updateView();
 
+private: // fields
+    Slot *slot_ = nullptr;
+
+private: // widgets
+    QWidget *child = nullptr;
+    QFormLayout *childLayout = nullptr;
+    QLabel *nameField = nullptr;
+    QLabel *rankField = nullptr;
+    TimeUnitLabel *startField = nullptr;
+    TimeUnitLabel *endField = nullptr;
+    TimeUnitLabel *runtimeField = nullptr;
 };
 
 
