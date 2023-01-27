@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/text">
-        <file>COPYING</file>
+    <qresource>
+        <file>res/gpl-3.0.html</file>
+        <file>res/style.qss</file>
     </qresource>
 </RCC>

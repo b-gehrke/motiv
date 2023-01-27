@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include "src/models/filetrace.hpp"
+#include "src/models/ViewSettings.hpp"
 
 
 /**
@@ -21,14 +22,22 @@ public: //constructors
      * @param trace
      * @param parent
      */
-    explicit TraceDataProxy(FileTrace *trace, QObject *parent = nullptr);
-    ~TraceDataProxy();
+    TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent = nullptr);
+    ~TraceDataProxy() override;
 
 
 public: // methods
-    Trace *getSelection() const;
-    types::TraceTime getBegin() const;
-    types::TraceTime getEnd() const;
+    [[nodiscard]] Trace *getSelection() const;
+    [[nodiscard]] types::TraceTime getBegin() const;
+    [[nodiscard]] types::TraceTime getEnd() const;
+    [[nodiscard]] ViewSettings *getSettings() const;
+    [[nodiscard]] Slot *getSelectedSlot() const;
+
+    /**
+     * Returns the runtime of the entire loaded trace
+     * @return
+     */
+    [[nodiscard]] types::TraceTime getTotalRuntime() const;
 
 public: Q_SIGNALS:
     /**
@@ -38,11 +47,20 @@ public: Q_SIGNALS:
     /**
      * Signals the begin was changed
      */
-    void beginChanged();
+    void beginChanged(types::TraceTime newBegin);
     /**
-     * Signal the end was changed
+     * Signals the end was changed
      */
-    void endChanged();
+    void endChanged(types::TraceTime newEnd);
+    /**
+     * Signals a change to the selected slot, nullptr if none
+     */
+    void slotSelected(Slot*);
+
+    /**
+     * Signals the filter was changes
+     */
+    void filterChanged(Filter);
 
 public Q_SLOTS:
     /**
@@ -57,16 +75,40 @@ public Q_SLOTS:
      * @invariant may not be smaller than begin and not larger than runtime
      */
     void setSelectionEnd(types::TraceTime newEnd);
+    /**
+     * Change the start and end time of the selection
+     * @param newBegin
+     * @param newEnd
+     * @invariant @c newBegin may not be larger than end or total runtime
+     * @invariant @c newEnd may not be smaller than begin and not larger than runtime
+     */
+    void setSelection(types::TraceTime newBegin, types::TraceTime newEnd);
+
+    /**
+     * Change the filter
+     * @param filter
+     */
+    void setFilter(Filter filter);
+
+    /**
+     * Change the selected slot
+     * @param newSlot pass nullptr if none selected
+     */
+    void setSlotSelection(Slot *newSlot);
 
 private: // methods
     void updateSelection();
+    void updateSlotSelection();
 
 private: // data
     FileTrace *trace = nullptr;
     Trace *selection = nullptr;
+    ViewSettings *settings = nullptr;
 
     types::TraceTime begin{0};
     types::TraceTime end{0};
+
+    Slot *selectedSlot = nullptr;
 };
 
 

@@ -2,6 +2,7 @@
 #define MOTIV_SUBTRACE_HPP
 
 #include "trace.hpp"
+#include "range.hpp"
 
 
 /**

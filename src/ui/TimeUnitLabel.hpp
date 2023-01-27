@@ -11,6 +11,11 @@ class TimeUnitLabel : public QLabel {
 public:
     explicit TimeUnitLabel(double time, QWidget *parent = nullptr);
 
+    void setTime(double time);
+    [[nodiscard]] double getTime() const;
+
+    void updateView();
+
 private:
     double time;
 };

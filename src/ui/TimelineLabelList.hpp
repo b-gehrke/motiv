@@ -2,13 +2,27 @@
 #define MOTIV_TIMELINELABELLIST_HPP
 
 
-#include <QWidget>
+#include <QListWidget>
 
-class TimelineLabelList : public QWidget {
+#include "TraceDataProxy.hpp"
+
+class TimelineLabelList : public QListWidget {
     Q_OBJECT
 
 public:
-    TimelineLabelList(QWidget *parent = nullptr);
+    TimelineLabelList(TraceDataProxy *data, QWidget *parent = nullptr);
+
+protected:
+    /*
+     * NOTE: we override this function to prevent the items from being clicked/activated.
+     * this is quite hacky and there might be a better solution.
+     */
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+private:
+    TraceDataProxy *data = nullptr;
 };
 
 

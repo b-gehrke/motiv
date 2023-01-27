@@ -43,8 +43,13 @@ void TimeInputField::setUpdateFunction(std::function<void(types::TraceTime)> new
 }
 
 void TimeInputField::setTime(types::TraceTime newTime) {
-    this->time = newTime;
-    if (this->updateFunction) {
-        this->updateFunction(this->time);
+    if(newTime != time) {
+        this->time = newTime;
+        if (this->updateFunction) {
+            this->updateFunction(this->time);
+        }
+
+        double newTextValue = static_cast<double>(time.count()) / this->resolution.multiplier();
+        this->lineEdit->setText(QString::number(newTextValue));
     }
 }

@@ -55,6 +55,7 @@ public:
     [[nodiscard]] CommunicationKind getKind() const override;
     [[nodiscard]] otf2::collective_type getOperation() const;
     [[nodiscard]] uint32_t getRoot() const;
+    [[nodiscard]] const std::vector<Member *> &getMembers() const;
 
     BUILDER(CollectiveCommunicationEvent,
             BUILDER_FIELD(std::vector<Member*>, members)

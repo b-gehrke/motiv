@@ -7,6 +7,7 @@
 #include "TimeInputField.hpp"
 #include "TraceDataProxy.hpp"
 #include "src/readercallbacks.hpp"
+#include "SlotInformationDock.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -22,7 +23,8 @@ public: Q_SIGNALS:
     // TODO
 
 public Q_SLOTS:
-    // TODO
+    void resetZoom();
+    void openFilterPopup();
 
 private: // methods
     void createMenus();
@@ -32,12 +34,13 @@ private: // methods
 
     void promptFile();
     void loadTrace();
+    void loadSettings();
 
 private: // widgets
     QToolBar *topToolbar = nullptr;
     QToolBar *bottomToolbar = nullptr;
 
-    QList<QDockWidget *> *docks = nullptr;
+    SlotInformationDock *slotInformation = nullptr;
 
     TimeInputField *startTimeInputField = nullptr;
     TimeInputField *endTimeInputField = nullptr;
@@ -48,6 +51,8 @@ private: // properties
 
     otf2::reader::reader *reader = nullptr;
     ReaderCallbacks *callbacks = nullptr;
+
+    ViewSettings *settings = nullptr;
 };
 
 

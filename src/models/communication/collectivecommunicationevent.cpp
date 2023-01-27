@@ -43,3 +43,7 @@ uint32_t CollectiveCommunicationEvent::getRoot() const {
     return root;
 }
 
+const std::vector<CollectiveCommunicationEvent::Member *> &CollectiveCommunicationEvent::getMembers() const {
+    return members;
+}
+

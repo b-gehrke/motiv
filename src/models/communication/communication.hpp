@@ -28,17 +28,17 @@ public:
      * Gets the event that initiated the communication.
      * @return Event that initiated the communication
      */
-    [[nodiscard]] CommunicationEvent * getStart() const;
+    [[nodiscard]] const CommunicationEvent * getStart() const;
 
     /**
      * Gets the event that ended the communication
      * @return event that ended the communication
      */
-    [[nodiscard]] CommunicationEvent * getEnd() const;
+    [[nodiscard]] const CommunicationEvent * getEnd() const;
 
 private:
-    CommunicationEvent* start;
-    CommunicationEvent* end;
+    const CommunicationEvent* start;
+    const CommunicationEvent* end;
 };
 
 #endif //MOTIV_COMMUNICATION_HPP

@@ -1,4 +1,5 @@
 #include "filetrace.hpp"
+#include "range.hpp"
 
 FileTrace::FileTrace(std::vector<Slot*> &slotss,
                      std::vector<Communication*> &communications,

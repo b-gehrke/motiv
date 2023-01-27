@@ -18,6 +18,9 @@
 class TimeInputField : public QWidget {
     Q_OBJECT
 
+public Q_SLOTS:
+    void setTime(types::TraceTime newTime);
+
 public: // constructors
     TimeInputField(QString labelText, TimeUnit timeResolution, types::TraceTime initialTime, QWidget *parent = nullptr);
 
@@ -25,7 +28,6 @@ public: // methods
     void setUpdateFunction(std::function<void (types::TraceTime)>);
 
 private: // methods
-    void setTime(types::TraceTime);
 
 private: // widgets
     QLabel *textLabel = nullptr;

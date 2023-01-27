@@ -7,15 +7,18 @@
 #include <QToolBar>
 #include <utility>
 
+#include "License.hpp"
 #include "TimeInputField.hpp"
 #include "Timeline.hpp"
 #include "TimeUnit.hpp"
+#include "FilterPopup.hpp"
 
 
 MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::move(filepath)) {
     if (this->filepath.isEmpty()) {
         this->promptFile();
     }
+    this->loadSettings();
     this->loadTrace();
 
     this->createMenus();
@@ -52,16 +55,21 @@ void MainWindow::createMenus() {
     // TODO S for sieve? what might be more intuitive?
     filterAction->setShortcut(tr("Ctrl+S"));
     // TODO add actual slot
-//    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+    connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     auto searchAction = new QAction(tr("&Find"));
     searchAction->setShortcut(tr("Ctrl+F"));
     // TODO add actual slot
-//    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+    connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
+
+    auto resetZoomAction = new QAction(tr("&Reset zoom"));
+    connect(resetZoomAction, SIGNAL(triggered()), this, SLOT(resetZoom()));
+    resetZoomAction->setShortcut(tr("Ctrl+R"));
 
     auto viewMenu = menuBar->addMenu(tr("&View"));
     viewMenu->addAction(filterAction);
     viewMenu->addAction(searchAction);
+    viewMenu->addAction(resetZoomAction);
 
     /// Window menu
     auto minimizeAction = new QAction(tr("&Minimize"), this);
@@ -73,7 +81,10 @@ void MainWindow::createMenus() {
 
     /// Help menu
     auto aboutAction = new QAction(tr("&View license"), this);
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(openLicenseView()));
+    connect(aboutAction, &QAction::triggered, this, [] {
+        auto license = new License;
+        license->show();
+    });
 
     auto helpMenu = menuBar->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
@@ -94,19 +105,30 @@ void MainWindow::createToolBars() {
     auto containerLayout = new QHBoxLayout(bottomContainerWidget);
     bottomContainerWidget->setLayout(containerLayout);
 
-    this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
-    this->startTimeInputField->setUpdateFunction([this](auto newStartTime){this->data->setSelectionBegin(newStartTime);});
+    // TODO populate with initial time stamps
+    this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0),
+                                                   bottomContainerWidget);
+    this->startTimeInputField->setUpdateFunction(
+        [this](auto newStartTime) { this->data->setSelectionBegin(newStartTime); });
     containerLayout->addWidget(this->startTimeInputField);
     this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
-    this->endTimeInputField->setUpdateFunction([this](auto newEndTime){this->data->setSelectionEnd(newEndTime);});
+    this->endTimeInputField->setUpdateFunction([this](auto newEndTime) { this->data->setSelectionEnd(newEndTime); });
     containerLayout->addWidget(this->endTimeInputField);
+
+    connect(data, SIGNAL(beginChanged(types::TraceTime)), this->startTimeInputField, SLOT(setTime(types::TraceTime)));
+    connect(data, SIGNAL(endChanged(types::TraceTime)), this->endTimeInputField, SLOT(setTime(types::TraceTime)));
 
     this->bottomToolbar->addWidget(bottomContainerWidget);
 
 }
 
 void MainWindow::createDockWidgets() {
-
+    this->slotInformation = new SlotInformationDock();
+    // @formatter:off
+    connect(data, SIGNAL(slotSelected(Slot*)), slotInformation, SLOT(setSlot(Slot*)));
+    connect(slotInformation, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
+    // @formatter:on
+    this->addDockWidget(Qt::RightDockWidgetArea, this->slotInformation);
 }
 
 void MainWindow::createCentralWidget() {
@@ -144,5 +166,24 @@ void MainWindow::loadTrace() {
     auto collectives = callbacks->getCollectiveCommunications();
     auto trace = new FileTrace(slots, communications, collectives, callbacks->duration());
 
-    data = new TraceDataProxy(trace, this);
+    data = new TraceDataProxy(trace, settings, this);
 }
+
+void MainWindow::loadSettings() {
+    settings = new ViewSettings();
+}
+
+void MainWindow::resetZoom() {
+    data->setSelection(types::TraceTime(0), data->getTotalRuntime());
+}
+
+void MainWindow::openFilterPopup() {
+    FilterPopup filterPopup(data->getSettings()->getFilter());
+
+    auto connection = connect(&filterPopup, SIGNAL(filterChanged(Filter)), this->data, SLOT(setFilter(Filter)));
+
+    filterPopup.exec();
+
+    disconnect(connection);
+}
+

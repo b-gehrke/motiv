@@ -2,6 +2,7 @@
 #define MOTIV_FILETRACE_HPP
 
 #include "subtrace.hpp"
+#include "range.hpp"
 
 /**
  * Trace representing the whole trace loaded from trace files
@@ -31,8 +32,14 @@ public:
      */
     [[nodiscard]] std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> getSlots() const override;
 
+    /**
+     * @copydoc Trace::getCommunications()
+     */
     [[nodiscard]] Range<Communication*> getCommunications() override;
 
+    /**
+     * @copydoc Trace::getCollectiveCommunications()
+     */
     [[nodiscard]] Range<CollectiveCommunicationEvent*> getCollectiveCommunications() override;
 
 };
