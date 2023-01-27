@@ -129,6 +129,12 @@ void MainWindow::createDockWidgets() {
     connect(slotInformation, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
     // @formatter:on
     this->addDockWidget(Qt::RightDockWidgetArea, this->slotInformation);
+
+    auto test = new QDockWidget();
+    auto testChild = new QLabel("Test Test Test");
+
+    test->setWidget(testChild);
+    addDockWidget(Qt::RightDockWidgetArea, test);
 }
 
 void MainWindow::createCentralWidget() {

@@ -49,7 +49,7 @@ set(PROJECT_SOURCES
         src/models/Filter.cpp
         src/ui/SlotInformationDock.cpp
         src/ui/SlotIndicator.cpp
-        )
+        src/ui/TraceTreeView.cpp src/ui/TraceTreeView.hpp src/models/TraceTree.cpp src/models/TraceTree.hpp src/ui/TraceTreeModel.cpp src/ui/TraceTreeModel.hpp)
 
 # XXX this would require qt version 6
 #qt_add_resources(${PROJECT_NAME} resources.qrc)
