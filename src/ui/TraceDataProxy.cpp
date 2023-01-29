@@ -73,7 +73,7 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
         Q_EMIT endChanged(end);
     }
 
-    if(oldBegin != begin && oldEnd != end) {
+    if(oldBegin != begin || oldEnd != end) {
         updateSelection();
     }
 }

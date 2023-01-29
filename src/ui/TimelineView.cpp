@@ -188,8 +188,17 @@ void TimelineView::wheelEvent(QWheelEvent *event) {
             newBegin = data->getSelection()->getStartTime() + leftDelta;
             newEnd = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - rightDelta;
         } else {
-            newBegin = data->getSelection()->getStartTime() - deltaDuration;
-            newEnd = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
+            // Calculate new absolute times (might be negative or to large)
+            auto newBeginAbs = data->getSelection()->getStartTime() - deltaDuration;
+            auto newEndAbs =  data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
+
+            // Limit the times to their boundaries (0 for start and end of entire trace for end)
+            auto newBeginBounded = qMax(newBeginAbs, types::TraceTime(0));
+            auto newEndBounded = qMin(newEndAbs, data->getTotalRuntime());
+
+            // If one time exceeds the bounds reject the changes
+            newBegin = qMin(newBeginBounded, newEndBounded - data->getSelection()->getRuntime());
+            newEnd = qMax(newEndBounded, newBeginBounded + data->getSelection()->getRuntime());
         }
 
         data->setSelection(newBegin, newEnd);
