@@ -4,7 +4,7 @@
 
 #include <QObject>
 
-#include "src/models/filetrace.hpp"
+#include "src/models/Filetrace.hpp"
 #include "src/models/ViewSettings.hpp"
 
 

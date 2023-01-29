@@ -3,7 +3,7 @@
 
 #define FILTER_DEFAULT ((SlotKind) (SlotKind::MPI | SlotKind::OpenMP | SlotKind::Plain))
 
-#include "slot.hpp"
+#include "Slot.hpp"
 
 class Filter {
 public: // constructors

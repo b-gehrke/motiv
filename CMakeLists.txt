@@ -17,38 +17,38 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 
 set(PROJECT_SOURCES
         resources.qrc
+        src/ReaderCallbacks.cpp
         src/main.cpp
-        src/readercallbacks.cpp
-        src/utils.cpp
-        src/models/slot.cpp
-        src/models/subtrace.cpp
-        src/models/filetrace.cpp
-        src/models/uitrace.cpp
-        src/models/communication/blockingp2pcommunicationevent.cpp
-        src/models/communication/nonblockingp2pcommunicationevent.cpp
-        src/models/communication/blockingsendevent.cpp
-        src/models/communication/blockingreceiveevent.cpp
-        src/models/communication/communication.cpp
-        src/models/communication/nonblockingsendevent.cpp
-        src/models/communication/nonblockingreceiveevent.cpp
-        src/models/communication/requestcancelledevent.cpp
-        src/models/communication/collectivecommunicationevent.cpp
-        src/ui/CommunicationIndicator.cpp
-        src/ui/MainWindow.cpp
-        src/ui/TimeInputField.cpp
-        src/ui/TraceDataProxy.cpp
-        src/ui/Timeline.cpp
-        src/ui/TimelineHeader.cpp
-        src/ui/TimelineLabelList.cpp
-        src/ui/TimelineView.cpp
-        src/ui/TimeUnit.cpp
-        src/ui/TimeUnitLabel.cpp
-        src/ui/ScrollSynchronizer.cpp
-        src/models/ViewSettings.cpp
-        src/ui/FilterPopup.cpp
+        src/models/Filetrace.cpp
         src/models/Filter.cpp
-        src/ui/SlotInformationDock.cpp
-        src/ui/SlotIndicator.cpp
+        src/models/Slot.cpp
+        src/models/SubTrace.cpp
+        src/models/UITrace.cpp
+        src/models/ViewSettings.cpp
+        src/models/communication/BlockingP2PCommunicationEvent.cpp
+        src/models/communication/BlockingReceivEevent.cpp
+        src/models/communication/BlockingSendEvent.cpp
+        src/models/communication/CollectiveCommunicationEvent.cpp
+        src/models/communication/Communication.cpp
+        src/models/communication/NonBlockingP2PCommunicationEvent.cpp
+        src/models/communication/NonBlockingReceiveEvent.cpp
+        src/models/communication/NonBlockingSendEvent.cpp
+        src/models/communication/RequestCancelledEvent.cpp
+        src/ui/ScrollSynchronizer.cpp
+        src/ui/TimeUnit.cpp
+        src/ui/TraceDataProxy.cpp
+        src/ui/views/CommunicationIndicator.cpp
+        src/ui/views/SlotIndicator.cpp
+        src/ui/views/TimelineView.cpp
+        src/ui/widgets/SlotInformationDock.cpp
+        src/ui/widgets/TimeInputField.cpp
+        src/ui/widgets/TimeUnitLabel.cpp
+        src/ui/widgets/Timeline.cpp
+        src/ui/widgets/TimelineHeader.cpp
+        src/ui/widgets/TimelineLabelList.cpp
+        src/ui/windows/FilterPopup.cpp
+        src/ui/windows/MainWindow.cpp
+        src/utils.cpp
         )
 
 # XXX this would require qt version 6

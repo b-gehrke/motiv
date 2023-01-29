@@ -1,7 +1,7 @@
 #ifndef MOTIV_VIEWSETTINGS_HPP
 #define MOTIV_VIEWSETTINGS_HPP
 
-#include "src/models/slot.hpp"
+#include "src/models/Slot.hpp"
 #include "Filter.hpp"
 
 #define SETTINGS_DEFAULT_ZOOM_QUOTIENT 25

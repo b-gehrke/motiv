@@ -1,5 +1,5 @@
 #include "TraceDataProxy.hpp"
-#include "src/models/uitrace.hpp"
+#include "src/models/UITrace.hpp"
 
 TraceDataProxy::TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent)
     : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()),

@@ -1,4 +1,4 @@
-#include "src/ui/MainWindow.hpp"
+#include "src/ui/windows/MainWindow.hpp"
 
 #include <QApplication>
 #include <QCommandLineParser>
