@@ -19,6 +19,7 @@ public:
 
         this->setReadOnly(true);
         this->setHtml(licenseText);
+        this->setWindowTitle(tr("License"));
     }
 };
 

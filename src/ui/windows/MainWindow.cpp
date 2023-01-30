@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "src/ui/widgets/License.hpp"
+#include "src/ui/widgets/Help.hpp"
 #include "src/ui/widgets/TimeInputField.hpp"
 #include "src/ui/widgets/Timeline.hpp"
 #include "src/ui/TimeUnit.hpp"
@@ -85,9 +86,16 @@ void MainWindow::createMenus() {
         auto license = new License;
         license->show();
     });
+    auto showHelpAction = new QAction(tr("&Show help"), this);
+    showHelpAction->setShortcut(tr("F1"));
+    connect(showHelpAction, &QAction::triggered, this, [] {
+        auto help = new Help;
+        help->show();
+    });
 
     auto helpMenu = menuBar->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
+    helpMenu->addAction(showHelpAction);
 }
 
 void MainWindow::createToolBars() {
