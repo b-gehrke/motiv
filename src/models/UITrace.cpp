@@ -92,3 +92,7 @@ UITrace::aggregateSlots(otf2::chrono::duration minDuration, const Slot *interval
     return new Slot(intervalStarter->start, intervalStarter->start + minDuration, longestSlot->location,
                     longestSlot->region);
 }
+
+UITrace *UITrace::forResolution(Trace *trace, int width) {
+    return forResolution(trace, trace->getRuntime() / width);
+}

@@ -15,8 +15,10 @@ TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsVie
     this->setScene(scene);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    connect(this->data, SIGNAL(selectionChanged()), this, SLOT(updateView()));
+    // @formatter:off
+    connect(this->data, SIGNAL(selectionChanged(types::TraceTime,types::TraceTime)), this, SLOT(updateView()));
     connect(this->data, SIGNAL(filterChanged(Filter)), this, SLOT(updateView()));
+    // @formatter:on
 }
 
 
@@ -190,7 +192,7 @@ void TimelineView::wheelEvent(QWheelEvent *event) {
         } else {
             // Calculate new absolute times (might be negative or to large)
             auto newBeginAbs = data->getSelection()->getStartTime() - deltaDuration;
-            auto newEndAbs =  data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
+            auto newEndAbs = data->getSelection()->getStartTime() + data->getSelection()->getRuntime() - deltaDuration;
 
             // Limit the times to their boundaries (0 for start and end of entire trace for end)
             auto newBeginBounded = qMax(newBeginAbs, types::TraceTime(0));

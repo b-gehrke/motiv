@@ -32,6 +32,7 @@ public: // methods
     [[nodiscard]] types::TraceTime getEnd() const;
     [[nodiscard]] ViewSettings *getSettings() const;
     [[nodiscard]] Slot *getSelectedSlot() const;
+    [[nodiscard]] Trace *getFullTrace() const;
 
     /**
      * Returns the runtime of the entire loaded trace
@@ -43,7 +44,7 @@ public: Q_SIGNALS:
     /**
      * Signals the selection has been changed
      */
-    void selectionChanged();
+    void selectionChanged(types::TraceTime newBegin, types::TraceTime newEnd);
     /**
      * Signals the begin was changed
      */

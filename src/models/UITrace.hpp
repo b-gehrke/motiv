@@ -10,7 +10,7 @@
 /**
  * Defines the minimum size in pixels for a slot
  */
-#define MIN_SLOT_SIZE_PX 2
+#define MIN_SLOT_SIZE_PX 5
 
 /**
  * Trace facilitating a subtrace optimized for rendering
@@ -47,6 +47,18 @@ public:
      * @return the UITrace wrapping the original trace
      */
     static UITrace *forResolution(Trace *trace, otf2::chrono::duration timePerPixel);
+
+
+    /**
+     * Wraps a trace into a UITrace optimized for rendering performance.
+     *
+     * @seealso UITrace
+     *
+     * @param trace original trace to be optimized
+     * @param width the width in px for which the trace should be optimized
+     * @return the UITrace wrapping the original trace
+     */
+    static UITrace *forResolution(Trace *trace, int width);
 
     Trace *subtrace(otf2::chrono::duration from, otf2::chrono::duration to) override;
 

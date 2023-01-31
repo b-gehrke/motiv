@@ -10,7 +10,9 @@ TimelineHeader::TimelineHeader(TraceDataProxy *data, QWidget *parent) : QWidget(
     this->setLayout(new QHBoxLayout(this));
     this->updateView();
 
-    connect(this->data, SIGNAL(selectionChanged()), this, SLOT(updateView()));
+    // @formatter:off
+    connect(this->data, SIGNAL(selectionChanged(types::TraceTime,types::TraceTime)), this, SLOT(updateView()));
+    // @formatter:on
 }
 
 void TimelineHeader::updateView() {

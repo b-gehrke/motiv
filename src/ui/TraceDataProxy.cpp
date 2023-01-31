@@ -49,7 +49,7 @@ void TraceDataProxy::updateSelection() {
     auto subtrace = trace->subtrace(begin, end);
     selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
 //    selection = subtrace;
-    Q_EMIT selectionChanged();
+    Q_EMIT selectionChanged(begin, end);
 }
 
 void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime newEnd) {
@@ -87,4 +87,8 @@ void TraceDataProxy::setFilter(Filter filter) {
     settings->setFilter(filter);
 
     Q_EMIT filterChanged(filter);
+}
+
+Trace *TraceDataProxy::getFullTrace() const {
+    return trace;
 }

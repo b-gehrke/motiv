@@ -13,6 +13,7 @@
 #include "src/ui/widgets/Timeline.hpp"
 #include "src/ui/TimeUnit.hpp"
 #include "src/ui/windows/FilterPopup.hpp"
+#include "src/ui/widgets/TraceOverviewDock.hpp"
 
 
 MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::move(filepath)) {
@@ -137,6 +138,9 @@ void MainWindow::createDockWidgets() {
     connect(slotInformation, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
     // @formatter:on
     this->addDockWidget(Qt::RightDockWidgetArea, this->slotInformation);
+
+    this->traceOverview = new TraceOverviewDock(this->data);
+    this->addDockWidget(Qt::TopDockWidgetArea, this->traceOverview);
 }
 
 void MainWindow::createCentralWidget() {

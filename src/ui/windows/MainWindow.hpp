@@ -8,6 +8,7 @@
 #include "src/ui/TraceDataProxy.hpp"
 #include "src/ReaderCallbacks.hpp"
 #include "src/ui/widgets/SlotInformationDock.hpp"
+#include "src/ui/widgets/TraceOverviewDock.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -53,6 +54,7 @@ private: // properties
     ReaderCallbacks *callbacks = nullptr;
 
     ViewSettings *settings = nullptr;
+    TraceOverviewDock *traceOverview = nullptr;
 };
 
 
