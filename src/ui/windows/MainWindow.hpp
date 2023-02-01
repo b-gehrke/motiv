@@ -26,6 +26,7 @@ public: Q_SIGNALS:
 public Q_SLOTS:
     void resetZoom();
     void openFilterPopup();
+    void openNewTrace();
 
 private: // methods
     void createMenus();

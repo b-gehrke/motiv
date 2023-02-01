@@ -1,9 +1,10 @@
-#include "src/ui/windows/MainWindow.hpp"
-
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QFile>
 #include <QIODeviceBase>
+
+#include "src/ui/windows/MainWindow.hpp"
+#include "src/ui/windows/RecentFilesDialog.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -38,8 +39,11 @@ int main(int argc, char *argv[])
         filepath = positionalArguments.first();
     }
 
-    MainWindow mainWindow(filepath);
-    mainWindow.show();
+    RecentFilesDialog recentFilesDialog(&filepath);
+    if(!filepath.isEmpty() || recentFilesDialog.exec() == QDialog::Accepted) {
+        auto mainWindow = new MainWindow(filepath);
+        mainWindow->show();
+    }
 
     return app.exec();
 }

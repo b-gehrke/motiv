@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         resources.qrc
         src/ReaderCallbacks.cpp
         src/main.cpp
+        src/models/AppSettings.cpp
         src/models/Filetrace.cpp
         src/models/Filter.cpp
         src/models/Slot.cpp
@@ -50,6 +51,8 @@ set(PROJECT_SOURCES
         src/ui/widgets/TraceOverviewDock.cpp
         src/ui/windows/FilterPopup.cpp
         src/ui/windows/MainWindow.cpp
+        src/ui/windows/Otf2FileDialog.cpp
+        src/ui/windows/RecentFilesDialog.cpp
         src/utils.cpp
         )
 
