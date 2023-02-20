@@ -43,6 +43,9 @@ int main(int argc, char *argv[])
     if(!filepath.isEmpty() || recentFilesDialog.exec() == QDialog::Accepted) {
         auto mainWindow = new MainWindow(filepath);
         mainWindow->show();
+    } else {
+        app.quit();
+        return EXIT_SUCCESS;
     }
 
     return app.exec();

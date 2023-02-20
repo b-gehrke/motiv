@@ -24,9 +24,7 @@ RecentFilesDialog::RecentFilesDialog(QString *dest) : dest(dest) {
 
     QObject::connect(pushButton, &QPushButton::clicked, fileDialog, &Otf2FileDialog::exec);
     QObject::connect(fileDialog, &QFileDialog::fileSelected,  [this](const QString &selectedFile){
-        if (selectedFile.isEmpty()) {
-            this->reject();
-        } else {
+        if (!selectedFile.isEmpty()) {
             AppSettings::getInstance().recentlyOpenedFilesPush(selectedFile);
             *this->dest = selectedFile;
             this->accept();
