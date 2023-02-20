@@ -42,6 +42,8 @@ private:
     Trace *uiTrace = nullptr;
     QPoint rubberBandOrigin{};
     QRubberBand *rubberBand = nullptr;
+    types::TraceTime selectionFrom;
+    types::TraceTime selectionTo;
 };
 
 

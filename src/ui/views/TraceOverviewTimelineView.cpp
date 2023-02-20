@@ -14,6 +14,9 @@ TraceOverviewTimelineView::TraceOverviewTimelineView(Trace *fullTrace, QWidget *
     this->setStyleSheet("background: transparent");
     this->setScene(scene);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    selectionFrom = types::TraceTime(0);
+    selectionTo = fullTrace->getRuntime();
 }
 
 
@@ -76,6 +79,8 @@ void TraceOverviewTimelineView::populateScene(QGraphicsScene *scene) {
     selectionRectRight->setZValue(layers::Z_LAYER_SELECTION);
     selectionRectLeft = scene->addRect(0,0, 0, top, selectionPen, selectionBrush);
     selectionRectLeft->setZValue(layers::Z_LAYER_SELECTION);
+
+    setSelectionWindow(selectionFrom, selectionTo);
 }
 
 
@@ -98,6 +103,8 @@ void TraceOverviewTimelineView::updateView() {
 }
 
 void TraceOverviewTimelineView::setSelectionWindow(types::TraceTime from, types::TraceTime to) {
+    selectionFrom = from;
+    selectionTo = to;
     auto durationR = static_cast<qreal>(uiTrace->getRuntime().count());
     auto fromR = static_cast<qreal>(from.count());
     auto toR = static_cast<qreal>(to.count());
