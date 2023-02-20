@@ -13,6 +13,11 @@
 #define MIN_SLOT_SIZE_PX 5
 
 /**
+ * Defines the minimum size in pixels for a collective communication event
+ */
+#define MIN_COLLECTIVE_EVENT_SIZE_PX 5
+
+/**
  * Trace facilitating a subtrace optimized for rendering
  *
  * Slots that would be rendered smaller than `MIN_SLOT_SIZE_PX` pixels are grouped together to a single slot.
@@ -75,8 +80,18 @@ private:
      * @param stats All other slots in this interval
      * @return A new slot summarizing all slots in the interval
      */
-    static Slot *
-    aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats);
+    static Slot * aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats);
+
+    /**
+     * Aggregates collective communications in an interval into a new summarized collective communication event.
+     *
+     * Creates a new collective communication event representing all events in @c stats
+     * @param minDuration Minimum duration for the new event
+     * @param intervalStarter First event in the interval
+     * @param stats All other events in this interval
+     * @return A new collective communication event summarizing all events in the interval
+     */
+    static CollectiveCommunicationEvent * aggregateCollectiveCommunications(otf2::chrono::duration minDuration, const CollectiveCommunicationEvent *intervalStarter, std::vector<CollectiveCommunicationEvent *> &stats);
 };
 
 #endif //MOTIV_UITRACE_HPP

@@ -75,7 +75,39 @@ UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixe
         groupedSlots.insert({locationGroup, newSlots});
     }
 
-    return new UITrace(groupedSlots, trace->getCommunications(), trace->getCollectiveCommunications(),
+    minDuration = timePerPixel * MIN_COLLECTIVE_EVENT_SIZE_PX;
+
+    std::vector<CollectiveCommunicationEvent *> newCollectiveCommunications;
+    CollectiveCommunicationEvent *intervalStarter = nullptr;
+    std::vector<CollectiveCommunicationEvent *> interval;
+    for (const auto &collectiveCommunication: trace->getCollectiveCommunications()) {
+
+
+        if (intervalStarter != nullptr &&
+            (collectiveCommunication->getStartTime() > intervalStarter->getStartTime() + minDuration)) {
+            CollectiveCommunicationEvent *newEvent = aggregateCollectiveCommunications(minDuration, intervalStarter, interval);
+            intervalStarter = nullptr;
+
+            newCollectiveCommunications.push_back(newEvent);
+
+            interval.clear();
+        }
+
+
+
+        if (collectiveCommunication->getDuration() < minDuration) {
+            if (intervalStarter == nullptr) {
+                intervalStarter = collectiveCommunication;
+            }
+
+            interval.push_back(collectiveCommunication);
+        } else {
+            newCollectiveCommunications.push_back(collectiveCommunication);
+        }
+
+    }
+
+    return new UITrace(groupedSlots, trace->getCommunications(), Range(newCollectiveCommunications),
                        trace->getRuntime(), trace->getStartTime(), timePerPixel);
 }
 
@@ -83,16 +115,52 @@ Trace *UITrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to)
     return forResolution(SubTrace::subtrace(from, to), timePerPx_);
 }
 
-Slot *
-UITrace::aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats) {
-    Slot *longestSlot = *std::max_element(stats.begin(), stats.end(), [](Slot *lhs, Slot *rhs) {
+
+template<class T>
+requires std::is_base_of_v<TimedElement, T>
+static T *longest(std::vector<T *> ls) {
+    return *std::max_element(ls.begin(), ls.end(), [](T *lhs, T *rhs) {
         return lhs->getDuration() > rhs->getDuration();
     });
+}
 
-    return new Slot(intervalStarter->startTime, intervalStarter->startTime + minDuration, longestSlot->location,
-                    longestSlot->region);
+template<class T>
+requires std::is_base_of_v<TimedElement, T>
+static T *last(std::vector<T *> ls) {
+    return *std::max_element(ls.begin(), ls.end(), [](T *lhs, T *rhs) {
+        return lhs->getEndTime() < rhs->getEndTime();
+    });
+}
+
+
+Slot *UITrace::aggregateSlots(otf2::chrono::duration minDuration,
+                              const Slot *intervalStarter,
+                              std::vector<Slot *> &stats) {
+    auto longestSlot = longest(stats);
+    auto intervalEnder = last(stats);
+
+    return new Slot(intervalStarter->startTime, intervalEnder->endTime, longestSlot->location, longestSlot->region);
 }
 
 UITrace *UITrace::forResolution(Trace *trace, int width) {
     return forResolution(trace, trace->getRuntime() / width);
+}
+
+CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(otf2::chrono::duration minDuration,
+                                                                         const CollectiveCommunicationEvent *intervalStarter,
+                                                                         std::vector<CollectiveCommunicationEvent *> &stats) {
+    auto longestEvent = longest(stats);
+    auto intervalEnder = last(stats);
+
+    auto singleMember = new CollectiveCommunicationEvent::Member(intervalStarter->getStartTime(),
+                                                                    intervalEnder->getEndTime(),
+                                                                    longestEvent->getLocation());
+
+    std::vector<CollectiveCommunicationEvent::Member*> singletonMembers;
+    singletonMembers.push_back(singleMember);
+
+    return new CollectiveCommunicationEvent(
+        singletonMembers, longestEvent->getLocation(), longestEvent->getCommunicator(),
+        longestEvent->getOperation(), longestEvent->getRoot()
+    );
 }
