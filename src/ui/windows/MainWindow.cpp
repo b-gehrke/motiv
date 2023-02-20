@@ -6,6 +6,8 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <utility>
+#include <QCoreApplication>
+#include <QProcess>
 
 #include "src/models/AppSettings.hpp"
 #include "src/ui/widgets/License.hpp"
@@ -53,9 +55,7 @@ void MainWindow::createMenus() {
             auto recentAction = new QAction(recent, openRecentMenu);
             openRecentMenu->addAction(recentAction);
             connect(recentAction, &QAction::triggered, [&,this] {
-                // TODO memory is not valid anymore on lambda call
-               this->setFilepath(recent);
-               this->loadTrace();
+               this->openNewWindow(recent);
             });
         }
         openRecentMenu->addSeparator();
@@ -175,7 +175,7 @@ void MainWindow::setFilepath(QString newFilepath) {
     this->filepath = std::move(newFilepath);
 }
 
-void MainWindow::promptFile() {
+QString MainWindow::promptFile() {
     auto newFilePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
                                                     QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
 
@@ -183,9 +183,9 @@ void MainWindow::promptFile() {
     if (newFilePath.isEmpty()) {
         auto errorMsg = new QErrorMessage(nullptr);
         errorMsg->showMessage("The chosen file is invalid!");
-    } else {
-        this->filepath = newFilePath;
     }
+
+    return newFilePath;
 }
 
 void MainWindow::loadTrace() {
@@ -223,7 +223,13 @@ void MainWindow::openFilterPopup() {
 }
 
 void MainWindow::openNewTrace() {
-    this->promptFile();
-    this->loadTrace();
+    auto path = this->promptFile();
+    this->openNewWindow(path);
+}
+
+void MainWindow::openNewWindow(QString path) {
+    QProcess::startDetached(
+            QFileInfo(QCoreApplication::applicationFilePath()).absoluteFilePath(),
+            QStringList(path));
 }
 
