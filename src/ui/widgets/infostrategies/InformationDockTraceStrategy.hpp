@@ -6,7 +6,8 @@
 #include "src/models/Trace.hpp"
 
 class InformationDockTraceStrategy : public InformationDockElementBaseStrategy<Trace> {
-
+public:
+    std::string title() override;
 };
 
 

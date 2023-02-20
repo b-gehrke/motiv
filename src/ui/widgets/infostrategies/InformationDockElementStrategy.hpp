@@ -9,6 +9,8 @@ class InformationDockElementStrategy {
 public:
     virtual void setup(QFormLayout* layout) { };
     virtual bool update(QFormLayout* layout, TimedElement* t) { return false; };
+
+    virtual std::string title() { return ""; }
 };
 
 #endif //MOTIV_INFORMATIONDOCKELEMENTSTRATEGY_HPP

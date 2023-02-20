@@ -36,3 +36,7 @@ void InformationDockCommunicationStrategy::updateView(QFormLayout *layout, Commu
     
     InformationDockElementBaseStrategy::updateView(layout, element);
 }
+
+std::string InformationDockCommunicationStrategy::title() {
+    return tr("P2P communication").toStdString();
+}

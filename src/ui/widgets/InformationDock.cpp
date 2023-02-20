@@ -13,18 +13,14 @@ InformationDock::InformationDock(QWidget *parent) : QDockWidget(parent) {
 void InformationDock::updateView() {
     if(!element_) return;
 
-    QWidget* newWidget = nullptr;
     for (auto &item: strategies_) {
         auto widget = item.first;
         auto strategy = item.second;
         if(strategy->update(static_cast<QFormLayout *>(widget->layout()), element_)) {
-            newWidget = widget;
+            setWidget(widget);
+            setWindowTitle("Details - " + QString::fromStdString(strategy->title()));
             break;
         }
-    }
-
-    if(newWidget) {
-        setWidget(newWidget);
     }
 }
 

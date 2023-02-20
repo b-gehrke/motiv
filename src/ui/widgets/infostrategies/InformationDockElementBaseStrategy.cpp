@@ -38,6 +38,11 @@ InformationDockElementBaseStrategy<T>::update(QFormLayout *layout, TimedElement 
     return t;
 }
 
+template<class T>
+requires std::is_base_of_v<TimedElement, T>std::string InformationDockElementBaseStrategy<T>::title() {
+    return typeid(T).name();
+}
+
 template class InformationDockElementBaseStrategy<Slot>;
 template class InformationDockElementBaseStrategy<Trace>;
 template class InformationDockElementBaseStrategy<Communication>;

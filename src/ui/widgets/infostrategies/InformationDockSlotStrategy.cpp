@@ -21,3 +21,7 @@ void InformationDockSlotStrategy::setup(QFormLayout *layout) {
 
     InformationDockElementBaseStrategy<Slot>::setup(layout);
 }
+
+std::string InformationDockSlotStrategy::title() {
+    return tr("Region (Function)").toStdString();
+}

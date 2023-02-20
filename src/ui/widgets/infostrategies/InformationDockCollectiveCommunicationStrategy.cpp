@@ -48,3 +48,7 @@ void InformationDockCollectiveCommunicationStrategy::updateView(QFormLayout *lay
 
     InformationDockElementBaseStrategy::updateView(layout, element);
 }
+
+std::string InformationDockCollectiveCommunicationStrategy::title() {
+    return tr("Collective communication").toStdString();
+}

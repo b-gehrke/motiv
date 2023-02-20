@@ -10,6 +10,9 @@ public:
     void setup(QFormLayout *layout) override;
 
     void updateView(QFormLayout *layout, Communication *element) override;
+
+    std::string title() override;
+
 private:
     QLabel* communicatorField = nullptr;
     QLabel *startKindField = nullptr;

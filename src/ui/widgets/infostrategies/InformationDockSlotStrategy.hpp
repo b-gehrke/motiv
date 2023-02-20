@@ -11,6 +11,8 @@ public:
 
     void updateView(QFormLayout *layout, Slot *element) override;
 
+    std::string title() override;
+
 private:
     QLabel *nameField = nullptr;
     QLabel *rankField = nullptr;

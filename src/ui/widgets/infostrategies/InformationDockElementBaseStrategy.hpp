@@ -20,6 +20,8 @@ public:
 
     bool update(QFormLayout *layout, TimedElement *element) override;
 
+    std::string title() override;
+
 protected:
     TimeUnitLabel *startField = nullptr;
     TimeUnitLabel *endField = nullptr;
