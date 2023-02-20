@@ -28,10 +28,10 @@ MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::m
     this->loadSettings();
     this->loadTrace();
 
-    this->createMenus();
     this->createToolBars();
     this->createDockWidgets();
     this->createCentralWidget();
+    this->createMenus();
 }
 
 MainWindow::~MainWindow() {
@@ -73,10 +73,26 @@ void MainWindow::createMenus() {
     connect(resetZoomAction, SIGNAL(triggered()), this, SLOT(resetZoom()));
     resetZoomAction->setShortcut(tr("Ctrl+R"));
 
+    auto widgetMenu = new QMenu(tr("Tool Windows"));
+
+    auto showOverviewAction = new QAction(tr("Show &trace overview"));
+    showOverviewAction->setCheckable(true);
+    connect(showOverviewAction, SIGNAL(toggled(bool)), this->traceOverview, SLOT(setVisible(bool)));
+    connect(this->traceOverview, SIGNAL(visibilityChanged(bool)), showOverviewAction, SLOT(setChecked(bool)));
+
+    auto showDetailsAction = new QAction(tr("Show &detail view"));
+    showDetailsAction->setCheckable(true);
+    connect(showDetailsAction, SIGNAL(toggled(bool)), this->information, SLOT(setVisible(bool)));
+    connect(this->information, SIGNAL(visibilityChanged(bool)), showDetailsAction, SLOT(setChecked(bool)));
+
+    widgetMenu->addAction(showOverviewAction);
+    widgetMenu->addAction(showDetailsAction);
+
     auto viewMenu = menuBar->addMenu(tr("&View"));
     viewMenu->addAction(filterAction);
     viewMenu->addAction(searchAction);
     viewMenu->addAction(resetZoomAction);
+    viewMenu->addMenu(widgetMenu);
 
     /// Window menu
     auto minimizeAction = new QAction(tr("&Minimize"), this);
