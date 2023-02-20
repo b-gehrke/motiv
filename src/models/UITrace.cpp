@@ -33,7 +33,7 @@ UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixe
 
 
         for (const auto &slot: slots) {
-            if (intervalStarter != nullptr && (slot->start > intervalStarter->start + minDuration)) {
+            if (intervalStarter != nullptr && (slot->startTime > intervalStarter->startTime + minDuration)) {
                 Slot *newSlot;
                 // Order of importance if overlapping, the slot with the most important kind is shown.
                 // 1. MPI events, 2. OpenMP events 3. all other events
@@ -89,7 +89,7 @@ UITrace::aggregateSlots(otf2::chrono::duration minDuration, const Slot *interval
         return lhs->getDuration() > rhs->getDuration();
     });
 
-    return new Slot(intervalStarter->start, intervalStarter->start + minDuration, longestSlot->location,
+    return new Slot(intervalStarter->startTime, intervalStarter->startTime + minDuration, longestSlot->location,
                     longestSlot->region);
 }
 

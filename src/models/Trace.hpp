@@ -8,6 +8,7 @@
 #include "src/models/communication/Communication.hpp"
 #include "src/models/communication/CollectiveCommunicationEvent.hpp"
 #include "Range.hpp"
+#include "TimedElement.hpp"
 
 
 struct LocationGroupCmp {
@@ -16,7 +17,7 @@ struct LocationGroupCmp {
     }
 };
 
-class Trace {
+class Trace : public TimedElement {
 public:
     /**
      * Gets the slots
@@ -25,11 +26,9 @@ public:
     [[nodiscard]] virtual std::map<otf2::definition::location_group *, Range<Slot *>, LocationGroupCmp>
     getSlots() const = 0;
 
-[[nodiscard]] virtual Range<Communication *> getCommunications() = 0;
+    [[nodiscard]] virtual Range<Communication *> getCommunications() = 0;
 
     [[nodiscard]] virtual Range<CollectiveCommunicationEvent *> getCollectiveCommunications() = 0;
-
-    [[nodiscard]] virtual otf2::chrono::duration getStartTime() const = 0;
 
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;
 

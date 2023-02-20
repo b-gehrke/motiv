@@ -7,8 +7,8 @@
 #include "src/ui/widgets/TimeInputField.hpp"
 #include "src/ui/TraceDataProxy.hpp"
 #include "src/ReaderCallbacks.hpp"
-#include "src/ui/widgets/SlotInformationDock.hpp"
 #include "src/ui/widgets/TraceOverviewDock.hpp"
+#include "src/ui/widgets/InformationDock.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -41,7 +41,7 @@ private: // widgets
     QToolBar *topToolbar = nullptr;
     QToolBar *bottomToolbar = nullptr;
 
-    SlotInformationDock *slotInformation = nullptr;
+    InformationDock *information = nullptr;
 
     TimeInputField *startTimeInputField = nullptr;
     TimeInputField *endTimeInputField = nullptr;

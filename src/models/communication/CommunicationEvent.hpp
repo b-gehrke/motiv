@@ -5,12 +5,13 @@
 #include "CommunicationKind.hpp"
 #include "src/types.h"
 #include "src/models/Builder.hpp"
+#include "src/models/TimedElement.hpp"
 
 /**
  * Abstract class for generic Communication events. All communications handled by this application have a start and an
  * end event. See `Communication` for more details.
  */
-class CommunicationEvent {
+class CommunicationEvent : public TimedElement {
 public:
     /**
      * Gets the location of the recorded event.
@@ -22,13 +23,13 @@ public:
      * Gets the start time of the recorded event. The time is relative to the star time of the program.
      * @return Start time of the recorded event
      */
-    [[nodiscard]] virtual otf2::chrono::duration getStart() const = 0;
+    [[nodiscard]] otf2::chrono::duration getStartTime() const override = 0;
 
     /**
      * Gets the end time of the recorded even. The time is relative to the star time of the program.
      * @return End time of the recorded event
      */
-    [[nodiscard]] virtual otf2::chrono::duration getEnd() const = 0;
+    [[nodiscard]] otf2::chrono::duration getEndTime() const override = 0;
 
     /**
      * Gets the communicator the recorded event took place in.

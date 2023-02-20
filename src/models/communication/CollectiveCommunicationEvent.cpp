@@ -7,7 +7,7 @@ CollectiveCommunicationEvent::CollectiveCommunicationEvent(std::vector<Member *>
                                                            types::communicator *communicator,
                                                            otf2::collective_type operation, uint32_t root) :
     members(std::move(members)), location(location), communicator(communicator), operation(operation),
-    root(root), start(0), end(0) {
+    root(root) {
     auto starting = std::min_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->start < rhs->start;});
     auto ending = std::max_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->end < rhs->end;});
 
@@ -19,11 +19,11 @@ otf2::definition::location * CollectiveCommunicationEvent::getLocation() const {
     return location;
 }
 
-otf2::chrono::duration CollectiveCommunicationEvent::getStart() const {
+otf2::chrono::duration CollectiveCommunicationEvent::getStartTime() const {
     return start;
 }
 
-otf2::chrono::duration CollectiveCommunicationEvent::getEnd() const {
+otf2::chrono::duration CollectiveCommunicationEvent::getEndTime() const {
     return end;
 }
 

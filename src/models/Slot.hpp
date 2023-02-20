@@ -3,6 +3,8 @@
 
 #include <otf2xx/otf2.hpp>
 #include "Builder.hpp"
+#include "src/types.h"
+#include "TimedElement.hpp"
 
 enum SlotKind {
     None    = 0b0000,
@@ -11,7 +13,7 @@ enum SlotKind {
     Plain   = 0b0100
 };
 
-class Slot {
+class Slot : public TimedElement {
 public:
     Slot(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
          otf2::definition::location *location, otf2::definition::region *region);
@@ -19,12 +21,12 @@ public:
     /**
      * Start time of the slot relative to the trace start time
      */
-    otf2::chrono::duration start;
+    otf2::chrono::duration startTime;
 
     /**
      * End time of the slot relative to the trace start time
      */
-    otf2::chrono::duration end;
+    types::TraceTime endTime;
 
     /**
      * Location of the slot (thread) containing the location group (MPI rank)
@@ -42,11 +44,9 @@ public:
      */
     [[nodiscard]] SlotKind getKind() const;
 
-    /**
-     * Return the duration of the slot
-     * @return duration of the slot
-     */
-    [[nodiscard]] otf2::chrono::duration getDuration() const;
+    [[nodiscard]] types::TraceTime getStartTime() const override;
+    [[nodiscard]] types::TraceTime getEndTime() const override;
+
 
     BUILDER(Slot,
             BUILDER_FIELD(otf2::chrono::duration, start)

@@ -13,11 +13,11 @@ otf2::definition::location * NonBlockingP2PCommunicationEvent::getLocation() con
     return location;
 }
 
-otf2::chrono::duration NonBlockingP2PCommunicationEvent::getStart() const {
+otf2::chrono::duration NonBlockingP2PCommunicationEvent::getStartTime() const {
     return start;
 }
 
-otf2::chrono::duration NonBlockingP2PCommunicationEvent::getEnd() const {
+otf2::chrono::duration NonBlockingP2PCommunicationEvent::getEndTime() const {
     return end;
 }
 

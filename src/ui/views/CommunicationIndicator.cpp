@@ -3,11 +3,13 @@
 #include "src/ui/Constants.hpp"
 
 
-CommunicationIndicator::CommunicationIndicator(qreal fromX, qreal fromY, qreal toX, qreal toY, qreal headLength) : CommunicationIndicator(QPointF(fromX, fromY), QPointF(toX, toY), headLength) {
+CommunicationIndicator::CommunicationIndicator(Communication *communication, qreal fromX, qreal fromY, qreal toX, qreal toY, qreal headLength)
+    : CommunicationIndicator(communication, QPointF(fromX, fromY), QPointF(toX, toY), headLength) {
 
 }
 
-CommunicationIndicator::CommunicationIndicator(QPointF from, QPointF to, qreal headLength) : QGraphicsPolygonItem() {
+CommunicationIndicator::CommunicationIndicator(Communication *communication, QPointF from, QPointF to, qreal headLength)
+    : GenericIndicator<Communication, QGraphicsPolygonItem>(communication) {
     QPolygonF arrow;
     QLineF line(to, from);
 
@@ -20,27 +22,4 @@ CommunicationIndicator::CommunicationIndicator(QPointF from, QPointF to, qreal h
 
     arrow << from << to << headFirst.p2() << to << headSecond.p2() << to;
     setPolygon(arrow);
-
-    setAcceptHoverEvents(true);
 }
-
-void CommunicationIndicator::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    QPen p(pen());
-    p.setWidth(p.width() * 2);
-    setPen(p);
-
-    setZValue(zValue() + layers::Z_LAYER_HIGHLIGHTED_OFFSET);
-
-    QGraphicsItem::hoverEnterEvent(event);
-}
-
-void CommunicationIndicator::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    QPen p(pen());
-    p.setWidth(p.width() / 2);
-    setPen(p);
-
-    setZValue(zValue() - layers::Z_LAYER_HIGHLIGHTED_OFFSET);
-
-    QGraphicsItem::hoverLeaveEvent(event);
-}
-

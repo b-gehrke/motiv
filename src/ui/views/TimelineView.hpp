@@ -25,7 +25,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    void populateScene(QGraphicsScene *scene);
+    void populateScene(QGraphicsScene *element);
 
 private:
     TraceDataProxy *data = nullptr;

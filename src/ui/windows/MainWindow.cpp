@@ -14,6 +14,11 @@
 #include "src/ui/TimeUnit.hpp"
 #include "src/ui/windows/FilterPopup.hpp"
 #include "src/ui/widgets/TraceOverviewDock.hpp"
+#include "src/ui/widgets/InformationDock.hpp"
+#include "src/ui/widgets/infostrategies/InformationDockSlotStrategy.hpp"
+#include "src/ui/widgets/infostrategies/InformationDockTraceStrategy.hpp"
+#include "src/ui/widgets/infostrategies/InformationDockCommunicationStrategy.hpp"
+#include "src/ui/widgets/infostrategies/InformationDockCollectiveCommunicationStrategy.hpp"
 
 
 MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::move(filepath)) {
@@ -115,12 +120,12 @@ void MainWindow::createToolBars() {
     bottomContainerWidget->setLayout(containerLayout);
 
     // TODO populate with initial time stamps
-    this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, types::TraceTime(0),
+    this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, data->getFullTrace()->getStartTime(),
                                                    bottomContainerWidget);
     this->startTimeInputField->setUpdateFunction(
         [this](auto newStartTime) { this->data->setSelectionBegin(newStartTime); });
     containerLayout->addWidget(this->startTimeInputField);
-    this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, types::TraceTime(0), bottomContainerWidget);
+    this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, data->getFullTrace()->getEndTime(), bottomContainerWidget);
     this->endTimeInputField->setUpdateFunction([this](auto newEndTime) { this->data->setSelectionEnd(newEndTime); });
     containerLayout->addWidget(this->endTimeInputField);
 
@@ -132,12 +137,19 @@ void MainWindow::createToolBars() {
 }
 
 void MainWindow::createDockWidgets() {
-    this->slotInformation = new SlotInformationDock();
+    this->information = new InformationDock();
+    information->addElementStrategy(new InformationDockSlotStrategy());
+    information->addElementStrategy(new InformationDockTraceStrategy());
+    information->addElementStrategy(new InformationDockCommunicationStrategy());
+    information->addElementStrategy(new InformationDockCollectiveCommunicationStrategy());
+
+    this->information->setElement(this->data->getFullTrace());
     // @formatter:off
-    connect(data, SIGNAL(slotSelected(Slot*)), slotInformation, SLOT(setSlot(Slot*)));
-    connect(slotInformation, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
+    connect(information, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
+
+    connect(data, SIGNAL(infoElementSelected(TimedElement*)), information, SLOT(setElement(TimedElement*)));
     // @formatter:on
-    this->addDockWidget(Qt::RightDockWidgetArea, this->slotInformation);
+    this->addDockWidget(Qt::RightDockWidgetArea, this->information);
 
     this->traceOverview = new TraceOverviewDock(this->data);
     this->addDockWidget(Qt::TopDockWidgetArea, this->traceOverview);

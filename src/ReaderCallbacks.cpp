@@ -251,11 +251,11 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
 
 void ReaderCallbacks::events_done(const otf2::reader::reader &) {
     std::sort(this->slots_.begin(), this->slots_.end(), [](Slot *rhs, Slot *lhs) {
-        return rhs->start < lhs->start;
+        return rhs->startTime < lhs->startTime;
     });
     std::sort(this->communications_.begin(), this->communications_.end(),
               [](Communication *rhs, Communication *lhs) {
-                  return rhs->getStart()->getStart() < lhs->getStart()->getStart();
+                  return rhs->getStartEvent()->getStartTime() < lhs->getStartEvent()->getStartTime();
               });
 
     for (const auto &item: this->slotsBuilding) {

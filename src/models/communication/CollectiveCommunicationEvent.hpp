@@ -49,8 +49,8 @@ public:
                                  uint32_t root);
 
     [[nodiscard]] otf2::definition::location * getLocation() const override;
-    [[nodiscard]] otf2::chrono::duration getStart() const override;
-    [[nodiscard]] otf2::chrono::duration getEnd() const override;
+    [[nodiscard]] otf2::chrono::duration getStartTime() const override;
+    [[nodiscard]] otf2::chrono::duration getEndTime() const override;
     [[nodiscard]] types::communicator * getCommunicator() const override;
     [[nodiscard]] CommunicationKind getKind() const override;
     [[nodiscard]] otf2::collective_type getOperation() const;

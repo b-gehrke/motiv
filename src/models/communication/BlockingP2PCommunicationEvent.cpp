@@ -7,7 +7,7 @@ BlockingP2PCommunicationEvent::BlockingP2PCommunicationEvent(const otf2::chrono:
                                                              types::communicator* communicator) : timepoint(
     timepoint), location(location), communicator(communicator) {}
 
-otf2::chrono::duration BlockingP2PCommunicationEvent::getStart() const {
+otf2::chrono::duration BlockingP2PCommunicationEvent::getStartTime() const {
     return timepoint;
 }
 
@@ -15,7 +15,7 @@ otf2::definition::location * BlockingP2PCommunicationEvent::getLocation() const 
     return location;
 }
 
-otf2::chrono::duration BlockingP2PCommunicationEvent::getEnd() const {
+otf2::chrono::duration BlockingP2PCommunicationEvent::getEndTime() const {
     return timepoint + BLOCKING_EVENT_DURATION;
 }
 

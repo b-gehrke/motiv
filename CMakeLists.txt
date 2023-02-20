@@ -37,17 +37,24 @@ set(PROJECT_SOURCES
         src/ui/ScrollSynchronizer.cpp
         src/ui/TimeUnit.cpp
         src/ui/TraceDataProxy.cpp
+        src/ui/views/CollectiveCommunicationIndicator.cpp
         src/ui/views/CommunicationIndicator.cpp
+        src/ui/views/GenericIndicator.cpp
         src/ui/views/SlotIndicator.cpp
         src/ui/views/TimelineView.cpp
         src/ui/views/TraceOverviewTimelineView.cpp
-        src/ui/widgets/SlotInformationDock.cpp
+        src/ui/widgets/InformationDock.cpp
         src/ui/widgets/TimeInputField.cpp
         src/ui/widgets/TimeUnitLabel.cpp
         src/ui/widgets/Timeline.cpp
         src/ui/widgets/TimelineHeader.cpp
         src/ui/widgets/TimelineLabelList.cpp
         src/ui/widgets/TraceOverviewDock.cpp
+        src/ui/widgets/infostrategies/InformationDockCollectiveCommunicationStrategy.cpp
+        src/ui/widgets/infostrategies/InformationDockCommunicationStrategy.cpp
+        src/ui/widgets/infostrategies/InformationDockElementBaseStrategy.cpp
+        src/ui/widgets/infostrategies/InformationDockSlotStrategy.cpp
+        src/ui/widgets/infostrategies/InformationDockTraceStrategy.cpp
         src/ui/windows/FilterPopup.cpp
         src/ui/windows/MainWindow.cpp
         src/utils.cpp

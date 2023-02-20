@@ -2,6 +2,7 @@
 #include "src/ui/views/CommunicationIndicator.hpp"
 #include "src/ui/views/SlotIndicator.hpp"
 #include "src/ui/Constants.hpp"
+#include "CollectiveCommunicationIndicator.hpp"
 
 #include <QGraphicsRectItem>
 #include <QApplication>
@@ -36,9 +37,9 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     QPen collectiveCommunicationPen(Qt::blue, 2);
 
 
-    auto onSlotSelected = [this](Slot *slot) { this->data->setSlotSelection(slot); };
-    auto onSlotDoubleClicked = [this](Slot *selectedSlot) {
-        this->data->setSelection(selectedSlot->start, selectedSlot->end);
+    auto onTimedElementSelected = [this](TimedElement *element) { this->data->setTimeElementSelection(element); };
+    auto onTimedElementDoubleClicked = [this](TimedElement *element) {
+        this->data->setSelection(element->getStartTime(), element->getEndTime());
     };
 
 
@@ -52,8 +53,8 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             auto region = slot->region;
             auto regionName = region->name();
             auto regionNameStr = regionName.str();
-            auto startTime = slot->start.count();
-            auto endTime = slot->end.count();
+            auto startTime = slot->startTime.count();
+            auto endTime = slot->endTime.count();
 
 
             // Ensures slots starting before `begin` (like main) are considered to start at begin
@@ -69,8 +70,8 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
 
             QRectF rect(slotBeginPos, top, qMax(rectWidth, 5.0), ROW_HEIGHT);
             auto rectItem = new SlotIndicator(rect, slot);
-            rectItem->setOnDoubleClick(onSlotDoubleClicked);
-            rectItem->setOnSelected(onSlotSelected);
+            rectItem->setOnDoubleClick(onTimedElementDoubleClicked);
+            rectItem->setOnSelected(onTimedElementSelected);
             rectItem->setToolTip(regionNameStr.c_str());
 
             // Determine color based on name
@@ -93,14 +94,14 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     }
 
     for (const auto &communication: selection->getCommunications()) {
-        const CommunicationEvent *startEvent = communication->getStart();
-        auto startEventEnd = static_cast<qreal>(startEvent->getEnd().count());
-        auto startEventStart = static_cast<qreal>(startEvent->getStart().count());
+        const CommunicationEvent *startEvent = communication->getStartEvent();
+        auto startEventEnd = static_cast<qreal>(startEvent->getEndTime().count());
+        auto startEventStart = static_cast<qreal>(startEvent->getStartTime().count());
 
 
-        const CommunicationEvent *endEvent = communication->getEnd();
-        auto endEventEnd = static_cast<qreal>(startEvent->getEnd().count());
-        auto endEventStart = static_cast<qreal>(startEvent->getStart().count());
+        const CommunicationEvent *endEvent = communication->getEndEvent();
+        auto endEventEnd = static_cast<qreal>(startEvent->getEndTime().count());
+        auto endEventStart = static_cast<qreal>(startEvent->getStartTime().count());
 
 
         auto fromTime = startEventStart + (startEventEnd - startEventStart) / 2;
@@ -118,17 +119,19 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
         auto toX = effectiveToTime / runtimeR * width;
         auto toY = static_cast<qreal> (toRank * ROW_HEIGHT) + .5 * ROW_HEIGHT + 20;
 
-        auto arrow = new CommunicationIndicator(fromX, fromY, toX, toY);
+        auto arrow = new CommunicationIndicator(communication, fromX, fromY, toX, toY);
+        arrow->setOnSelected(onTimedElementSelected);
+        arrow->setOnDoubleClick(onTimedElementDoubleClicked);
         arrow->setPen(arrowPen);
         arrow->setZValue(layers::Z_LAYER_P2P_COMMUNICATIONS);
         scene->addItem(arrow);
     }
 
     for (const auto &communication: selection->getCollectiveCommunications()) {
-        auto fromTime = static_cast<qreal>(communication->getStart().count());
+        auto fromTime = static_cast<qreal>(communication->getStartTime().count());
         auto effectiveFromTime = qMax(beginR, fromTime) - beginR;
 
-        auto toTime = static_cast<qreal>(communication->getEnd().count());
+        auto toTime = static_cast<qreal>(communication->getEndTime().count());
         auto effectiveToTime = qMin(endR, toTime) - beginR;
 
         auto fromX = (effectiveFromTime / runtimeR) * width;
@@ -137,10 +140,12 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
         auto toX = (effectiveToTime / runtimeR) * width;
         auto toY = top + 10;
 
-        QRectF rect(QPointF(fromX, fromY), QPointF(toX, toY));
-        auto rectItem = scene->addRect(rect);
+        auto rectItem = new CollectiveCommunicationIndicator(communication);
+        rectItem->setOnSelected(onTimedElementSelected);
+        rectItem->setRect(QRectF(QPointF(fromX, fromY), QPointF(toX, toY)));
         rectItem->setPen(collectiveCommunicationPen);
         rectItem->setZValue(layers::Z_LAYER_COLLECTIVE_COMMUNICATIONS);
+        scene->addItem(rectItem);
     }
 
 }

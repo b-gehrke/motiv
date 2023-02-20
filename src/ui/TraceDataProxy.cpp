@@ -24,10 +24,6 @@ types::TraceTime TraceDataProxy::getEnd() const {
     return this->end;
 }
 
-Slot *TraceDataProxy::getSelectedSlot() const {
-    return this->selectedSlot;
-}
-
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
     setSelection(newBegin, end);
 }
@@ -78,9 +74,8 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
     }
 }
 
-void TraceDataProxy::setSlotSelection(Slot *newSlot) {
-    this->selectedSlot = newSlot;
-    Q_EMIT slotSelected(newSlot);
+void TraceDataProxy::setTimeElementSelection(TimedElement *newSlot) {
+    Q_EMIT infoElementSelected(newSlot);
 }
 
 void TraceDataProxy::setFilter(Filter filter) {

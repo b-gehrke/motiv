@@ -48,19 +48,19 @@ using TimeAccessor = std::function<otf2::chrono::duration(T const &)>;
 
 
 namespace accessors {
-    const TimeAccessor<Slot *> slotStart = &Slot::start;
-    const TimeAccessor<Slot *> slotEnd = &Slot::end;
+    const TimeAccessor<Slot *> slotStart = &Slot::startTime;
+    const TimeAccessor<Slot *> slotEnd = &Slot::endTime;
 
-    const TimeAccessor<CommunicationEvent *> communicationEventStart = &CommunicationEvent::getStart;
-    const TimeAccessor<CommunicationEvent *> communicationEventEnd = &CommunicationEvent::getEnd;
+    const TimeAccessor<CommunicationEvent *> communicationEventStart = &CommunicationEvent::getStartTime;
+    const TimeAccessor<CommunicationEvent *> communicationEventEnd = &CommunicationEvent::getEndTime;
 
 
-    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventStart = &CollectiveCommunicationEvent::getStart;
-    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventEnd = &CollectiveCommunicationEvent::getEnd;
+    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventStart = &CollectiveCommunicationEvent::getStartTime;
+    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventEnd = &CollectiveCommunicationEvent::getEndTime;
 
     const TimeAccessor<Communication *> communicationStart = [](
-        const Communication *e) { return e->getStart()->getStart(); };
-    const TimeAccessor<Communication *> communicationEnd = [](const Communication *e) { return e->getEnd()->getEnd(); };
+        const Communication *e) { return e->getStartEvent()->getStartTime(); };
+    const TimeAccessor<Communication *> communicationEnd = [](const Communication *e) { return e->getEndEvent()->getEndTime(); };
 };
 
 template<typename T>
@@ -81,7 +81,7 @@ Trace *SubTrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to
     std::map<otf2::definition::location_group *, Range<Slot *>, LocationGroupCmp> newSlots;
     for (const auto &item: getSlots()) {
         Range<Slot *> slots = subRange(item.second, from, to, accessors::slotStart, accessors::slotEnd);
-        std::sort(slots.begin(), slots.end(), [](const Slot* lhs, const Slot* rhs) {return lhs->start < rhs->start;});
+        std::sort(slots.begin(), slots.end(), [](const Slot* lhs, const Slot* rhs) {return lhs->startTime < rhs->startTime;});
         newSlots.insert({item.first, slots});
     }
     auto newCommunications = subRange(getCommunications(), from, to, accessors::communicationStart,
@@ -95,5 +95,13 @@ Trace *SubTrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to
     auto trace = new SubTrace(newSlots, newCommunications, newCollectiveCommunications, to - from, from);
 
     return trace;
+}
+
+types::TraceTime SubTrace::getEndTime() const {
+    return startTime_ + runtime_;
+}
+
+types::TraceTime SubTrace::getDuration() const {
+    return runtime_;
 }
 

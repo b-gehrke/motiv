@@ -17,7 +17,7 @@ FileTrace::FileTrace(std::vector<Slot*> &slotss,
         auto groupR = r->location->location_group();
 
         if(groupL.ref() == groupR.ref()) {
-            return l->start < r->start;
+            return l->startTime < r->startTime;
         }
 
         return groupL.ref() < groupR.ref();

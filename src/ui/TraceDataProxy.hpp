@@ -31,7 +31,6 @@ public: // methods
     [[nodiscard]] types::TraceTime getBegin() const;
     [[nodiscard]] types::TraceTime getEnd() const;
     [[nodiscard]] ViewSettings *getSettings() const;
-    [[nodiscard]] Slot *getSelectedSlot() const;
     [[nodiscard]] Trace *getFullTrace() const;
 
     /**
@@ -56,7 +55,7 @@ public: Q_SIGNALS:
     /**
      * Signals a change to the selected slot, nullptr if none
      */
-    void slotSelected(Slot*);
+    void infoElementSelected(TimedElement *);
 
     /**
      * Signals the filter was changes
@@ -95,7 +94,7 @@ public Q_SLOTS:
      * Change the selected slot
      * @param newSlot pass nullptr if none selected
      */
-    void setSlotSelection(Slot *newSlot);
+    void setTimeElementSelection(TimedElement *newSlot);
 
 private: // methods
     void updateSelection();
@@ -108,8 +107,6 @@ private: // data
 
     types::TraceTime begin{0};
     types::TraceTime end{0};
-
-    Slot *selectedSlot = nullptr;
 };
 
 

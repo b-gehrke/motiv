@@ -6,10 +6,18 @@
 Communication::Communication(const CommunicationEvent *start, const CommunicationEvent *end) : start(start), end(end) {
 }
 
-const CommunicationEvent * Communication::getStart() const {
+const CommunicationEvent * Communication::getStartEvent() const {
     return start;
 }
 
-const CommunicationEvent * Communication::getEnd() const {
+const CommunicationEvent * Communication::getEndEvent() const {
     return end;
+}
+
+types::TraceTime Communication::getStartTime() const {
+    return start->getStartTime();
+}
+
+types::TraceTime Communication::getEndTime() const {
+    return end->getEndTime();
 }

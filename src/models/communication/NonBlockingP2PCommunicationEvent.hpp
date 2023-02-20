@@ -32,8 +32,8 @@ protected:
     types::communicator* communicator;
 public:
     otf2::definition::location * getLocation() const override;
-    otf2::chrono::duration getStart() const override;
-    otf2::chrono::duration getEnd() const override;
+    otf2::chrono::duration getStartTime() const override;
+    otf2::chrono::duration getEndTime() const override;
     types::communicator * getCommunicator() const override;
 };
 

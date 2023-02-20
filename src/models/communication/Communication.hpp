@@ -15,7 +15,7 @@
  * does not have to successful. For example the end event might be of kind `RequestCancelled` indicating a request was not
  * completed.
  */
-class Communication {
+class Communication : public TimedElement {
 public:
     /**
      * Creates a new instance of the `Communication` class
@@ -28,13 +28,17 @@ public:
      * Gets the event that initiated the communication.
      * @return Event that initiated the communication
      */
-    [[nodiscard]] const CommunicationEvent * getStart() const;
+    [[nodiscard]] const CommunicationEvent * getStartEvent() const;
 
     /**
      * Gets the event that ended the communication
      * @return event that ended the communication
      */
-    [[nodiscard]] const CommunicationEvent * getEnd() const;
+    [[nodiscard]] const CommunicationEvent * getEndEvent() const;
+
+    types::TraceTime getStartTime() const override;
+
+    types::TraceTime getEndTime() const override;
 
 private:
     const CommunicationEvent* start;

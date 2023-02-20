@@ -28,8 +28,8 @@ void TraceOverviewTimelineView::populateScene(QGraphicsScene *scene) {
     for (const auto &item: uiTrace->getSlots()) {
         // Display slots
         for (const auto &slot: item.second) {
-            auto startTime = slot->start.count();
-            auto endTime = slot->end.count();
+            auto startTime = slot->startTime.count();
+            auto endTime = slot->endTime.count();
 
 
             // Ensures slots starting before `begin` (like main) are considered to start at begin

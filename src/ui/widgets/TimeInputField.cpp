@@ -6,7 +6,7 @@
 
 
 TimeInputField::TimeInputField(QString text, TimeUnit resolution, types::TraceTime initialTime, QWidget *parent)
-    : QWidget(parent), text(std::move(text)), resolution(resolution), time(initialTime) {
+    : QWidget(parent), text(std::move(text)), resolution(resolution), time(0) {
 
     this->textLabel = new QLabel(this->text, this);
 
@@ -36,6 +36,8 @@ TimeInputField::TimeInputField(QString text, TimeUnit resolution, types::TraceTi
         auto newTotalValue = static_cast<u_int64_t>(newValue * this->resolution.multiplier());
         this->setTime(types::TraceTime(newTotalValue));
     });
+
+    setTime(initialTime);
 }
 
 void TimeInputField::setUpdateFunction(std::function<void(types::TraceTime)> newUpdateFunction) {
