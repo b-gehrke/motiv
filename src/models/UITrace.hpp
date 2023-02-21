@@ -13,9 +13,14 @@
 #define MIN_SLOT_SIZE_PX 5
 
 /**
+ * Defines the minimum size in pixels for a communication
+ */
+#define MIN_COMMUNICATION_SIZE_PX 15
+
+/**
  * Defines the minimum size in pixels for a collective communication event
  */
-#define MIN_COLLECTIVE_EVENT_SIZE_PX 5
+#define MIN_COLLECTIVE_EVENT_SIZE_PX 10
 
 /**
  * Trace facilitating a subtrace optimized for rendering
