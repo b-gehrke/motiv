@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Motiv");
-    QApplication::setApplicationVersion("0.1.0" /* TODO macro via CMakeLists.txt*/);
+    QApplication::setApplicationVersion(MOTIV_VERSION_STRING);
 
     // Load an application style
     QFile styleFile( ":/res/style.qss" );
