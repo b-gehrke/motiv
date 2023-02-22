@@ -70,55 +70,85 @@ public:
      */
     static UITrace *forResolution(Trace *trace, int width);
 
+    /**
+     * @copydoc Trace::subtrace()
+     */
     Trace *subtrace(otf2::chrono::duration from, otf2::chrono::duration to) override;
 
 private:
+    /**
+     * Backing field. Stores the time that can be represented per pixel.
+     */
     otf2::chrono::duration timePerPx_;
-    std::map<otf2::definition::location_group *, std::vector<Slot *>, LocationGroupCmp> slotsVec_;
 
     /**
      * Aggregates slots in an interval into a new summarized slot.
      *
      * Creates a new slot representing all slots in @c stats
-     * @param minDuration Minimum duration for the new slot
      * @param intervalStarter First slot in the interval
      * @param stats All other slots in this interval
      * @return A new slot summarizing all slots in the interval
      */
     static Slot *
-    aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats);
+    aggregateSlots(const Slot *intervalStarter, std::vector<Slot *> &stats);
 
     /**
      * Aggregates collective communications in an interval into a new summarized collective communication event.
      *
      * Creates a new collective communication event representing all events in @c stats
-     * @param minDuration Minimum duration for the new event
      * @param intervalStarter First event in the interval
      * @param stats All other events in this interval
      * @return A new collective communication event summarizing all events in the interval
      */
-    static CollectiveCommunicationEvent *aggregateCollectiveCommunications(otf2::chrono::duration minDuration,
-                                                                           const CollectiveCommunicationEvent *intervalStarter,
-                                                                           std::vector<CollectiveCommunicationEvent *> &stats);
+    static CollectiveCommunicationEvent *
+    aggregateCollectiveCommunications(const CollectiveCommunicationEvent *intervalStarter,
+                                      std::vector<CollectiveCommunicationEvent *> &stats);
 
-    static Slot *
-    slotInterval(types::TraceTime minDuration, const Slot *intervalStarter,
-                 std::map<SlotKind, std::vector<Slot *>> &stats);
+    /**
+     * Aggregates slots in an interval respecting stats
+     *
+     * Creates a new slot representing all slots in {@c stats} by ordering them by priority with their kind
+     * @param intervalStarter First slot in the interval
+     * @param stats All other slots grouped by kind in the interval
+     * @return A new slot summarizing all slots in the interval
+     */
+    static Slot *slotInterval(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats);
 
+    /**
+     * Collects and optimizes timed elements to small to be rendered.
+     * @tparam T Type of {@c TimedElement}
+     * @param minDuration Minimum duration of a {@c TimedElement} to be rendered
+     * @param elements All elements to be rendered
+     * @param aggregate Function to aggregate multiple elements into one
+     * @return @c elements but to short element are summarized
+     */
     template<class T>
     requires std::is_base_of_v<TimedElement, T>
     static std::vector<T *> optimize(
         types::TraceTime minDuration,
         Range<T *> elements,
-        std::function<T *(types::TraceTime, T *, std::vector<T *> &stats)> aggregate);
+        std::function<T *(T *, std::vector<T *> &stats)> aggregate);
 
+    /**
+     * Collects and optimizes timed elements to small to be rendered.
+     *
+     * Elements in one interval (shortest render time) are grouped with a function @c keySelector. The resulting map is
+     * passed to @c aggregate
+     * @tparam T Type of {@c TimedElement}
+     * @tparam K Type of group by key
+     * @param minDuration Minimum duration of a {@c TimedElement} to be rendered
+     * @param elements All elements to be rendered
+     * @param keySelector Function to select a key to group by
+     * @param aggregate Function to aggregate multiple elements into one
+     * @return @c elements but to short element are summarized
+     */
     template<class T, typename K>
     requires std::is_base_of_v<TimedElement, T>
     static std::vector<T *> optimize(
         types::TraceTime minDuration,
         Range<T *> &elements,
         std::function<K(const T *)> keySelector,
-        std::function<T *(types::TraceTime, T *, std::map<K, std::vector<T *>> &stats)> aggregate);
+        std::function<T *(T *, std::map<K, std::vector<T *>> &stats)> aggregate);
 };
 
 #endif //MOTIV_UITRACE_HPP

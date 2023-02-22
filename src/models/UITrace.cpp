@@ -9,40 +9,38 @@ UITrace::UITrace(std::map<otf2::definition::location_group *, std::vector<Slot *
                  const otf2::chrono::duration &runtime, const otf2::chrono::duration &startTime,
                  const otf2::chrono::duration &timePerPx) :
     SubTrace(),
-    timePerPx_(timePerPx),
-    slotsVec_(std::move(slotsVec)) {
+    timePerPx_(timePerPx) {
     communications_ = communications;
     collectiveCommunications_ = collectiveCommunications;
     runtime_ = runtime;
     startTime_ = startTime;
 
-    for (auto &item: slotsVec_) {
+    for (auto &item: slotsVec) {
         slots_.insert({item.first, Range(item.second)});
     }
 }
 
 UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixel) {
-    auto minDuration = timePerPixel * MIN_SLOT_SIZE_PX;
-    std::map<otf2::definition::location_group *, std::vector<Slot *>, LocationGroupCmp> groupedSlots;
 
+    // Optimize slots
+    auto minDuration = timePerPixel * MIN_SLOT_SIZE_PX;
+    std::map<otf2::definition::location_group *, std::vector<Slot *>, LocationGroupCmp> newSlots;
     for (const auto &item: trace->getSlots()) {
         auto locationGroup = item.first;
         auto slots = item.second;
-        qDebug() << "Rank" << locationGroup->name().str().c_str();
+        auto newSlotsForRank = optimize<Slot, SlotKind>(
+            minDuration,
+            slots,
+            &Slot::getKind,
+            &UITrace::slotInterval);
 
-        qDebug() << "Slots" << std::distance(slots.begin(), slots.end());
-
-        auto newSlots = optimize<Slot, SlotKind>(minDuration,
-                                                 slots,
-                                                 &Slot::getKind,
-                                                 UITrace::slotInterval);
-
-
-        qDebug() << "New slots" << newSlots.size();
-        groupedSlots.insert({locationGroup, newSlots});
+        newSlots.insert({locationGroup, newSlotsForRank});
     }
 
 
+    // Optimize communications.
+    // Optimization is done per rank of the starting event. This is beneficial if few 1:n communications occur.
+    // 1:n communications are only visible with a higher zoom level.
     minDuration = timePerPixel * MIN_COMMUNICATION_SIZE_PX;
     auto communicationsByRank = groupBy<Communication *, otf2::reference<otf2::definition::location_group>>(
         trace->getCommunications(),
@@ -60,21 +58,23 @@ UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixe
 
     std::vector<Communication *> newCommunications;
     for (const auto &item: communicationsByRank) {
-        auto comms = item.second;
+        auto communications = item.second;
         auto newCommunicationsForRank = optimize<Communication>(
             minDuration,
-            comms,
-            [](types::TraceTime, Communication *starter, std::vector<Communication *> &) { return starter; });
-        newCommunications.insert(newCommunications.end(), newCommunicationsForRank.begin(), newCommunicationsForRank.end());
+            communications,
+            [](Communication *starter, std::vector<Communication *> &) { return starter; });
+        newCommunications.insert(newCommunications.end(), newCommunicationsForRank.begin(),
+                                 newCommunicationsForRank.end());
     }
 
 
+    // Optimize collective communications
     minDuration = timePerPixel * MIN_COLLECTIVE_EVENT_SIZE_PX;
+    auto newCollectiveCommunications = optimize<CollectiveCommunicationEvent>(minDuration,
+                                                                              trace->getCollectiveCommunications(),
+                                                                              &UITrace::aggregateCollectiveCommunications);
 
-    auto newCollectiveCommunications = optimize<CollectiveCommunicationEvent>(minDuration, trace->getCollectiveCommunications(),
-                                                        &UITrace::aggregateCollectiveCommunications);
-
-    return new UITrace(groupedSlots, Range(newCommunications), Range(newCollectiveCommunications),
+    return new UITrace(newSlots, Range(newCommunications), Range(newCollectiveCommunications),
                        trace->getRuntime(), trace->getStartTime(), timePerPixel);
 }
 
@@ -82,13 +82,15 @@ template<class T>
 requires std::is_base_of_v<TimedElement, T>
 std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
                                    Range<T *> elements,
-                                   std::function<T *(types::TraceTime, T *, std::vector<T *> &stats)> aggregate) {
+                                   std::function<T *(T *, std::vector<T *> &stats)> aggregate) {
+    // This optimization implementation does not group elements in an interval. To not replicate code, it calls the
+    // overload that groups and groups all elements into a single group.
     return optimize<T, uint8_t>(
         minDuration,
         elements,
         [](const T *) { return 0; },
-        [aggregate](types::TraceTime minDuration, T *starter, std::map<uint8_t, std::vector<T *>> &stats) {
-            return aggregate(minDuration, starter, stats[0]);
+        [aggregate](T *starter, std::map<uint8_t, std::vector<T *>> &stats) {
+            return aggregate(starter, stats[0]);
         });
 }
 
@@ -97,26 +99,27 @@ requires std::is_base_of_v<TimedElement, T>
 std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
                                    Range<T *> &elements,
                                    std::function<K(const T *)> keySelector,
-                                   std::function<T *(types::TraceTime, T *,
-                                                     std::map<K, std::vector<T *>> &stats)> aggregate) {
+                                   std::function<T *(T *, std::map<K, std::vector<T *>> &stats)> aggregate) {
     std::vector<T *> newElements;
     T *intervalStarter = nullptr;
     std::map<K, std::vector<T *>> stats;
 
     for (const auto &element: elements) {
+        // Check whether the current element is outside the interval (start + minDuration). If so, group interval and continue.
         if (intervalStarter != nullptr && (element->getStartTime() > intervalStarter->getStartTime() + minDuration)) {
-            newElements.push_back(aggregate(minDuration, intervalStarter, stats));
-//            qDebug() << "Inserted aggregated element";
+            newElements.push_back(aggregate(intervalStarter, stats));
 
             stats.clear();
             intervalStarter = nullptr;
         }
 
+        // Check if element is too short
         if (element->getDuration() < minDuration) {
             if (intervalStarter == nullptr) {
                 intervalStarter = element;
             }
 
+            // Insert element in group
             if (!stats.contains(keySelector(element))) {
                 stats.insert({keySelector(element), std::vector<T *>()});
             }
@@ -124,32 +127,29 @@ std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
             stats.at(keySelector(element)).push_back(element);
         } else {
             newElements.push_back(element);
-//            qDebug() << "Inserted element";
         }
     }
+
+    // If the trace ends with a short interval it must be completed.
     if (intervalStarter) {
-        newElements.push_back(aggregate(minDuration, intervalStarter, stats));
-//        qDebug() << "Inserted last aggregated element";
+        newElements.push_back(aggregate(intervalStarter, stats));
     }
     return newElements;
 }
 
-Slot *UITrace::slotInterval(types::TraceTime minDuration, const Slot *intervalStarter,
-                            std::map<SlotKind, std::vector<Slot *>> &stats) {
-    Slot *newSlot;
+Slot *UITrace::slotInterval(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats) {
+    std::vector<Slot *>* elements;
     // Order of importance if overlapping, the slot with the most important kind is shown.
-// 1. MPI events, 2. OpenMP events 3. all other events
+    // 1. MPI events, 2. OpenMP events 3. all other events
     if (stats.contains(MPI)) {
-        auto mpiStats = stats.at(MPI);
-        newSlot = aggregateSlots(minDuration, intervalStarter, mpiStats);
+        elements = &stats.at(MPI);
     } else if (stats.contains(OpenMP)) {
-        auto openMpStats = stats.at(OpenMP);
-        newSlot = aggregateSlots(minDuration, intervalStarter, openMpStats);
+        elements = &stats.at(OpenMP);
     } else {
-        auto plainStats = stats.at(Plain);
-        newSlot = aggregateSlots(minDuration, intervalStarter, plainStats);
+        elements = &stats.at(Plain);
     }
-    return newSlot;
+    return aggregateSlots(intervalStarter, *elements);
+
 }
 
 Trace *UITrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) {
@@ -174,9 +174,7 @@ static T *last(std::vector<T *> ls) {
 }
 
 
-Slot *UITrace::aggregateSlots(otf2::chrono::duration minDuration,
-                              const Slot *intervalStarter,
-                              std::vector<Slot *> &stats) {
+Slot *UITrace::aggregateSlots(const Slot *intervalStarter, std::vector<Slot *> &stats) {
     auto longestSlot = longest(stats);
     auto intervalEnder = last(stats);
 
@@ -187,9 +185,9 @@ UITrace *UITrace::forResolution(Trace *trace, int width) {
     return forResolution(trace, trace->getRuntime() / width);
 }
 
-CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(otf2::chrono::duration minDuration,
-                                                                         const CollectiveCommunicationEvent *intervalStarter,
-                                                                         std::vector<CollectiveCommunicationEvent *> &stats) {
+CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(
+    const CollectiveCommunicationEvent *intervalStarter,
+    std::vector<CollectiveCommunicationEvent *> &stats) {
     auto longestEvent = longest(stats);
     auto intervalEnder = last(stats);
 
