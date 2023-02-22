@@ -1,5 +1,5 @@
 #include "TraceDataProxy.hpp"
-#include "src/models/uitrace.hpp"
+#include "src/models/UITrace.hpp"
 
 TraceDataProxy::TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent)
     : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()),
@@ -24,10 +24,6 @@ types::TraceTime TraceDataProxy::getEnd() const {
     return this->end;
 }
 
-Slot *TraceDataProxy::getSelectedSlot() const {
-    return this->selectedSlot;
-}
-
 void TraceDataProxy::setSelectionBegin(types::TraceTime newBegin) {
     setSelection(newBegin, end);
 }
@@ -49,7 +45,7 @@ void TraceDataProxy::updateSelection() {
     auto subtrace = trace->subtrace(begin, end);
     selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
 //    selection = subtrace;
-    Q_EMIT selectionChanged();
+    Q_EMIT selectionChanged(begin, end);
 }
 
 void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime newEnd) {
@@ -73,18 +69,21 @@ void TraceDataProxy::setSelection(types::TraceTime newBegin, types::TraceTime ne
         Q_EMIT endChanged(end);
     }
 
-    if(oldBegin != begin && oldEnd != end) {
+    if(oldBegin != begin || oldEnd != end) {
         updateSelection();
     }
 }
 
-void TraceDataProxy::setSlotSelection(Slot *newSlot) {
-    this->selectedSlot = newSlot;
-    Q_EMIT slotSelected(newSlot);
+void TraceDataProxy::setTimeElementSelection(TimedElement *newSlot) {
+    Q_EMIT infoElementSelected(newSlot);
 }
 
 void TraceDataProxy::setFilter(Filter filter) {
     settings->setFilter(filter);
 
     Q_EMIT filterChanged(filter);
+}
+
+Trace *TraceDataProxy::getFullTrace() const {
+    return trace;
 }
