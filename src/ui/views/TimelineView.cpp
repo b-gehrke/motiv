@@ -34,7 +34,7 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
     auto endR = static_cast<qreal>(end);
 
     QPen arrowPen(Qt::black, 1);
-    QPen collectiveCommunicationPen(Qt::blue, 2);
+    QPen collectiveCommunicationPen(colors::COLOR_COLLECTIVE_COMMUNICATION, 2);
 
 
     auto onTimedElementSelected = [this](TimedElement *element) { this->data->setTimeElementSelection(element); };
@@ -77,13 +77,13 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             // Determine color based on name
             QColor rectColor;
             if (regionNameStr.starts_with("MPI_")) {
-                rectColor = Qt::green;
+                rectColor = colors::COLOR_SLOT_MPI;
                 rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 2);
             } else if (regionNameStr.starts_with("!$omp")) {
-                rectColor = Qt::red;
+                rectColor = colors::COLOR_SLOT_OPEN_MP;
                 rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 1);
             } else {
-                rectColor = Qt::lightGray;
+                rectColor = colors::COLOR_SLOT_PLAIN;
                 rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 0);
             }
             rectItem->setBrush(rectColor);
