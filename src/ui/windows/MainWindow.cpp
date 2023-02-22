@@ -145,9 +145,9 @@ void MainWindow::createMenus() {
 
 void MainWindow::createToolBars() {
     // Top toolbar contains preview/control of whole trace
-    this->topToolbar = new QToolBar(this);
-    this->topToolbar->setMovable(false);
-    addToolBar(Qt::TopToolBarArea, this->topToolbar);
+//    this->topToolbar = new QToolBar(this);
+//    this->topToolbar->setMovable(false);
+//    addToolBar(Qt::TopToolBarArea, this->topToolbar);
 
     // Bottom toolbar contains control fields
     this->bottomToolbar = new QToolBar(this);
