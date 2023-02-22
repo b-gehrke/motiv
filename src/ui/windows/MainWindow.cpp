@@ -6,7 +6,10 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <utility>
+#include <QCoreApplication>
+#include <QProcess>
 
+#include "src/models/AppSettings.hpp"
 #include "src/ui/widgets/License.hpp"
 #include "src/ui/widgets/Help.hpp"
 #include "src/ui/widgets/TimeInputField.hpp"
@@ -46,7 +49,29 @@ void MainWindow::createMenus() {
     /// File menu
     auto openTraceAction = new QAction(tr("&Open..."), this);
     openTraceAction->setShortcut(tr("Ctrl+O"));
-    connect(openTraceAction, SIGNAL(triggered()), this, SLOT(openTrace()));
+    connect(openTraceAction, &QAction::triggered, this, &MainWindow::openNewTrace);
+    auto openRecentMenu = new QMenu(tr("&Open recent"));
+    if (AppSettings::getInstance().recentlyOpenedFiles().isEmpty()) {
+        auto emptyAction = openRecentMenu->addAction(tr("&(Empty)"));
+        emptyAction->setEnabled(false);
+    } else {
+        // TODO this is not updated on call to clear
+        for (const auto &recent: AppSettings::getInstance().recentlyOpenedFiles()) {
+            auto recentAction = new QAction(recent, openRecentMenu);
+            openRecentMenu->addAction(recentAction);
+            connect(recentAction, &QAction::triggered, [&,this] {
+               this->openNewWindow(recent);
+            });
+        }
+        openRecentMenu->addSeparator();
+
+        auto clearRecentMenuAction = new QAction(tr("&Clear history"));
+        openRecentMenu->addAction(clearRecentMenuAction);
+        connect(clearRecentMenuAction, &QAction::triggered, [&] {
+            AppSettings::getInstance().recentlyOpenedFilesClear();
+            openRecentMenu->clear();
+        });
+    }
 
     auto quitAction = new QAction(tr("&Quit"), this);
     quitAction->setShortcut(tr("Ctrl+Q"));
@@ -54,19 +79,17 @@ void MainWindow::createMenus() {
 
     auto fileMenu = menuBar->addMenu(tr("&File"));
     fileMenu->addAction(openTraceAction);
+    fileMenu->addMenu(openRecentMenu);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAction);
 
     /// View Menu
     auto filterAction = new QAction(tr("&Filter"));
-    // TODO S for sieve? what might be more intuitive?
     filterAction->setShortcut(tr("Ctrl+S"));
-    // TODO add actual slot
     connect(filterAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     auto searchAction = new QAction(tr("&Find"));
     searchAction->setShortcut(tr("Ctrl+F"));
-    // TODO add actual slot
     connect(searchAction, SIGNAL(triggered()), this, SLOT(openFilterPopup()));
 
     auto resetZoomAction = new QAction(tr("&Reset zoom"));
@@ -180,7 +203,7 @@ void MainWindow::setFilepath(QString newFilepath) {
     this->filepath = std::move(newFilepath);
 }
 
-void MainWindow::promptFile() {
+QString MainWindow::promptFile() {
     auto newFilePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
                                                     QFileDialog::tr("OTF Traces (*.otf *.otf2)"));
 
@@ -188,9 +211,9 @@ void MainWindow::promptFile() {
     if (newFilePath.isEmpty()) {
         auto errorMsg = new QErrorMessage(nullptr);
         errorMsg->showMessage("The chosen file is invalid!");
-    } else {
-        this->filepath = newFilePath;
     }
+
+    return newFilePath;
 }
 
 void MainWindow::loadTrace() {
@@ -225,5 +248,16 @@ void MainWindow::openFilterPopup() {
     filterPopup.exec();
 
     disconnect(connection);
+}
+
+void MainWindow::openNewTrace() {
+    auto path = this->promptFile();
+    this->openNewWindow(path);
+}
+
+void MainWindow::openNewWindow(QString path) {
+    QProcess::startDetached(
+            QFileInfo(QCoreApplication::applicationFilePath()).absoluteFilePath(),
+            QStringList(path));
 }
 

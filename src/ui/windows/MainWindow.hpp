@@ -26,6 +26,7 @@ public: Q_SIGNALS:
 public Q_SLOTS:
     void resetZoom();
     void openFilterPopup();
+    void openNewTrace();
 
 private: // methods
     void createMenus();
@@ -33,9 +34,10 @@ private: // methods
     void createDockWidgets();
     void createCentralWidget();
 
-    void promptFile();
+    QString promptFile();
     void loadTrace();
     void loadSettings();
+    void openNewWindow(QString path);
 
 private: // widgets
     QToolBar *topToolbar = nullptr;
