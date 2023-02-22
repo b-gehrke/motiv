@@ -5,6 +5,9 @@
 
 class TimedElement {
 public:
+    virtual ~TimedElement() = default;
+
+public:
     [[nodiscard]] virtual types::TraceTime getStartTime() const = 0;
     [[nodiscard]] virtual types::TraceTime getEndTime() const = 0;
 

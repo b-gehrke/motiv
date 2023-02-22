@@ -47,6 +47,7 @@ public:
                                  types::communicator *communicator,
                                  otf2::collective_type operation,
                                  uint32_t root);
+    virtual ~CollectiveCommunicationEvent() = default;
 
     [[nodiscard]] otf2::definition::location * getLocation() const override;
     [[nodiscard]] otf2::chrono::duration getStartTime() const override;
@@ -66,8 +67,8 @@ public:
             members, location, communicator, operation, root)
 
 private:
-    otf2::chrono::duration start;
-    otf2::chrono::duration end;
+    otf2::chrono::duration start{};
+    otf2::chrono::duration end{};
     otf2::definition::location* location;
     std::vector<Member*> members;
     types::communicator* communicator;

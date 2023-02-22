@@ -23,7 +23,7 @@ public: //constructors
      * @param parent
      */
     TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent = nullptr);
-    ~TraceDataProxy() override;
+    virtual ~TraceDataProxy() override;
 
 
 public: // methods

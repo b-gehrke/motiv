@@ -8,9 +8,9 @@ TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QL
     this->setFrameShape(QFrame::NoFrame);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setStyleSheet("background: transparent");
-    setViewportMargins(0, 20,0,0);
+    setViewportMargins(0, 20, 0, 0);
 
-    for (const auto &ranks : this->data->getSelection()->getSlots()) {
+    for (const auto &ranks: this->data->getSelection()->getSlots()) {
         const auto &rankName = ranks.first->name().str();
         auto item = new QListWidgetItem(this);
         item->setText(QString::fromStdString(rankName));
@@ -20,14 +20,14 @@ TimelineLabelList::TimelineLabelList(TraceDataProxy *data, QWidget *parent) : QL
     }
 }
 
-void TimelineLabelList::mousePressEvent(QMouseEvent *event) {
+void TimelineLabelList::mousePressEvent(QMouseEvent *) {
     return;
 }
 
-void TimelineLabelList::mouseReleaseEvent(QMouseEvent *event) {
+void TimelineLabelList::mouseReleaseEvent(QMouseEvent *) {
     return;
 }
 
-void TimelineLabelList::mouseMoveEvent(QMouseEvent *event) {
+void TimelineLabelList::mouseMoveEvent(QMouseEvent *) {
     return;
 }

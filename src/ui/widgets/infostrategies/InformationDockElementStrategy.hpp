@@ -7,8 +7,8 @@
 
 class InformationDockElementStrategy {
 public:
-    virtual void setup(QFormLayout* layout) { };
-    virtual bool update(QFormLayout* layout, TimedElement* t) { return false; };
+    virtual void setup(QFormLayout*) { };
+    virtual bool update(QFormLayout*, TimedElement*) { return false; };
 
     virtual std::string title() { return ""; }
 };

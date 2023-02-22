@@ -11,12 +11,12 @@
 #include <type_traits>
 
 ReaderCallbacks::ReaderCallbacks(otf2::reader::reader &rdr) :
-    rdr_(rdr),
     slots_(std::vector<Slot*>()),
     communications_(std::vector<Communication*>()),
     collectiveCommunications_(std::vector<CollectiveCommunicationEvent*>()),
     slotsBuilding(),
-    program_start_() {
+    program_start_(),
+    rdr_(rdr) {
 
 }
 
@@ -33,11 +33,11 @@ void ReaderCallbacks::definition(const otf2::definition::location &loc) {
     rdr_.register_location(loc);
 }
 
-void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::program_begin &event) {
+void ReaderCallbacks::event(const otf2::definition::location &, const otf2::event::program_begin &event) {
     this->program_start_ = event.timestamp();
 }
 
-void ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::program_end &event) {
+void ReaderCallbacks::event(const otf2::definition::location &, const otf2::event::program_end &event) {
     this->program_end_ = event.timestamp();
 }
 
@@ -139,7 +139,7 @@ void ReaderCallbacks::event(const otf2::definition::location &location, const ot
 }
 
 void
-ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_isend_complete &complete) {
+ReaderCallbacks::event(const otf2::definition::location &, const otf2::event::mpi_isend_complete &complete) {
     if (!uncompletedRequests.contains(complete.request_id())) {
         throw std::logic_error("Found a mpi_isend_complete event with no matching mpi_isend_request event!");
     }
@@ -160,7 +160,7 @@ ReaderCallbacks::event(const otf2::definition::location &location, const otf2::e
 }
 
 void
-ReaderCallbacks::event(const otf2::definition::location &location, const otf2::event::mpi_ireceive_complete &complete) {
+ReaderCallbacks::event(const otf2::definition::location &, const otf2::event::mpi_ireceive_complete &complete) {
     if (!uncompletedRequests.contains(complete.request_id())) {
         throw std::logic_error("Found a mpi_ireceive_complete event with no matching mpi_ireceive_request event!");
     }
@@ -270,9 +270,9 @@ void ReaderCallbacks::events_done(const otf2::reader::reader &) {
         // TODO: Warn about unmatched receives
         delete item.second;
     }
-    for(const auto &item: this->uncompletedRequests) {
-        // TODO: Warn about uncompleted (and not cancelled) requests
-    }
+//    for(const auto &item: this->uncompletedRequests) {
+//        // TODO: Warn about uncompleted (and not cancelled) requests
+//    }
 
     std::destroy(this->slotsBuilding.begin(), this->slotsBuilding.end());
     std::destroy(this->pendingSends.begin(), this->pendingSends.end());

@@ -6,7 +6,7 @@ CollectiveCommunicationEvent::CollectiveCommunicationEvent(std::vector<Member *>
                                                            otf2::definition::location *location,
                                                            types::communicator *communicator,
                                                            otf2::collective_type operation, uint32_t root) :
-    members(std::move(members)), location(location), communicator(communicator), operation(operation),
+    location(location), members(std::move(members)), communicator(communicator), operation(operation),
     root(root) {
     auto starting = std::min_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->start < rhs->start;});
     auto ending = std::max_element(this->members.begin(), this->members.end(), [](const Member* lhs, const Member* rhs) {return lhs->end < rhs->end;});

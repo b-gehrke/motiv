@@ -37,6 +37,7 @@ void InformationDockCollectiveCommunicationStrategy::updateView(QFormLayout *lay
 
                 rootName = QString::fromStdString(root.name().str());
             }
+            break;
     }
 
     auto operationName = QString::fromStdString(collectiveCommunicationOperationName(element->getOperation()));

@@ -98,16 +98,13 @@ public:                                                 \
         MAP(BUILDER_CHECK, __VA_ARGS__)                 \
         return {MAP_LIST(BUILDER_DREF, __VA_ARGS__)};   \
     };                                                  \
-    std::shared_ptr<type> build_shared() {              \
-        MAP(BUILDER_CHECK, __VA_ARGS__)                 \
-        return std::make_shared<type>(                  \
-            MAP_LIST(BUILDER_DREF, __VA_ARGS__));       \
-    }                                                   \
     content                                             \
 };
 
 template<typename T>
 class builder {
+public:
+    virtual ~builder() = default;
 
     /**
      * @brief Build the target object

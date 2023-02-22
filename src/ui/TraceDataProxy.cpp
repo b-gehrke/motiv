@@ -2,8 +2,8 @@
 #include "src/models/UITrace.hpp"
 
 TraceDataProxy::TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent)
-    : QObject(parent), trace(trace), begin(trace->getStartTime()), end(trace->getStartTime() + trace->getRuntime()),
-      settings(settings) {
+    : QObject(parent), trace(trace), settings(settings), begin(trace->getStartTime()),
+      end(trace->getStartTime() + trace->getRuntime()) {
     updateSelection();
 }
 
