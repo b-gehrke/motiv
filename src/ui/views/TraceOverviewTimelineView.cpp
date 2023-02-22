@@ -53,16 +53,16 @@ void TraceOverviewTimelineView::populateScene(QGraphicsScene *scene) {
             QColor rectColor;
             switch (slot->getKind()) {
                 case ::MPI:
-                    rectColor = Qt::green;
+                    rectColor = colors::COLOR_SLOT_MPI;
                     rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 2);
                     break;
                 case ::OpenMP:
-                    rectColor = Qt::red;
+                    rectColor = colors::COLOR_SLOT_OPEN_MP;
                     rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 1);
                     break;
                 case ::None:
                 case ::Plain:
-                    rectColor = Qt::lightGray;
+                    rectColor = colors::COLOR_SLOT_PLAIN;
                     rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 0);
                     break;
             }

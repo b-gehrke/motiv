@@ -47,8 +47,6 @@ void GenericIndicator<T, G>::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if(!highlightOnHover) return;
-
     QPen p(G::pen());
     p.setWidth(p.width() * 2);
     G::setPen(p);
@@ -60,8 +58,6 @@ void GenericIndicator<T, G>::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    if(!highlightOnHover) return;
-
     QPen p(G::pen());
     p.setWidth(p.width() / 2);
     G::setPen(p);
@@ -69,12 +65,6 @@ void GenericIndicator<T, G>::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     G::setZValue(G::zValue() - layers::Z_LAYER_HIGHLIGHTED_OFFSET);
 
     QGraphicsItem::hoverLeaveEvent(event);
-}
-
-template<class T, class G>
-requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
-void GenericIndicator<T, G>::setHighlightOnHover(const bool val) {
-    highlightOnHover = val;
 }
 
 template class GenericIndicator<Communication, QGraphicsPolygonItem>;

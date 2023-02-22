@@ -12,7 +12,6 @@ public: // constructors
 public: // methods
     void setOnDoubleClick(const std::function<void(T *)>& fn);
     void setOnSelected(const std::function<void(T *)>& fn);
-    void setHighlightOnHover(const bool);
 
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -29,7 +28,6 @@ private:
 private: // event handler
     std::function<void(T*)> onDoubleClick;
     std::function<void(T *element)>  onSelected;
-    bool highlightOnHover = true;
 };
 
 

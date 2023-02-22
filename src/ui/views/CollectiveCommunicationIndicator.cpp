@@ -6,7 +6,7 @@
 CollectiveCommunicationIndicator::CollectiveCommunicationIndicator(CollectiveCommunicationEvent *element,
                                                                    QGraphicsItem *parent)
     : GenericIndicator(element, parent) {
-    setHighlightOnHover(false);
+    setAcceptHoverEvents(false);
 }
 
 bool CollectiveCommunicationIndicator::respondToEvent(QPointF mousePos) {
