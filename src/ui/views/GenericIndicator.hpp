@@ -37,14 +37,14 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
-    virtual bool respondToEvent(QPointF mousePos) { return true; };
+    virtual bool respondToEvent(QPointF) { return true; };
 
 private:
     T* element_;
 
 private: // event handler
-    std::function<void(T*)> onDoubleClick;
-    std::function<void(T *element)>  onSelected;
+    std::function<void(T*)> onDoubleClick_;
+    std::function<void(T *element)>  onSelected_;
 };
 
 

@@ -32,7 +32,7 @@ void InformationDockElementBaseStrategy<T>::setup(QFormLayout *layout)  {
 }
 
 template<class T> requires std::is_base_of_v<TimedElement, T>
-void InformationDockElementBaseStrategy<T>::updateView(QFormLayout *layout, T *element) {
+void InformationDockElementBaseStrategy<T>::updateView(QFormLayout *, T *element) {
     if (!element) return;
 
     auto start = static_cast<double>(element->getStartTime().count());

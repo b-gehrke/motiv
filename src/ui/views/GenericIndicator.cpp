@@ -26,26 +26,26 @@
 #include "src/models/communication/CollectiveCommunicationEvent.hpp"
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
-GenericIndicator<T, G>::GenericIndicator(T *element, QGraphicsItem *parent)
-    : element_(element), G() {
+GenericIndicator<T, G>::GenericIndicator(T *element, QGraphicsItem *)
+    : G(), element_(element) {
     this->setAcceptHoverEvents(true);
     this->setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::setOnDoubleClick(const std::function<void(T *)>& fn) {
-    onDoubleClick = fn;
+    onDoubleClick_ = fn;
 }
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::setOnSelected(const std::function<void(T *)>& fn) {
-    onSelected = fn;
+    onSelected_ = fn;
 }
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
-    if (onDoubleClick && respondToEvent(event->pos())) {
-        onDoubleClick(element_);
+    if (onDoubleClick_ && respondToEvent(event->pos())) {
+        onDoubleClick_(element_);
         event->accept();
     } else {
         G::mouseDoubleClickEvent(event);
@@ -54,8 +54,8 @@ void GenericIndicator<T, G>::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *eve
 
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 void GenericIndicator<T, G>::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (onSelected && respondToEvent(event->pos())) {
-        onSelected(element_);
+    if (onSelected_ && respondToEvent(event->pos())) {
+        onSelected_(element_);
         event->accept();
     } else {
         G::mousePressEvent(event);
