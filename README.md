@@ -5,9 +5,12 @@ An interactive Qt application to visualize [OTF2](https://www.vi-hps.org/project
 
 - C++20 compatible compiler
 - [CMake](https://cmake.org)
-- [Qt5/6 (incl. Qt Widgets)](https://www.qt.io)
+- [Qt6 (incl. Qt Widgets)](https://www.qt.io)
 - [otf2](http://www.vi-hps.org/projects/score-p/)
-- [otf2xx](https://github.com/tud-zih-energy/otf2xx)
+- [otf2xx](https://github.com/tud-zih-energy/otf2xx) (included as submodule)
+
+## Code documentation
+The code documentation is generated and available at [b-gehrke.github.io/motiv](https://b-gehrke.github.io/motiv) 
 
 ## Build
 
