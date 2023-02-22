@@ -54,10 +54,6 @@ namespace accessors {
     const TimeAccessor<CommunicationEvent *> communicationEventStart = &CommunicationEvent::getStartTime;
     const TimeAccessor<CommunicationEvent *> communicationEventEnd = &CommunicationEvent::getEndTime;
 
-
-    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventStart = &CollectiveCommunicationEvent::getStartTime;
-    const TimeAccessor<CollectiveCommunicationEvent *> colelctiveCommunicationEventEnd = &CollectiveCommunicationEvent::getEndTime;
-
     const TimeAccessor<Communication *> communicationStart = [](
         const Communication *e) { return e->getStartEvent()->getStartTime(); };
     const TimeAccessor<Communication *> communicationEnd = [](const Communication *e) { return e->getEndEvent()->getEndTime(); };
