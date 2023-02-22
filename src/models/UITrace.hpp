@@ -85,7 +85,8 @@ private:
      * @param stats All other slots in this interval
      * @return A new slot summarizing all slots in the interval
      */
-    static Slot * aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats);
+    static Slot *
+    aggregateSlots(otf2::chrono::duration minDuration, const Slot *intervalStarter, std::vector<Slot *> &stats);
 
     /**
      * Aggregates collective communications in an interval into a new summarized collective communication event.
@@ -96,7 +97,28 @@ private:
      * @param stats All other events in this interval
      * @return A new collective communication event summarizing all events in the interval
      */
-    static CollectiveCommunicationEvent * aggregateCollectiveCommunications(otf2::chrono::duration minDuration, const CollectiveCommunicationEvent *intervalStarter, std::vector<CollectiveCommunicationEvent *> &stats);
+    static CollectiveCommunicationEvent *aggregateCollectiveCommunications(otf2::chrono::duration minDuration,
+                                                                           const CollectiveCommunicationEvent *intervalStarter,
+                                                                           std::vector<CollectiveCommunicationEvent *> &stats);
+
+    static Slot *
+    slotInterval(types::TraceTime minDuration, const Slot *intervalStarter,
+                 std::map<SlotKind, std::vector<Slot *>> &stats);
+
+    template<class T>
+    requires std::is_base_of_v<TimedElement, T>
+    static std::vector<T *> optimize(
+        types::TraceTime minDuration,
+        Range<T *> elements,
+        std::function<T *(types::TraceTime, T *, std::vector<T *> &stats)> aggregate);
+
+    template<class T, typename K>
+    requires std::is_base_of_v<TimedElement, T>
+    static std::vector<T *> optimize(
+        types::TraceTime minDuration,
+        Range<T *> &elements,
+        std::function<K(const T *)> keySelector,
+        std::function<T *(types::TraceTime, T *, std::map<K, std::vector<T *>> &stats)> aggregate);
 };
 
 #endif //MOTIV_UITRACE_HPP

@@ -1,4 +1,7 @@
 #include "UITrace.hpp"
+#include "src/utils.hpp"
+
+#include <QDebug>
 
 UITrace::UITrace(std::map<otf2::definition::location_group *, std::vector<Slot *>, LocationGroupCmp> slotsVec,
                  const Range<Communication *> &communications,
@@ -21,176 +24,132 @@ UITrace::UITrace(std::map<otf2::definition::location_group *, std::vector<Slot *
 UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixel) {
     auto minDuration = timePerPixel * MIN_SLOT_SIZE_PX;
     std::map<otf2::definition::location_group *, std::vector<Slot *>, LocationGroupCmp> groupedSlots;
-    std::map<otf2::definition::location_group *, Range<Slot *>, LocationGroupCmp> groupedSlotsRange;
 
     for (const auto &item: trace->getSlots()) {
         auto locationGroup = item.first;
         auto slots = item.second;
-        std::vector<Slot *> newSlots;
+        qDebug() << "Rank" << locationGroup->name().str().c_str();
 
-        Slot *intervalStarter = nullptr;
-        std::map<SlotKind, std::vector<Slot *>> stats;
+        qDebug() << "Slots" << std::distance(slots.begin(), slots.end());
 
-        for (const auto &slot: slots) {
-            if (intervalStarter != nullptr && (slot->startTime > intervalStarter->startTime + minDuration)) {
-                Slot *newSlot;
-                // Order of importance if overlapping, the slot with the most important kind is shown.
-                // 1. MPI events, 2. OpenMP events 3. all other events
-                if (stats.contains(MPI)) {
-                    auto mpiStats = stats.at(MPI);
-                    newSlot = aggregateSlots(minDuration, intervalStarter, mpiStats);
-                } else if (stats.contains(OpenMP)) {
-                    auto openMpStats = stats.at(OpenMP);
-                    newSlot = aggregateSlots(minDuration, intervalStarter, openMpStats);
-                } else {
-                    auto plainStats = stats.at(Plain);
-                    newSlot = aggregateSlots(minDuration, intervalStarter, plainStats);
-                }
-
-                stats.clear();
-                intervalStarter = nullptr;
-
-                newSlots.push_back(newSlot);
-            }
-
-            if (slot->getDuration() < minDuration) {
-                if (intervalStarter == nullptr) {
-                    intervalStarter = slot;
-                }
-
-                if (!stats.contains(slot->getKind())) {
-                    stats.insert({slot->getKind(), std::vector<Slot *>()});
-                }
-
-                stats.at(slot->getKind()).push_back(slot);
-            } else {
-                newSlots.push_back(slot);
-            }
-        }
-        if(intervalStarter){
-            Slot *newSlot;
-            // Order of importance if overlapping, the slot with the most important kind is shown.
-            // 1. MPI events, 2. OpenMP events 3. all other events
-            if (stats.contains(MPI)) {
-                auto mpiStats = stats.at(MPI);
-                newSlot = aggregateSlots(minDuration, intervalStarter, mpiStats);
-            } else if (stats.contains(OpenMP)) {
-                auto openMpStats = stats.at(OpenMP);
-                newSlot = aggregateSlots(minDuration, intervalStarter, openMpStats);
-            } else {
-                auto plainStats = stats.at(Plain);
-                newSlot = aggregateSlots(minDuration, intervalStarter, plainStats);
-            }
-
-            newSlots.push_back(newSlot);
-        }
+        auto newSlots = optimize<Slot, SlotKind>(minDuration,
+                                                 slots,
+                                                 &Slot::getKind,
+                                                 UITrace::slotInterval);
 
 
+        qDebug() << "New slots" << newSlots.size();
         groupedSlots.insert({locationGroup, newSlots});
     }
 
 
     minDuration = timePerPixel * MIN_COMMUNICATION_SIZE_PX;
-    auto traceCommunications = trace->getCommunications();
-    std::vector<Communication*> communications(traceCommunications.begin(), traceCommunications.end());
-    std::map<otf2::reference<otf2::definition::location_group>, Range<Communication*>> communicationsByRank;
-    
-    // Sort first by location group aka MPI Rank, second by start time
-    std::sort(communications.begin(), communications.end(), [](const Communication* l, const Communication* r) {
-        auto rankL = l->getStartEvent()->getLocation()->location_group().ref();
-        auto rankR = r->getStartEvent()->getLocation()->location_group().ref();
+    auto communicationsByRank = groupBy<Communication *, otf2::reference<otf2::definition::location_group>>(
+        trace->getCommunications(),
+        [](const Communication *c) { return c->getStartEvent()->getLocation()->location_group().ref(); },
+        [](const Communication *l, const Communication *r) {
+            auto rankL = l->getStartEvent()->getLocation()->location_group().ref();
+            auto rankR = r->getStartEvent()->getLocation()->location_group().ref();
 
-        if(rankL == rankR) {
-            return l->getStartTime() < r->getStartTime();
-        }
-
-        return rankL < rankR;
-    });
-
-    if(!communications.empty()) {
-        // group by location group aka MPI Rank
-        auto start = communications.begin();
-        auto it = communications.begin() + 1;
-        while (it != communications.end()) {
-            auto rank = (*it)->getStartEvent()->getLocation()->location_group().ref();
-            auto startRank = (*start)->getStartEvent()->getLocation()->location_group().ref();
-            if (rank != startRank) {
-                communicationsByRank[startRank] = Range<Communication*>(start, it);
-                start = it;
+            if (rankL == rankR) {
+                return l->getStartTime() < r->getStartTime();
             }
 
-            it++;
-        }
-        auto startRank = (*start)->getStartEvent()->getLocation()->location_group().ref();
-        communicationsByRank[startRank] = Range<Communication*>(start, it);
-    }
+            return rankL < rankR;
+        });
 
-    std::vector<Communication*> newCommunications;
+    std::vector<Communication *> newCommunications;
     for (const auto &item: communicationsByRank) {
-        auto rank = item.first;
         auto comms = item.second;
-
-        Communication *intervalStarter = nullptr;
-
-
-        for (const auto &comm: comms) {
-            if (intervalStarter != nullptr && (comm->getStartTime() > intervalStarter->getStartTime() + minDuration)) {
-                newCommunications.push_back(intervalStarter);
-
-                intervalStarter = nullptr;
-            }
-
-            if (comm->getDuration() < minDuration) {
-                if (intervalStarter == nullptr) {
-                    intervalStarter = comm;
-                }
-            } else {
-                newCommunications.push_back(comm);
-            }
-        }
-        if(intervalStarter) {
-            newCommunications.push_back(intervalStarter);
-        }
+        auto newCommunicationsForRank = optimize<Communication>(
+            minDuration,
+            comms,
+            [](types::TraceTime, Communication *starter, std::vector<Communication *> &) { return starter; });
+        newCommunications.insert(newCommunications.end(), newCommunicationsForRank.begin(), newCommunicationsForRank.end());
     }
 
 
     minDuration = timePerPixel * MIN_COLLECTIVE_EVENT_SIZE_PX;
 
-    std::vector<CollectiveCommunicationEvent *> newCollectiveCommunications;
-    CollectiveCommunicationEvent *collectiveIntervalStarter = nullptr;
-    std::vector<CollectiveCommunicationEvent *> collectiveInterval;
-    for (const auto &collectiveCommunication: trace->getCollectiveCommunications()) {
-
-
-        if (collectiveIntervalStarter != nullptr &&
-            (collectiveCommunication->getStartTime() > collectiveIntervalStarter->getStartTime() + minDuration)) {
-            CollectiveCommunicationEvent *newEvent = aggregateCollectiveCommunications(minDuration, collectiveIntervalStarter, collectiveInterval);
-
-            collectiveIntervalStarter = nullptr;
-            collectiveInterval.clear();
-
-            newCollectiveCommunications.push_back(newEvent);
-        }
-
-
-
-        if (collectiveCommunication->getDuration() < minDuration) {
-            if (collectiveIntervalStarter == nullptr) {
-                collectiveIntervalStarter = collectiveCommunication;
-            }
-
-            collectiveInterval.push_back(collectiveCommunication);
-        } else {
-            newCollectiveCommunications.push_back(collectiveCommunication);
-        }
-    }
-    if(collectiveIntervalStarter) {
-        CollectiveCommunicationEvent *newEvent = aggregateCollectiveCommunications(minDuration, collectiveIntervalStarter, collectiveInterval);
-        newCollectiveCommunications.push_back(newEvent);
-    }
+    auto newCollectiveCommunications = optimize<CollectiveCommunicationEvent>(minDuration, trace->getCollectiveCommunications(),
+                                                        &UITrace::aggregateCollectiveCommunications);
 
     return new UITrace(groupedSlots, Range(newCommunications), Range(newCollectiveCommunications),
                        trace->getRuntime(), trace->getStartTime(), timePerPixel);
+}
+
+template<class T>
+requires std::is_base_of_v<TimedElement, T>
+std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
+                                   Range<T *> elements,
+                                   std::function<T *(types::TraceTime, T *, std::vector<T *> &stats)> aggregate) {
+    return optimize<T, uint8_t>(
+        minDuration,
+        elements,
+        [](const T *) { return 0; },
+        [aggregate](types::TraceTime minDuration, T *starter, std::map<uint8_t, std::vector<T *>> &stats) {
+            return aggregate(minDuration, starter, stats[0]);
+        });
+}
+
+template<class T, typename K>
+requires std::is_base_of_v<TimedElement, T>
+std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
+                                   Range<T *> &elements,
+                                   std::function<K(const T *)> keySelector,
+                                   std::function<T *(types::TraceTime, T *,
+                                                     std::map<K, std::vector<T *>> &stats)> aggregate) {
+    std::vector<T *> newElements;
+    T *intervalStarter = nullptr;
+    std::map<K, std::vector<T *>> stats;
+
+    for (const auto &element: elements) {
+        if (intervalStarter != nullptr && (element->getStartTime() > intervalStarter->getStartTime() + minDuration)) {
+            newElements.push_back(aggregate(minDuration, intervalStarter, stats));
+//            qDebug() << "Inserted aggregated element";
+
+            stats.clear();
+            intervalStarter = nullptr;
+        }
+
+        if (element->getDuration() < minDuration) {
+            if (intervalStarter == nullptr) {
+                intervalStarter = element;
+            }
+
+            if (!stats.contains(keySelector(element))) {
+                stats.insert({keySelector(element), std::vector<T *>()});
+            }
+
+            stats.at(keySelector(element)).push_back(element);
+        } else {
+            newElements.push_back(element);
+//            qDebug() << "Inserted element";
+        }
+    }
+    if (intervalStarter) {
+        newElements.push_back(aggregate(minDuration, intervalStarter, stats));
+//        qDebug() << "Inserted last aggregated element";
+    }
+    return newElements;
+}
+
+Slot *UITrace::slotInterval(types::TraceTime minDuration, const Slot *intervalStarter,
+                            std::map<SlotKind, std::vector<Slot *>> &stats) {
+    Slot *newSlot;
+    // Order of importance if overlapping, the slot with the most important kind is shown.
+// 1. MPI events, 2. OpenMP events 3. all other events
+    if (stats.contains(MPI)) {
+        auto mpiStats = stats.at(MPI);
+        newSlot = aggregateSlots(minDuration, intervalStarter, mpiStats);
+    } else if (stats.contains(OpenMP)) {
+        auto openMpStats = stats.at(OpenMP);
+        newSlot = aggregateSlots(minDuration, intervalStarter, openMpStats);
+    } else {
+        auto plainStats = stats.at(Plain);
+        newSlot = aggregateSlots(minDuration, intervalStarter, plainStats);
+    }
+    return newSlot;
 }
 
 Trace *UITrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) {
@@ -235,10 +194,10 @@ CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(otf2::c
     auto intervalEnder = last(stats);
 
     auto singleMember = new CollectiveCommunicationEvent::Member(intervalStarter->getStartTime(),
-                                                                    intervalEnder->getEndTime(),
-                                                                    longestEvent->getLocation());
+                                                                 intervalEnder->getEndTime(),
+                                                                 longestEvent->getLocation());
 
-    std::vector<CollectiveCommunicationEvent::Member*> singletonMembers;
+    std::vector<CollectiveCommunicationEvent::Member *> singletonMembers;
     singletonMembers.push_back(singleMember);
 
     return new CollectiveCommunicationEvent(
