@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.19)
 
 project(motiv VERSION 0.1 LANGUAGES CXX)
 
+set(PROJECT_SOURCE_URL https://github.com/parcio/motiv)
+set(PROJECT_ISSUES_URL ${PROJECT_SOURCE_URL}/issues)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -78,6 +81,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         MOTIV_VERSION_STRING="${PROJECT_VERSION}"
+        MOTIV_SOURCE_URL="${PROJECT_SOURCE_URL}"
+        MOTIV_ISSUES_URL="${PROJECT_ISSUES_URL}"
         )
 
 target_link_libraries(${PROJECT_NAME}

@@ -3,5 +3,6 @@
         <file>res/gpl-3.0.html</file>
         <file>res/help.md</file>
         <file>res/style.qss</file>
+        <file>res/motiv.png</file>
     </qresource>
 </RCC>

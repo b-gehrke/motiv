@@ -1,13 +1,15 @@
 #include "MainWindow.hpp"
 
+#include <QApplication>
+#include <QCoreApplication>
 #include <QErrorMessage>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QProcess>
 #include <QToolBar>
 #include <utility>
-#include <QCoreApplication>
-#include <QProcess>
 
 #include "src/models/AppSettings.hpp"
 #include "src/ui/widgets/License.hpp"
@@ -16,6 +18,7 @@
 #include "src/ui/widgets/Timeline.hpp"
 #include "src/ui/TimeUnit.hpp"
 #include "src/ui/windows/FilterPopup.hpp"
+#include "src/ui/widgets/About.hpp"
 #include "src/ui/widgets/TraceOverviewDock.hpp"
 #include "src/ui/widgets/InformationDock.hpp"
 #include "src/ui/widgets/infostrategies/InformationDockSlotStrategy.hpp"
@@ -59,8 +62,8 @@ void MainWindow::createMenus() {
         for (const auto &recent: AppSettings::getInstance().recentlyOpenedFiles()) {
             auto recentAction = new QAction(recent, openRecentMenu);
             openRecentMenu->addAction(recentAction);
-            connect(recentAction, &QAction::triggered, [&,this] {
-               this->openNewWindow(recent);
+            connect(recentAction, &QAction::triggered, [&, this] {
+                this->openNewWindow(recent);
             });
         }
         openRecentMenu->addSeparator();
@@ -126,8 +129,8 @@ void MainWindow::createMenus() {
     windowMenu->addAction(minimizeAction);
 
     /// Help menu
-    auto aboutAction = new QAction(tr("&View license"), this);
-    connect(aboutAction, &QAction::triggered, this, [] {
+    auto showLicenseAction = new QAction(tr("&View license"), this);
+    connect(showLicenseAction, &QAction::triggered, this, [] {
         auto license = new License;
         license->show();
     });
@@ -137,10 +140,20 @@ void MainWindow::createMenus() {
         auto help = new Help;
         help->show();
     });
+    auto showAboutQtAction = new QAction(tr("&About Qt"), this);
+    connect(showAboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+    auto showAboutAction = new QAction(tr("&About"), this);
+    showAboutAction->setShortcut(tr("Shift+F1"));
+    connect(showAboutAction, &QAction::triggered, this, [this] {
+        auto about = new About;
+        about->show();
+    });
 
     auto helpMenu = menuBar->addMenu(tr("&Help"));
-    helpMenu->addAction(aboutAction);
+    helpMenu->addAction(showLicenseAction);
     helpMenu->addAction(showHelpAction);
+    helpMenu->addAction(showAboutQtAction);
+    helpMenu->addAction(showAboutAction);
 }
 
 void MainWindow::createToolBars() {
@@ -162,9 +175,10 @@ void MainWindow::createToolBars() {
     this->startTimeInputField = new TimeInputField("Start", TimeUnit::Second, data->getFullTrace()->getStartTime(),
                                                    bottomContainerWidget);
     this->startTimeInputField->setUpdateFunction(
-        [this](auto newStartTime) { this->data->setSelectionBegin(newStartTime); });
+            [this](auto newStartTime) { this->data->setSelectionBegin(newStartTime); });
     containerLayout->addWidget(this->startTimeInputField);
-    this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, data->getFullTrace()->getEndTime(), bottomContainerWidget);
+    this->endTimeInputField = new TimeInputField("End", TimeUnit::Second, data->getFullTrace()->getEndTime(),
+                                                 bottomContainerWidget);
     this->endTimeInputField->setUpdateFunction([this](auto newEndTime) { this->data->setSelectionEnd(newEndTime); });
     containerLayout->addWidget(this->endTimeInputField);
 
@@ -184,9 +198,10 @@ void MainWindow::createDockWidgets() {
 
     this->information->setElement(this->data->getFullTrace());
     // @formatter:off
-    connect(information, SIGNAL(zoomToWindow(types::TraceTime,types::TraceTime)), data, SLOT(setSelection(types::TraceTime,types::TraceTime)));
+    connect(information, SIGNAL(zoomToWindow(types::TraceTime, types::TraceTime)), data,
+            SLOT(setSelection(types::TraceTime, types::TraceTime)));
 
-    connect(data, SIGNAL(infoElementSelected(TimedElement*)), information, SLOT(setElement(TimedElement*)));
+    connect(data, SIGNAL(infoElementSelected(TimedElement * )), information, SLOT(setElement(TimedElement * )));
     // @formatter:on
     this->addDockWidget(Qt::RightDockWidgetArea, this->information);
 

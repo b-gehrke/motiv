@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QApplication::setApplicationName("Motiv");
     QApplication::setApplicationVersion(MOTIV_VERSION_STRING);
+    QApplication::setWindowIcon(QIcon(":/res/motiv.png"));
 
     // Load an application style
     QFile styleFile( ":/res/style.qss" );
