@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.5
+Name=Motiv
+Comment=Visualize OTF2 traces
+Exec=motiv %f
+TryExec=motiv
+Terminal=false
+Type=Application
+Categories=Qt;Utility;
+Icon=motiv

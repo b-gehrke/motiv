@@ -95,5 +95,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         )
 
 install(TARGETS ${PROJECT_NAME}
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        BUNDLE DESTINATION .)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/motiv.desktop DESTINATION share/icons)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/motiv.png DESTINATION share/applications)
