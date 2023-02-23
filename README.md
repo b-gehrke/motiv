@@ -22,3 +22,5 @@ The code documentation is generated and available at [b-gehrke.github.io/motiv](
 
 ## License
 MOTIV is licensed under GPL v3 or later. The license is available [here](COPYING).
+
+[Jellyfish icon](https://www.flaticon.com/free-icons/jellyfish) created by [Freepik](https://www.flaticon.com/authors/freepik) from [Flaticon](https://www.flaticon.com/).
