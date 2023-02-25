@@ -3,7 +3,7 @@ name: "Build"
 # Workflow file for windows
 on:
   push:
-    branches: [ "master", "ci" ]
+    branches: [ "master" ]
   pull_request:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -60,7 +60,7 @@ jobs:
         with:
           name: motiv-linux
           path: build/motiv
-      - name: Upload linux binary
+      - name: Upload Mac binary
         uses: actions/upload-artifact@v3
         if: runner.os == 'macOS'
         with:

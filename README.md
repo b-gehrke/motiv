@@ -1,4 +1,7 @@
 # Marvellous OTF2 Traces Interactive Visualizer (MOTIV)
+[![Build](https://github.com/b-gehrke/motiv/actions/workflows/build.yaml/badge.svg)](https://github.com/b-gehrke/motiv/actions/workflows/build.yaml)
+
+
 An interactive Qt application to visualize [OTF2](https://www.vi-hps.org/projects/score-p/) trace files.
 
 ## Dependencies
