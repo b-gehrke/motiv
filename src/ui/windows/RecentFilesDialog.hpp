@@ -21,8 +21,25 @@
 
 #include <QDialog>
 
+/**
+ * A dialog that displays an open button and previously opened trace files.
+ * On QDialog::Accept the reference supplied in the constructor is updated to the selected path.
+ *
+ * @code{.cpp}
+ * QString myPath;
+ * RecentFilesDialog dialog(&myPath);
+ *
+ * if (dialog.exec() == QDialog::Accepted)
+ *     std::cout << "Path supplied: " << myPath << std::endl;
+ * else
+ *     std::cout << "No path supplied" << std::endl;
+ * @endcode
+ */
 class RecentFilesDialog : public QDialog {
 public:
+    /**
+     * @param dest variable to write the result to.
+     */
     RecentFilesDialog(QString *dest);
 
 private:

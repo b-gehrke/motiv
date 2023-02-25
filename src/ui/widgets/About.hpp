@@ -22,8 +22,19 @@
 
 #define LN "<br>"
 
+/**
+ * A widget showcasing information about this software
+ * including name, version, copyright and links to source code and issues.
+ */
 class About : public QWidget {
 public:
+    /**
+     * Creates new instance of About widget.
+     * It is recommended to pass nullptr as @p parent so that it shows as modal window.
+     * Do not forget to call `show()` on the constructed object if parent is nullptr.
+     *
+     * @param parent
+     */
     explicit About(QWidget *parent = nullptr) : QWidget(parent) {
         this->setAttribute(Qt::WA_DeleteOnClose);
 

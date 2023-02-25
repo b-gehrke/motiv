@@ -22,13 +22,29 @@
 #include <QLabel>
 #include "src/types.h"
 
+/**
+ * TimeUnitLabel constructs a @ref QLabel "QLabel" from a double value
+ * that represents a time point.
+ * It will always show the greatest possible unit where the value is greater than zero.
+ */
 class TimeUnitLabel : public QLabel {
     Q_OBJECT
 
 public:
+    /**
+     * @param time value to display in ns
+     * @param parent
+     */
     explicit TimeUnitLabel(double time, QWidget *parent = nullptr);
 
+    /**
+     * Update value.
+     * @param time value to display in ns
+     */
     void setTime(double time);
+    /**
+     * @return value in ns
+     */
     [[nodiscard]] double getTime() const;
 
     void updateView();

@@ -29,6 +29,10 @@ public:
     explicit ScrollSynchronizer(QObject *parent = nullptr);
 
 public:
+    /**
+     * Synchronizes scroll state of @p widget with the previously supplied widgets.
+     * @param widget
+     */
     void addWidget(QAbstractScrollArea *widget);
 
 private:

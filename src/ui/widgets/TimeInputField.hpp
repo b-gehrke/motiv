@@ -30,7 +30,20 @@
 /**
  * TimeInputField provides a combination of a QLabel, QLineEdit and QComboBox.
  *
- * This widget allows to control a TraceTime at different degrees of granularity.
+ * The QLabel displays an informational text, QLineEdit is a field that allows a double value as input,
+ * and the QComboBox can be used to select a time unit.
+ * Selecting a different time unit will automatically adjust the value in the input field.
+ * The purpose of this widget is to control a TraceTime at different degrees of granularity.
+ *
+ * By default, the widget does only keep its internal state and does not modify any other variable.
+ * In order to use the entered value you have to set an update function
+ * using @ref setUpdateFunction(std::function<void (types::TraceTime)>) "setUpdateFunction(yourFunc)".
+ *
+ * @code{.cpp}
+ * types::TraceTime myTime(0);
+ * auto field = new TimeInputField("Start", TimeUnit::Second, TraceTime(0));
+ * field->setUpdateFunction([&myTime](auto newStartTime) { myTime = newStartTime); });
+ * @endcode
  */
 class TimeInputField : public QWidget {
     Q_OBJECT
@@ -39,9 +52,20 @@ public Q_SLOTS:
     void setTime(types::TraceTime newTime);
 
 public: // constructors
+    /**
+     * Creates new TimeInputField.
+     * @param labelText Informational text to display left of the input field
+     * @param timeResolution Initial temporal resolution of the widget
+     * @param initialTime Initial value to display
+     * @param parent
+     */
     TimeInputField(QString labelText, TimeUnit timeResolution, types::TraceTime initialTime, QWidget *parent = nullptr);
 
 public: // methods
+    /**
+     * Set an update function that is called when a new value is entered.
+     * See @ref TimeInputField "TimeInputField" for an example.
+     */
     void setUpdateFunction(std::function<void (types::TraceTime)>);
 
 private: // methods

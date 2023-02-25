@@ -21,8 +21,18 @@
 #include <QFile>
 #include <QTextEdit>
 
+/**
+ * A widget showcasing displaying license information about this software.
+ */
 class License : public QTextEdit {
 public:
+    /**
+     * Creates new instance of License widget.
+     * It is recommended to pass nullptr as @p parent so that it shows as modal window.
+     * Do not forget to call `show()` on the constructed object if parent is nullptr.
+     *
+     * @param parent
+     */
     explicit License(QWidget *parent = nullptr) : QTextEdit(parent) {
         QFile licenseFile(":res/gpl-3.0.html");
         if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

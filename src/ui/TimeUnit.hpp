@@ -37,8 +37,16 @@ struct TimeUnit {
     };
 
     TimeUnit(Unit unit);
+    /**
+     * Construct TimeUnit from string.
+     * @param unit SI time string (e.g. ns, μs, s, h)
+     */
     TimeUnit(QString unit);
 
+    /**
+     * Turns TimeUnit into SI time format.
+     * @return @ref Unit "Unit" as SI string
+     */
     QString str() const;
 
     /**
