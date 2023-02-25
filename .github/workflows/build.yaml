@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake qt6-base-dev
+          sudo apt-get install -y cmake qt6-base-dev qt6-tools-dev
 
       - name: Running cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
