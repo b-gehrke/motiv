@@ -22,10 +22,41 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake qt6-base-dev qt6-tools-dev
+      - name: Install Cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 6.*
+
+      - name: Running cmake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: motiv
+          path: build/motiv
+  MacOS:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Install Cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 6.*
 
       - name: Running cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
