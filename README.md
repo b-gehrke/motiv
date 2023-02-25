@@ -1,4 +1,4 @@
-# Marvellous OTF2 Traces Interactive Visualizer (MOTIV)
+# Marvelous OTF2 Traces Interactive Visualizer (MOTIV)
 An interactive Qt application to visualize [OTF2](https://www.vi-hps.org/projects/score-p/) trace files.
 
 ## Dependencies

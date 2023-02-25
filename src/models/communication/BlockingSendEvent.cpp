@@ -1,5 +1,5 @@
 /*
- * Marvellous OTF2 Traces Interactive Visualizer (MOTIV)
+ * Marvelous OTF2 Traces Interactive Visualizer (MOTIV)
  * Copyright (C) 2023 Florian Gallrein, Björn Gehrke
  *
  * This program is free software: you can redistribute it and/or modify
