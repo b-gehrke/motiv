@@ -1,0 +1,68 @@
+name: "Build"
+
+# Workflow file for windows
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  Build:
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest", "macos-latest" ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Install Cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 6.*
+      - name: Install OTF2 Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install curl
+          curl -o /tmp/otf2.tar.gz https://perftools.pages.jsc.fz-juelich.de/cicd/otf2/tags/otf2-3.0/otf2-3.0.tar.gz
+          tar -xzf /tmp/otf2.tar.gz -C /tmp
+          cd /tmp/otf2-3.0
+          ./configure
+          make
+          sudo make install
+          cd -
+      - name: Install OTF2 Mac
+        if: runner.os == 'macOS'
+        run: |
+          brew install otf2
+
+      - name: Running cmake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Upload linux binary
+        uses: actions/upload-artifact@v3
+        if: runner.os == 'Linux'
+        with:
+          name: motiv-linux
+          path: build/motiv
+      - name: Upload Mac binary
+        uses: actions/upload-artifact@v3
+        if: runner.os == 'macOS'
+        with:
+          name: motiv-macos
+          path: build/motiv.app/Contents/MacOS/motiv
