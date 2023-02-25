@@ -14,8 +14,7 @@ concurrency:
 
 jobs:
   Ubuntu:
-    runs-on: ubuntu-latest
-
+    runs-on: [ "ubuntu-latest", "macos-latest" ]
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -29,7 +28,8 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: 6.*
-      - name: Install OTF2
+      - name: Install OTF2 Linux
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install curl
@@ -40,35 +40,8 @@ jobs:
           make
           sudo make install
           cd -
-
-      - name: Running cmake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build
-        run: cmake --build build
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: motiv
-          path: build/motiv
-  MacOS:
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-        with:
-          submodules: recursive
-
-      - name: Install Cmake
-        uses: lukka/get-cmake@latest
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: 6.*
-      - name: Install OTF2
+      - name: Install OTF2 Mac
+        if: runner.os == 'macOS'
         run: |
           brew install otf2
 
@@ -78,8 +51,15 @@ jobs:
       - name: Build
         run: cmake --build build
 
-      - name: Upload binary
+      - name: Upload linux binary
         uses: actions/upload-artifact@v3
+        if: runner.os == 'Linux'
         with:
-          name: motiv
+          name: motiv-linux
           path: build/motiv
+      - name: Upload linux binary
+        uses: actions/upload-artifact@v3
+        if: runner.os == 'macOS'
+        with:
+          name: motiv-macos
+          path: build/motiv.app/Contents/MacOS/motiv
