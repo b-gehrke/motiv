@@ -13,8 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Ubuntu:
-    runs-on: [ "ubuntu-latest", "macos-latest" ]
+  Build:
+    strategy:
+        os: [ "ubuntu-latest", "macos-latest" ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v1
