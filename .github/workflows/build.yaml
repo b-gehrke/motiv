@@ -29,6 +29,17 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: 6.*
+      - name: Install OTF2
+        run: |
+          sudo apt-get update
+          sudo apt-get install curl
+          curl -o /tmp/otf2.tar.gz https://perftools.pages.jsc.fz-juelich.de/cicd/otf2/tags/otf2-3.0/otf2-3.0.tar.gz
+          tar -xzf /tmp/otf2.tar.gz -C /tmp
+          cd /tmp/otf2-3.0
+          ./configure
+          make
+          sudo make install
+          cd -
 
       - name: Running cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -57,6 +68,9 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: 6.*
+      - name: Install OTF2
+        run: |
+          brew install otf2
 
       - name: Running cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
