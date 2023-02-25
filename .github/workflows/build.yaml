@@ -8,6 +8,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   Ubuntu:
     runs-on: ubuntu-latest
@@ -20,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y cmake qt6-base-dev
+          sudo apt-get update
+          sudo apt-get install -y cmake qt6-base-dev
 
       - name: Running cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
