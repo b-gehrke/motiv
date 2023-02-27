@@ -26,6 +26,10 @@
 #include "src/ui/views/TimelineView.hpp"
 #include "src/ui/TraceDataProxy.hpp"
 
+/**
+ * The Timeline class holds the actual @ref TimeLineView and also includes
+ * a header that changes with the selection, and a list of names of the shown ranks on the left.
+ */
 class Timeline : public QWidget {
     Q_OBJECT
 

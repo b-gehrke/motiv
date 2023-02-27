@@ -21,6 +21,10 @@
 #include <QFile>
 #include <QTextEdit>
 
+/**
+ * A widget which provides users with information about the various views and controls
+ * available in the application.
+ */
 class Help : public QTextEdit {
 public:
     explicit Help(QWidget *parent = nullptr) : QTextEdit(parent) {

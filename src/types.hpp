@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MOTIV_TYPES_H
-#define MOTIV_TYPES_H
+#ifndef MOTIV_TYPES_HPP
+#define MOTIV_TYPES_HPP
 
 #include <variant>
 #include <otf2xx/otf2.hpp>
@@ -26,4 +26,4 @@ namespace types {
     typedef otf2::chrono::duration TraceTime;
 }
 
-#endif //MOTIV_TYPES_H
+#endif //MOTIV_TYPES_HPP

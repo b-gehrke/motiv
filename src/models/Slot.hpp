@@ -20,7 +20,7 @@
 
 #include <otf2xx/otf2.hpp>
 #include "Builder.hpp"
-#include "src/types.h"
+#include "src/types.hpp"
 #include "TimedElement.hpp"
 
 enum SlotKind {

@@ -23,7 +23,7 @@
 
 #include "src/ui/TraceDataProxy.hpp"
 #include "src/models/Slot.hpp"
-#include "src/types.h"
+#include "src/types.hpp"
 #include "GenericIndicator.hpp"
 
 class SlotIndicator : public GenericIndicator<Slot, QGraphicsRectItem> {

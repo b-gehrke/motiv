@@ -20,7 +20,7 @@
 
 #include <QString>
 
-#include "src/types.h"
+#include "src/types.hpp"
 
 
 /**

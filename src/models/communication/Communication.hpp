@@ -19,7 +19,7 @@
 #define MOTIV_COMMUNICATION_HPP
 
 #include "src/models/Builder.hpp"
-#include "src/types.h"
+#include "src/types.hpp"
 #include "CommunicationKind.hpp"
 #include "CommunicationEvent.hpp"
 

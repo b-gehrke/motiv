@@ -18,7 +18,7 @@
 #ifndef MOTIV_TIMEDELEMENT_HPP
 #define MOTIV_TIMEDELEMENT_HPP
 
-#include "src/types.h"
+#include "src/types.hpp"
 
 class TimedElement {
 public:

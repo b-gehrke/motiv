@@ -23,6 +23,11 @@
 
 #include "src/ui/TraceDataProxy.hpp"
 
+/**
+ * The TimelineLabelList displays a vertical bar with a list of rank names.
+ *
+ * @TODO for configurable region heights, the height of the labels should be adjusted here too
+ */
 class TimelineLabelList : public QListWidget {
     Q_OBJECT
 

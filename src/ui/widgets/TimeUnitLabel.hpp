@@ -20,7 +20,7 @@
 
 
 #include <QLabel>
-#include "src/types.h"
+#include "src/types.hpp"
 
 /**
  * TimeUnitLabel constructs a @ref QLabel "QLabel" from a double value

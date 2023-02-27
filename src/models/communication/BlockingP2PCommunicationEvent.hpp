@@ -19,7 +19,7 @@
 #define MOTIV_BLOCKINGP2PCOMMUNICATIONEVENT_HPP
 
 #include "lib/otf2xx/include/otf2xx/otf2.hpp"
-#include "src/types.h"
+#include "src/types.hpp"
 #include "src/models/Builder.hpp"
 #include "CommunicationEvent.hpp"
 #include "CommunicationKind.hpp"

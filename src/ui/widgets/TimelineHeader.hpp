@@ -23,6 +23,9 @@
 
 #include "src/ui/TraceDataProxy.hpp"
 
+/**
+ * The TimelineHeader displays a horizontal bar with evenly distributed labels marking a time point.
+ */
 class TimelineHeader : public QWidget {
     Q_OBJECT
 

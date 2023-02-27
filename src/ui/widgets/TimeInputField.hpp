@@ -23,7 +23,7 @@
 #include <QLineEdit>
 #include <QWidget>
 
-#include "src/types.h"
+#include "src/types.hpp"
 #include "src/ui/TimeUnit.hpp"
 #include "src/ui/TraceDataProxy.hpp"
 
