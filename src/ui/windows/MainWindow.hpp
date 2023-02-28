@@ -26,6 +26,9 @@
 #include "src/ReaderCallbacks.hpp"
 #include "src/ui/widgets/TraceOverviewDock.hpp"
 #include "src/ui/widgets/InformationDock.hpp"
+#include "src/ui/widgets/License.hpp"
+#include "src/ui/widgets/Help.hpp"
+#include "src/ui/widgets/About.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -61,9 +64,14 @@ private: // widgets
     QToolBar *bottomToolbar = nullptr;
 
     InformationDock *information = nullptr;
+    TraceOverviewDock *traceOverview = nullptr;
 
     TimeInputField *startTimeInputField = nullptr;
     TimeInputField *endTimeInputField = nullptr;
+
+    License *licenseWindow = nullptr;
+    Help *helpWindow = nullptr;
+    About *aboutWindow = nullptr;
 
 private: // properties
     QString filepath;
@@ -73,7 +81,6 @@ private: // properties
     ReaderCallbacks *callbacks = nullptr;
 
     ViewSettings *settings = nullptr;
-    TraceOverviewDock *traceOverview = nullptr;
 };
 
 

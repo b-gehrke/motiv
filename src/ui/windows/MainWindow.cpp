@@ -58,9 +58,17 @@ MainWindow::MainWindow(QString filepath) : QMainWindow(nullptr), filepath(std::m
 }
 
 MainWindow::~MainWindow() {
-    delete data;
-    delete callbacks;
-    delete reader;
+    delete this->data;
+    delete this->callbacks;
+    delete this->reader;
+    delete this->settings;
+
+    delete this->traceOverview;
+    delete this->information;
+
+    delete this->licenseWindow;
+    delete this->helpWindow;
+    delete this->aboutWindow;
 }
 
 void MainWindow::createMenus() {
@@ -138,7 +146,7 @@ void MainWindow::createMenus() {
     viewMenu->addMenu(widgetMenu);
 
     /// Window menu
-    auto minimizeAction = new QAction(tr("&Minimize"), this);
+    auto minimizeAction = new QAction(tr("&Minimize"));
     minimizeAction->setShortcut(tr("Ctrl+M"));
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(showMinimized()));
 
@@ -146,24 +154,24 @@ void MainWindow::createMenus() {
     windowMenu->addAction(minimizeAction);
 
     /// Help menu
-    auto showLicenseAction = new QAction(tr("&View license"), this);
-    connect(showLicenseAction, &QAction::triggered, this, [] {
-        auto license = new License;
-        license->show();
+    auto showLicenseAction = new QAction(tr("&View license"));
+    connect(showLicenseAction, &QAction::triggered, this, [this] {
+        if(!this->licenseWindow) this->licenseWindow = new License;
+        this->licenseWindow->show();
     });
-    auto showHelpAction = new QAction(tr("&Show help"), this);
+    auto showHelpAction = new QAction(tr("&Show help"));
     showHelpAction->setShortcut(tr("F1"));
-    connect(showHelpAction, &QAction::triggered, this, [] {
-        auto help = new Help;
-        help->show();
+    connect(showHelpAction, &QAction::triggered, this, [this] {
+        if(!this->helpWindow) this->helpWindow = new Help;
+        this->helpWindow->show();
     });
-    auto showAboutQtAction = new QAction(tr("&About Qt"), this);
+    auto showAboutQtAction = new QAction(tr("&About Qt"));
     connect(showAboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
-    auto showAboutAction = new QAction(tr("&About"), this);
+    auto showAboutAction = new QAction(tr("&About"));
     showAboutAction->setShortcut(tr("Shift+F1"));
     connect(showAboutAction, &QAction::triggered, this, [this] {
-        auto about = new About;
-        about->show();
+        if(!this->aboutWindow) this->aboutWindow= new About;
+        this->aboutWindow->show();
     });
 
     auto helpMenu = menuBar->addMenu(tr("&Help"));
@@ -182,7 +190,7 @@ void MainWindow::createToolBars() {
     // Bottom toolbar contains control fields
     this->bottomToolbar = new QToolBar(this);
     this->bottomToolbar->setMovable(false);
-    addToolBar(Qt::BottomToolBarArea, this->bottomToolbar);
+    this->addToolBar(Qt::BottomToolBarArea, this->bottomToolbar);
 
     auto bottomContainerWidget = new QWidget(this->bottomToolbar);
     auto containerLayout = new QHBoxLayout(bottomContainerWidget);
@@ -249,23 +257,23 @@ QString MainWindow::promptFile() {
 }
 
 void MainWindow::loadTrace() {
-    reader = new otf2::reader::reader(this->filepath.toStdString());
-    callbacks = new ReaderCallbacks(*reader);
+    this->reader = new otf2::reader::reader(this->filepath.toStdString());
+    this->callbacks = new ReaderCallbacks(*reader);
 
-    reader->set_callback(*callbacks);
-    reader->read_definitions();
-    reader->read_events();
+    this->reader->set_callback(*callbacks);
+    this->reader->read_definitions();
+    this->reader->read_events();
 
-    auto slots = callbacks->getSlots();
-    auto communications = callbacks->getCommunications();
-    auto collectives = callbacks->getCollectiveCommunications();
-    auto trace = new FileTrace(slots, communications, collectives, callbacks->duration());
+    auto slots = this->callbacks->getSlots();
+    auto communications = this->callbacks->getCommunications();
+    auto collectives = this->callbacks->getCollectiveCommunications();
+    auto trace = new FileTrace(slots, communications, collectives, this->callbacks->duration());
 
-    data = new TraceDataProxy(trace, settings, this);
+    this->data = new TraceDataProxy(trace, this->settings, this);
 }
 
 void MainWindow::loadSettings() {
-    settings = new ViewSettings();
+    this->settings = new ViewSettings();
 }
 
 void MainWindow::resetZoom() {

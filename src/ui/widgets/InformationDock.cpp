@@ -27,6 +27,14 @@ InformationDock::InformationDock(QWidget *parent) : QDockWidget(parent) {
     setWindowTitle(tr("Details"));
 }
 
+InformationDock::~InformationDock() {
+    delete this->element_;
+    for(auto &item : this->strategies_) {
+        delete item.first;
+        delete item.second;
+    }
+}
+
 void InformationDock::updateView() {
     if(!element_) return;
 

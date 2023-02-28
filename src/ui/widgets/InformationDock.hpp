@@ -30,6 +30,7 @@ class InformationDock : public QDockWidget {
 Q_OBJECT
 public:
     explicit InformationDock(QWidget *parent = nullptr);
+    ~InformationDock();
 
 public:
     void addElementStrategy(InformationDockElementStrategy *s);
@@ -52,9 +53,6 @@ private: // fields
     TimedElement *element_ = nullptr;
 
 private:
-    QWidget *child = nullptr;
-    QFormLayout *childLayout = nullptr;
-
     std::vector<std::pair<QWidget*, InformationDockElementStrategy*>> strategies_ {};
 };
 
