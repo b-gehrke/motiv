@@ -109,14 +109,13 @@ void TraceOverviewTimelineView::resizeEvent(QResizeEvent *event) {
 }
 
 void TraceOverviewTimelineView::updateView() {
-    auto scene = new QGraphicsScene(this);
+    this->scene()->clear();
 
     auto sceneRect = this->rect();
     sceneRect.setHeight(size().height() - 2);
 
-    scene->setSceneRect(sceneRect);
-    this->populateScene(scene);
-    this->setScene(scene);
+    this->scene()->setSceneRect(sceneRect);
+    this->populateScene(this->scene());
 }
 
 void TraceOverviewTimelineView::setSelectionWindow(types::TraceTime from, types::TraceTime to) {

@@ -59,9 +59,9 @@ types::TraceTime TraceDataProxy::getTotalRuntime() const {
 }
 
 void TraceDataProxy::updateSelection() {
+    delete selection;
     auto subtrace = trace->subtrace(begin, end);
     selection = UITrace::forResolution(subtrace, subtrace->getRuntime() / 1920);
-//    selection = subtrace;
     Q_EMIT selectionChanged(begin, end);
 }
 

@@ -26,7 +26,7 @@
 #include <QWheelEvent>
 
 TimelineView::TimelineView(TraceDataProxy *data, QWidget *parent) : QGraphicsView(parent), data(data) {
-    auto scene = new QGraphicsScene(this);
+    auto scene = new QGraphicsScene();
     this->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     this->setAutoFillBackground(false);
     this->setStyleSheet("background: transparent");
@@ -179,17 +179,15 @@ void TimelineView::resizeEvent(QResizeEvent *event) {
 
 void TimelineView::updateView() {
     // TODO it might be more performant to keep track of items and add/remove new/leaving items and resizing them
-//    delete this->scene();
-    auto scene = new QGraphicsScene(this);
+    this->scene()->clear();
 
     auto ROW_HEIGHT = 30;
     auto sceneHeight = this->data->getSelection()->getSlots().size() * ROW_HEIGHT;
     auto sceneRect = this->rect();
     sceneRect.setHeight(sceneHeight);
 
-    scene->setSceneRect(sceneRect);
-    this->populateScene(scene);
-    this->setScene(scene);
+    this->scene()->setSceneRect(sceneRect);
+    this->populateScene(this->scene());
 }
 
 void TimelineView::wheelEvent(QWheelEvent *event) {
