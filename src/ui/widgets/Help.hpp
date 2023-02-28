@@ -22,8 +22,7 @@
 #include <QTextEdit>
 
 /**
- * A widget which provides users with information about the various views and controls
- * available in the application.
+ * @brief A widget which provides users with information about the various views and controls available in the application.
  */
 class Help : public QTextEdit {
 public:

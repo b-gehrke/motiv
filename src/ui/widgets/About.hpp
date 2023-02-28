@@ -23,8 +23,9 @@
 #define LN "<br>"
 
 /**
- * A widget showcasing information about this software
- * including name, version, copyright and links to source code and issues.
+ * @brief A widget showcasing information about this software
+ *
+ * The information include name, version, copyright and links to source code and issues.
  */
 class About : public QWidget {
 public:

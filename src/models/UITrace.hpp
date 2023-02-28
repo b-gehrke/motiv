@@ -40,7 +40,7 @@
 #define MIN_COLLECTIVE_EVENT_SIZE_PX 10
 
 /**
- * Trace facilitating a subtrace optimized for rendering
+ * @brief Trace facilitating a subtrace optimized for rendering
  *
  * Slots that would be rendered smaller than `MIN_SLOT_SIZE_PX` pixels are grouped together to a single slot.
  * Instead of all slots that fit inside `MIN_SLOT_SIZE_PX` the longest slot with the most important kind is shown.

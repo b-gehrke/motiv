@@ -22,7 +22,8 @@
 #include <QDialog>
 
 /**
- * A dialog that displays an open button and previously opened trace files.
+ * @brief A dialog that displays an open button and previously opened trace files.
+ *
  * On QDialog::Accept the reference supplied in the constructor is updated to the selected path.
  *
  * @code{.cpp}

@@ -26,7 +26,7 @@
 #include "./Communication.hpp"
 
 /**
- * Defines the duration of blocking communication events.
+ * @brief Defines the duration of blocking communication events.
  *
  * A blocking communication event has only a single time point and therefore no duration. For easier use in the rest
  * of the application each blocking event is assigned a small duration nevertheless.

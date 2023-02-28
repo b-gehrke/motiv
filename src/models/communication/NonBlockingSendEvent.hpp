@@ -22,7 +22,7 @@
 #include "NonBlockingP2PCommunicationEvent.hpp"
 
 /**
- * Class representing the non blocking send event.
+ * @brief Class representing the non blocking send event.
  */
 class NonBlockingSendEvent : public NonBlockingP2PCommunicationEvent {
 public:

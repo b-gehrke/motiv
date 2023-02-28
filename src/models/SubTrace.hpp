@@ -23,7 +23,7 @@
 
 
 /**
- * Trace representing a section of a larger trace.
+ * @brief Trace representing a section of a larger trace.
  */
 class SubTrace : public Trace {
 public:

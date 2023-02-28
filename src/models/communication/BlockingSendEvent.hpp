@@ -23,7 +23,7 @@
 
 
 /**
- * Class representing the blocking send event.
+ * @brief Class representing the blocking send event.
  */
 class BlockingSendEvent : public BlockingP2PCommunicationEvent {
 public:

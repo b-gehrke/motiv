@@ -23,7 +23,7 @@
 #include "src/models/Builder.hpp"
 
 /**
- * All different kinds of communication events.
+ * @brief All different kinds of communication events.
  */
 enum CommunicationKind {
     /**

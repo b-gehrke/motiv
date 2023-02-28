@@ -28,6 +28,8 @@
 #include "src/ui/TraceDataProxy.hpp"
 
 /**
+ * @brief A widget for entering a time point
+ *
  * TimeInputField provides a combination of a QLabel, QLineEdit and QComboBox.
  *
  * The QLabel displays an informational text, QLineEdit is a field that allows a double value as input,

@@ -22,7 +22,7 @@
 #include <QTextEdit>
 
 /**
- * A widget showcasing displaying license information about this software.
+ * @brief A widget showcasing displaying license information about this software.
  */
 class License : public QTextEdit {
 public:

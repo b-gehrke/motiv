@@ -27,6 +27,8 @@
 #include "src/ui/TraceDataProxy.hpp"
 
 /**
+ * @brief Container widget for actual view and axis labels
+ *
  * The Timeline class holds the actual @ref TimeLineView and also includes
  * a header that changes with the selection, and a list of names of the shown ranks on the left.
  */

@@ -25,7 +25,9 @@
 #include "src/models/TimedElement.hpp"
 
 /**
- * Abstract class for generic Communication events. All communications handled by this application have a start and an
+ * @brief Abstract class for generic Communication events.
+ *
+ * All communications handled by this application have a start and an
  * end event. See `Communication` for more details.
  */
 class CommunicationEvent : public TimedElement {

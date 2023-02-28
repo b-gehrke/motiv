@@ -22,7 +22,7 @@
 #include "BlockingP2PCommunicationEvent.hpp"
 
 /**
- * Class representing the blocking send event.
+ * @brief Class representing the blocking send event.
  */
 class BlockingReceiveEvent : public BlockingP2PCommunicationEvent {
 public:

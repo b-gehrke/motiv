@@ -26,8 +26,11 @@
 
 
 /**
+ * @brief Model class providing access to data and pub/sub architecture of change events
+ *
  * TraceDataProxy acts as an intermediate class between the views and the data.
- * This class tracks all state changes related to the representation of the trace, e.g. selections.
+ * This class tracks all state changes related to the representation of the trace, e.g. selections
+ * and emits a signal on changes.
  */
 class TraceDataProxy : public QObject {
     Q_OBJECT

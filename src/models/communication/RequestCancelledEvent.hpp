@@ -22,7 +22,7 @@
 #include "NonBlockingP2PCommunicationEvent.hpp"
 
 /**
- * Class representing the request cancelled event.
+ * @brief Class representing the request cancelled event.
  */
 class RequestCancelledEvent : public NonBlockingP2PCommunicationEvent {
 public:

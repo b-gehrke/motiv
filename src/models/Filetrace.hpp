@@ -22,7 +22,7 @@
 #include "Range.hpp"
 
 /**
- * Trace representing the whole trace loaded from trace files
+ * @brief Trace representing the whole trace loaded from trace files
  */
 class FileTrace : public SubTrace {
 private:
