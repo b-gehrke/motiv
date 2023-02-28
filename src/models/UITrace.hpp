@@ -97,18 +97,6 @@ private:
      * Backing field. Stores the time that can be represented per pixel.
      */
     otf2::chrono::duration timePerPx_;
-
-    /**
-     * Aggregates slots in an interval into a new summarized slot.
-     *
-     * Creates a new slot representing all slots in @c stats
-     * @param intervalStarter First slot in the interval
-     * @param stats All other slots in this interval
-     * @return A new slot summarizing all slots in the interval
-     */
-    static Slot *
-    aggregateSlots(const Slot *intervalStarter, std::vector<Slot *> &stats);
-
     /**
      * Aggregates collective communications in an interval into a new summarized collective communication event.
      *
@@ -129,7 +117,7 @@ private:
      * @param stats All other slots grouped by kind in the interval
      * @return A new slot summarizing all slots in the interval
      */
-    static Slot *slotInterval(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats);
+    static Slot *aggregateSlots(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats);
 
     /**
      * Collects and optimizes timed elements to small to be rendered.

@@ -58,7 +58,15 @@ public:
      * @copydoc Trace::getStartTime()
      */
     [[nodiscard]] otf2::chrono::duration getStartTime() const override;
+
+    /**
+     * @copydoc TimedElement::getEndTime()
+     */
     [[nodiscard]] types::TraceTime getEndTime() const override;
+
+    /**
+     * @copydoc TimedElement::getDuration()
+     */
     [[nodiscard]] types::TraceTime getDuration() const override;
 
 protected:

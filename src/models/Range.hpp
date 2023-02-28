@@ -34,6 +34,11 @@ public:
 
     Range(It begin, It end) : begin_(begin), end_(end), vec_(nullptr) {};
 
+    /**
+     * @brief Constructs a new Range object from a given Range object.
+     *
+     * @param rhs The Range object to copy from.
+     */
     Range(const Range &rhs) {
         if (rhs.vec_) {
             vec_ = new std::vector<T>(*rhs.vec_);

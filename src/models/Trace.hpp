@@ -34,22 +34,59 @@ struct LocationGroupCmp {
     }
 };
 
+/**
+ * @brief Abstract base class for a trace.
+ *
+ * This class defines an abstract base class for a trace. It inherits from the TimedElement class and contains pure virtual functions that have to be implemented by derived classes.
+ */
 class Trace : public TimedElement {
 public:
     /**
-     * Gets the slots
-     * @return The slots
+     * @brief Returns a map of slots of the current trace.
+     *
+     * This pure virtual function returns a map of slots of the current trace. The function has to be implemented in the derived classes.
+     *
+     * @return A map of slots of the current trace.
      */
-    [[nodiscard]] virtual std::map<otf2::definition::location_group *, Range<Slot *>, LocationGroupCmp>
-    getSlots() const = 0;
+    [[nodiscard]] virtual std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> getSlots() const = 0;
 
-    [[nodiscard]] virtual Range<Communication *> getCommunications() = 0;
+    /**
+     * @brief Returns communication objects of the current trace.
+     *
+     * This pure virtual function returns communication objects of the current trace. The function has to be implemented in the derived classes.
+     *
+     * @return communication objects of the current trace.
+     */
+    [[nodiscard]] virtual Range<Communication*> getCommunications() = 0;
 
-    [[nodiscard]] virtual Range<CollectiveCommunicationEvent *> getCollectiveCommunications() = 0;
+    /**
+     * @brief Returns collective communication events of the current trace.
+     *
+     * This pure virtual function returns collective communication events of the current trace. The function has to be implemented in the derived classes.
+     *
+     * @return collective communication events of the current trace.
+     */
+    [[nodiscard]] virtual Range<CollectiveCommunicationEvent*> getCollectiveCommunications() = 0;
 
+    /**
+     * @brief Returns the runtime of the current trace.
+     *
+     * This pure virtual function returns the runtime of the current trace. The function has to be implemented in the derived classes.
+     *
+     * @return The runtime of the current trace.
+     */
     [[nodiscard]] virtual otf2::chrono::duration getRuntime() const = 0;
 
-    [[nodiscard]] virtual Trace *subtrace(otf2::chrono::duration from, otf2::chrono::duration to) = 0;
+    /**
+     * @brief Creates a subtrace of the current trace.
+     *
+     * This pure virtual function creates a subtrace of the current trace by returning a new Trace object that only contains elements within the given time range. The function has to be implemented in the derived classes.
+     *
+     * @param from Time the the subtrace should start.
+     * @param to Time the subtrace should end.
+     * @return A new Trace object that only contains elements within the given time range.
+     */
+    [[nodiscard]] virtual Trace* subtrace(otf2::chrono::duration from, otf2::chrono::duration to) = 0;
 };
 
 

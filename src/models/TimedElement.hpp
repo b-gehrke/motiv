@@ -25,9 +25,31 @@ public:
     virtual ~TimedElement() = default;
 
 public:
+    /**
+     * @brief Returns the start time of the current object.
+     *
+     * This pure virtual function returns the start time of the current object. The function has to be implemented in the derived classes.
+     *
+     * @return The start time of the current object.
+     */
     [[nodiscard]] virtual types::TraceTime getStartTime() const = 0;
+
+    /**
+     * @brief Returns the end time of the current object.
+     *
+     * This pure virtual function returns the end time of the current object. The function has to be implemented in the derived classes.
+     *
+     * @return The end time of the current object.
+     */
     [[nodiscard]] virtual types::TraceTime getEndTime() const = 0;
 
+    /**
+     * @brief Returns the duration of the current object.
+     *
+     * This function calculates and returns the duration of the current object, which is the difference between its end time and start time. The function can be overridden in the derived classes if necessary.
+     *
+     * @return The duration of the current object.
+     */
     [[nodiscard]] virtual types::TraceTime getDuration() const { return getEndTime() - getStartTime(); }
 };
 

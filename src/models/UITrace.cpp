@@ -36,6 +36,9 @@ UITrace::UITrace(std::map<otf2::definition::location_group *, std::vector<Slot *
         slots_.insert({item.first, Range(item.second)});
     }
 }
+UITrace *UITrace::forResolution(Trace *trace, int width) {
+    return forResolution(trace, trace->getRuntime() / width);
+}
 
 UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixel) {
 
@@ -49,7 +52,7 @@ UITrace *UITrace::forResolution(Trace *trace, otf2::chrono::duration timePerPixe
             minDuration,
             slots,
             &Slot::getKind,
-            &UITrace::slotInterval);
+            &UITrace::aggregateSlots);
 
         newSlots.insert({locationGroup, newSlotsForRank});
     }
@@ -154,26 +157,6 @@ std::vector<T *> UITrace::optimize(types::TraceTime minDuration,
     return newElements;
 }
 
-Slot *UITrace::slotInterval(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats) {
-    std::vector<Slot *>* elements;
-    // Order of importance if overlapping, the slot with the most important kind is shown.
-    // 1. MPI events, 2. OpenMP events 3. all other events
-    if (stats.contains(MPI)) {
-        elements = &stats.at(MPI);
-    } else if (stats.contains(OpenMP)) {
-        elements = &stats.at(OpenMP);
-    } else {
-        elements = &stats.at(Plain);
-    }
-    return aggregateSlots(intervalStarter, *elements);
-
-}
-
-Trace *UITrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) {
-    return forResolution(SubTrace::subtrace(from, to), timePerPx_);
-}
-
-
 template<class T>
 requires std::is_base_of_v<TimedElement, T>
 static T *longest(std::vector<T *> ls) {
@@ -191,15 +174,22 @@ static T *last(std::vector<T *> ls) {
 }
 
 
-Slot *UITrace::aggregateSlots(const Slot *intervalStarter, std::vector<Slot *> &stats) {
-    auto longestSlot = longest(stats);
-    auto intervalEnder = last(stats);
+Slot *UITrace::aggregateSlots(const Slot *intervalStarter, std::map<SlotKind, std::vector<Slot *>> &stats) {
+    std::vector<Slot *>* elements;
+    // Order of importance if overlapping, the slot with the most important kind is shown.
+    // 1. MPI events, 2. OpenMP events 3. all other events
+    if (stats.contains(MPI)) {
+        elements = &stats.at(MPI);
+    } else if (stats.contains(OpenMP)) {
+        elements = &stats.at(OpenMP);
+    } else {
+        elements = &stats.at(Plain);
+    }
+
+    auto longestSlot = longest(*elements);
+    auto intervalEnder = last(*elements);
 
     return new Slot(intervalStarter->startTime, intervalEnder->endTime, longestSlot->location, longestSlot->region);
-}
-
-UITrace *UITrace::forResolution(Trace *trace, int width) {
-    return forResolution(trace, trace->getRuntime() / width);
 }
 
 CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(
@@ -219,4 +209,8 @@ CollectiveCommunicationEvent *UITrace::aggregateCollectiveCommunications(
         singletonMembers, longestEvent->getLocation(), longestEvent->getCommunicator(),
         longestEvent->getOperation(), longestEvent->getRoot()
     );
+}
+
+Trace *UITrace::subtrace(otf2::chrono::duration from, otf2::chrono::duration to) {
+    return forResolution(SubTrace::subtrace(from, to), timePerPx_);
 }

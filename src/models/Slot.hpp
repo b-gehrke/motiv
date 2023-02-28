@@ -56,12 +56,22 @@ public:
     otf2::definition::region *region;
 
     /**
-     * Returns the kind of the slot
-     * @return kind of the slot
+     *
+     *  @brief Returns the kind of the current Slot object.
+     *
+     *  This function returns the kind of the current Slot object based on the name of the region that the Slot belongs to.
+     *  @return The kind of the current Slot object.
      */
     [[nodiscard]] SlotKind getKind() const;
 
+    /**
+     * @copydoc TimedElement::getStartTime()
+     */
     [[nodiscard]] types::TraceTime getStartTime() const override;
+
+    /**
+     * @copydoc TimedElement::getStartTime()
+     */
     [[nodiscard]] types::TraceTime getEndTime() const override;
 
 

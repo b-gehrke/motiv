@@ -23,25 +23,54 @@
 
 #define SETTINGS_DEFAULT_ZOOM_QUOTIENT 25
 
+/**
+ * @brief The ViewSettings class encapsulates settings for the main view.
+ *
+ * It includes a filter to control which events are displayed and a zoom factor to control
+ * the level of detail in the visualization.
+ */
 class ViewSettings {
 public:
 
-public:
-    [[nodiscard]] Filter getFilter() const;
     /**
-     * Returns the reciprocal of a zoom factor
+     * @brief Returns the current filter.
+     * @return A Filter object representing the current filter.
+     */
+    [[nodiscard]] Filter getFilter() const;
+
+    /**
+     * @brief Returns the reciprocal of the current zoom factor.
      *
-     * E.g. 50 represents a 1/50 = 2% zoom
-     * @return
+     * For example, if the zoom view is zoomed to show 1/50=2%, this function will return 50.
+     * @return An integer representing the reciprocal of the current zoom factor.
      */
     [[nodiscard]] int getZoomQuotient() const;
 
-
+    /**
+     * @brief Sets the current filter.
+     * @param filter A Filter object representing the new filter.
+     */
     void setFilter(Filter filter);
+
+    /**
+     * @brief Sets the current zoom factor.
+     *
+     * The zoom factor defines how much of the actual trace is shown.
+     * It is set as the reciprocal. For example, if the view is
+     * zoom to show only 2%=1/50 of the whole view, the zoom factor is 50
+     *
+     * @param zoomFactor An integer representing the new zoom factor.
+     */
     void setZoomFactor(int zoomFactor);
 
 private:
+    /**
+     * Backing field for the current zoom factor.
+     */
     int zoomFactor_ = SETTINGS_DEFAULT_ZOOM_QUOTIENT;
+    /**
+     * Backing field for the current filter.
+     * */
     Filter filter_;
 };
 

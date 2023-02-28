@@ -79,9 +79,7 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
             // Ensures slots ending after `end` (like main) are considered to end at end
             auto effectiveEndTime = qMin(end, endTime);
 
-            auto slotBeginPos = qMax(0.0,
-                                     (static_cast<qreal>(effectiveStartTime - begin) / static_cast<qreal>(runtime)) *
-                                     width);
+            auto slotBeginPos = (static_cast<qreal>(effectiveStartTime - begin) / static_cast<qreal>(runtime)) * width;
             auto slotRuntime = static_cast<qreal>(effectiveEndTime - effectiveStartTime);
             auto rectWidth = (slotRuntime / static_cast<qreal>(runtime)) * width;
 
@@ -93,15 +91,21 @@ void TimelineView::populateScene(QGraphicsScene *scene) {
 
             // Determine color based on name
             QColor rectColor;
-            if (regionNameStr.starts_with("MPI_")) {
-                rectColor = colors::COLOR_SLOT_MPI;
-                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 2);
-            } else if (regionNameStr.starts_with("!$omp")) {
-                rectColor = colors::COLOR_SLOT_OPEN_MP;
-                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 1);
-            } else {
-                rectColor = colors::COLOR_SLOT_PLAIN;
-                rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 0);
+            switch (slot->getKind()) {
+                case ::MPI:
+                    rectColor = colors::COLOR_SLOT_MPI;
+                    rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 2);
+                    break;
+                case ::OpenMP:
+                    rectColor = colors::COLOR_SLOT_OPEN_MP;
+                    rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 1);
+                    break;
+                case ::None:
+                case ::Plain:
+                default:
+                    rectColor = colors::COLOR_SLOT_PLAIN;
+                    rectItem->setZValue(layers::Z_LAYER_SLOTS_MIN_PRIORITY + 0);
+                    break;
             }
             rectItem->setBrush(rectColor);
             scene->addItem(rectItem);
