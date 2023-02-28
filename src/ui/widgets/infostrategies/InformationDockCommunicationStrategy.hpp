@@ -22,12 +22,25 @@
 #include "InformationDockElementBaseStrategy.hpp"
 #include "src/models/communication/Communication.hpp"
 
+/**
+ * @brief A InformationDockElementStrategy to display information about a Communication
+ */
 class InformationDockCommunicationStrategy : public InformationDockElementBaseStrategy<Communication> {
 public:
+
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::setup(QFormLayout*)
+     */
     void setup(QFormLayout *layout) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::updateView(QFormLayout*, T*)
+     */
     void updateView(QFormLayout *layout, Communication *element) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::title()
+     */
     std::string title() override;
 
 private:

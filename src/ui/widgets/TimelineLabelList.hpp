@@ -24,14 +24,20 @@
 #include "src/ui/TraceDataProxy.hpp"
 
 /**
- * The TimelineLabelList displays a vertical bar with a list of rank names.
+ * @brief The TimelineLabelList displays a vertical bar with a list of rank names.
  *
- * @TODO for configurable region heights, the height of the labels should be adjusted here too
+ * TODO: for configurable region heights, the height of the labels should be adjusted here too
  */
 class TimelineLabelList : public QListWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the TimelineLabelList class
+     *
+     * @param data A pointer to a TraceDataProxy
+     * @param parent The parent QWidget
+     */
     TimelineLabelList(TraceDataProxy *data, QWidget *parent = nullptr);
 
 protected:
@@ -39,8 +45,18 @@ protected:
      * NOTE: we override this function to prevent the items from being clicked/activated.
      * this is quite hacky and there might be a better solution.
      */
+
+    /**
+     * @copydoc QGraphicsView::mousePressEvent(QMouseEvent*)
+     */
     void mousePressEvent(QMouseEvent *event) override;
+    /**
+     * @copydoc QGraphicsView::mouseReleaseEvent(QMouseEvent*)
+     */
     void mouseReleaseEvent(QMouseEvent *event) override;
+    /**
+     * @copydoc QGraphicsView::mouseMoveEvent(QMouseEvent*)
+     */
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:

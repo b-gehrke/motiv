@@ -27,6 +27,10 @@
  */
 class Help : public QTextEdit {
 public:
+    /**
+     * @brief Creates a new instance of the Help class
+     * @param parent The parent QWidget
+     */
     explicit Help(QWidget *parent = nullptr) : QTextEdit(parent) {
         QFile helpFile(":res/help.md");
         if (!helpFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

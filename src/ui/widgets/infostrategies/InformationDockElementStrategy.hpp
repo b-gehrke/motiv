@@ -22,11 +22,38 @@
 
 #include <QFormLayout>
 
+/**
+ * @brief A base class for strategies for the InformationDock to show information about a TimedElement.
+ */
 class InformationDockElementStrategy {
 public:
+    /**
+     * @brief Sets up the QFormLayout
+     *
+     * In derived classes this function should be overwritten and fields and rows should be added to the form layout.
+     *
+     * @param layout The layout of the detailed window pane
+     */
     virtual void setup(QFormLayout*) { };
+
+    /**
+     * @brief Updates the view to show details about a newly selected element
+     *
+     * In derived classes this function should be overwritten and update the fields initialized in the setup call. If
+     * the strategy cannot handle the newly selected element it should reject the update by returning false. If it does
+     * so it should not change the form layout or the selected element.
+     *
+     * @param layout The layout of the detailed window pane
+     * @param element The newly selected element
+     *
+     * @return Whether the strategy can handle the selected item and has performed an update.
+     */
     virtual bool update(QFormLayout*, TimedElement*) { return false; };
 
+    /**
+     * @brief Returns the title the information dock should show
+     * @return The title for the information dock should show
+     */
     virtual std::string title() { return ""; }
 };
 

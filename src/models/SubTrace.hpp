@@ -105,6 +105,7 @@ public:
      *
      * @param slots Range of slots this subtrace covers
      * @param communications Range of communications this subtrace covers
+     * @param collectiveCommunications Range of collective communication this subtrace covers
      * @param runtime Runtime of this subtrace
      */
     SubTrace(std::map<otf2::definition::location_group*, Range<Slot*>, LocationGroupCmp> &slots,

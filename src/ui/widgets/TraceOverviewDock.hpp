@@ -24,10 +24,18 @@
 #include "src/ui/views/TraceOverviewTimelineView.hpp"
 #include <QDockWidget>
 
+/**
+ * @brief A DockWidget holding a TraceOverviewTimelineView
+ */
 class TraceOverviewDock  : public QDockWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the TraceOverviewDock class
+     * @param data The data proxy to obtain the current selection of the trace and to connect to change events
+     * @param parent The parent QWidget
+     */
     explicit TraceOverviewDock(TraceDataProxy *data, QWidget *parent = nullptr);
 
 private: // data

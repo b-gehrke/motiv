@@ -23,22 +23,49 @@
 
 #include "src/ui/TraceDataProxy.hpp"
 
+/**
+ * @brief The main view component rendering the trace
+ *
+ * This class is the main component responsible for rendering all slots, communications and collective communications.
+ * The scene is rerendered whenever the selected time window of the trace changes or the window is resized.
+ */
 class TimelineView : public QGraphicsView {
 Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the TimelineView class.
+     *
+     * @param data The data proxy to obtain the current selection of the trace and to connect to change events
+     * @param parent The parent QWidget
+     */
     explicit TimelineView(TraceDataProxy *data, QWidget *parent = nullptr);
 
 public: Q_SIGNALS:
+    /**
+     * @brief Indicates a TimedElement is selected.
+     *
+     * @param begin The start time of the selected TimedElement
+     * @param end The end time of the selected TimedElement
+     */
     void elementSelected(types::TraceTime begin, types::TraceTime end);
 
 public Q_SLOTS:
 
+    /**
+     * @brief Updates the view to reflect the current selection of the TraceDataProxy.
+     */
     void updateView();
 
 protected:
+    /**
+     * @copydoc QGraphicsView::resizeEvent(QResizeEvent*)
+     */
     void resizeEvent(QResizeEvent *event) override;
 
+    /**
+     * @copydoc QGraphicsView::wheelEvent(QWheelEvent*)
+     */
     void wheelEvent(QWheelEvent *event) override;
 
 private:

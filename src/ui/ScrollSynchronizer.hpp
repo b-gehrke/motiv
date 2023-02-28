@@ -22,15 +22,19 @@
 #include <QAbstractScrollArea>
 
 /**
- * Synchronizes the scroll state of two or more widgets that inherit from QAbstractScrollArea.
+ * @brief Synchronizes the scroll state of two or more widgets that inherit from QAbstractScrollArea.
  */
 class ScrollSynchronizer : QObject {
 public:
+    /**
+     * @brief Creates a new instance of the ScrollSynchronizer class.
+     * @param parent The parent QObject
+     */
     explicit ScrollSynchronizer(QObject *parent = nullptr);
 
 public:
     /**
-     * Synchronizes scroll state of @p widget with the previously supplied widgets.
+     * @brief Synchronizes scroll state of @p widget with the previously supplied widgets.
      * @param widget
      */
     void addWidget(QAbstractScrollArea *widget);

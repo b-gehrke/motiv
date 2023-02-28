@@ -35,11 +35,12 @@ public:
      *
      * @param slotss vector of all slots from the trace file
      * @param communications vector of communications from the trace file
+     * @param collectiveCommunications vector of collective communications from the trace file
      * @param runtime total runtime of the trace
      */
     FileTrace(std::vector<Slot*> &slotss,
               std::vector<Communication*> &communications,
-              std::vector<CollectiveCommunicationEvent*> &collectiveCommunications_,
+              std::vector<CollectiveCommunicationEvent*> &collectiveCommunications,
               otf2::chrono::duration runtime);
 
     virtual ~FileTrace();

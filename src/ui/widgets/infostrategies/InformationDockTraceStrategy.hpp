@@ -22,8 +22,14 @@
 #include "InformationDockElementBaseStrategy.hpp"
 #include "src/models/Trace.hpp"
 
+/**
+ * @brief A InformationDockElementStrategy to display information about a Trace
+ */
 class InformationDockTraceStrategy : public InformationDockElementBaseStrategy<Trace> {
 public:
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::title()
+     */
     std::string title() override;
 };
 

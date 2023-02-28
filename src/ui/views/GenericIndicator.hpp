@@ -21,22 +21,64 @@
 
 #include <QGraphicsItem>
 
+/**
+ * @brief A generic indicator bundling common interaction behaviours.
+ *
+ * This abstracts handling common interactions such as
+ * @tparam T
+ * @tparam G
+ */
 template <class T, class G> requires std::is_base_of_v<QAbstractGraphicsShapeItem, G>
 class GenericIndicator : public G {
 public: // constructors
     explicit GenericIndicator(T* element, QGraphicsItem *parent = nullptr);
 
 public: // methods
+    /**
+     * @brief Registers a double click handler
+     *
+     * Registers a callback function that is invoked whenever the user double clicked on the indicator.
+     * @param fn Callback to be invoked on double click
+     */
     void setOnDoubleClick(const std::function<void(T *)>& fn);
+
+    /**
+     * @brief Registers a select handler
+     *
+     * Registers a callback function that is invoked whenever the user selects the indicator by left cliking on it.
+     * @param fn Callback to be invoked on selection
+     */
     void setOnSelected(const std::function<void(T *)>& fn);
 
 protected:
+    /**
+     * @copydoc QAbstractGraphicsShapeItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+     */
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    /**
+     * @copydoc QAbstractGraphicsShapeItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+     */
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
+    /**
+     * @copydoc QAbstractGraphicsShapeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+     */
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+    /**
+     * @copydoc QAbstractGraphicsShapeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+     */
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
+    /**
+     * @brief Checks whether the indicator should react to an event at a given point
+     *
+     * This function should be overwritten in derived classes. By default this function always returns true.
+     *
+     * @param point The point at which the event occured
+     *
+     * @return True if the indicator should react to the event, false otherwise
+     */
     virtual bool respondToEvent(QPointF) { return true; };
 
 private:

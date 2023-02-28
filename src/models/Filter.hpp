@@ -22,12 +22,25 @@
 
 #include "Slot.hpp"
 
+/**
+ * @brief Class containing options to filter the view.
+ */
 class Filter {
 public: // constructors
 
 public: // methods
+    /**
+     * @brief Returns the kinds of slots that should be rendered.
+     * @return The kinds of slots that should be rendered.
+     */
     [[nodiscard]] SlotKind getSlotKinds() const;
 
+    /**
+     * @brief Sets the slots that should be rendered.
+     *
+     * Note that SlotKind values can be used as a flag and be combined with a bitwise or.
+     * @param slotKinds The kind of slots that should be rendered.
+     */
     void setSlotKinds(SlotKind slotKinds);
 
 private: // fields

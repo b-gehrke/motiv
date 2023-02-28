@@ -22,7 +22,7 @@
 #include <QSettings>
 
 /**
- * Singleton holding persistent information
+ * @brief Singleton holding persistent information
  */
 class AppSettings : QObject {
 Q_OBJECT
@@ -42,12 +42,42 @@ public:
     AppSettings(AppSettings const &) = delete;
     void operator=(AppSettings const &) = delete;
 
+
+    /**
+     * @brief Returns the recently opened files
+     * @return The recently opened files
+     */
     [[nodiscard]] const QStringList &recentlyOpenedFiles() const;
+
+    /**
+     * @brief Pushes a new file to the recently opened files list
+     *
+     * After the file is added to the list is saved.
+     *
+     * @param newFile The new opened file
+     */
     void recentlyOpenedFilesPush(const QString &newFile);
+
+    /**
+     * @brief Removes a file from the recently opened files list
+     *
+     * After the file is removed the list is saved
+     *
+     * @param filePath The file to be removed
+     */
     void recentlyOpenedFilesRemove(const QString &filePath);
+
+    /**
+     * @brief Clears the recently opened files list
+     *
+     * After the list is cleared it is saved
+     */
     void recentlyOpenedFilesClear();
 
 public: Q_SIGNALS:
+    /**
+     * @brief Signals a change in the recently opened files
+     */
     void recentlyOpenedFilesChanged(QStringList);
 
 private:

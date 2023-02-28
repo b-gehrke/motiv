@@ -49,6 +49,13 @@ class TimeInputField : public QWidget {
     Q_OBJECT
 
 public Q_SLOTS:
+    /**
+     * @brief Sets the time
+     *
+     * The UI is updated afterwars to reflect the new time
+     *
+     * @param newTime The new time
+     */
     void setTime(types::TraceTime newTime);
 
 public: // constructors

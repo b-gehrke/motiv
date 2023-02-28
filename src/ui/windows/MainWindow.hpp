@@ -30,22 +30,40 @@
 #include "src/ui/widgets/Help.hpp"
 #include "src/ui/widgets/About.hpp"
 
+/**
+ * @brief The main window of the application.
+ *
+ * This class sets up and connects all components and menu bars as well as loading the trace.
+ */
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public: // constructors
-    MainWindow(QString filepath = QString());
+    /**
+     * @brief Creates a new instance of the MainWindow class.
+     *
+     * @param filepath Path to trace file. If omitted the user is promted for it.
+     */
+    explicit MainWindow(QString filepath = QString());
     ~MainWindow() override;
-
-public: // methods
-    void setFilepath(QString newFilepath);
 
 public: Q_SIGNALS:
     // TODO
 
 public Q_SLOTS:
+    /**
+     * @brief Resets the zoom to show the entire trace.
+     */
     void resetZoom();
+
+    /**
+     * @brief Opens and shows the FilterPopup
+     */
     void openFilterPopup();
+
+    /**
+     * @brief Asks for a new trace file and opens the trace
+     */
     void openNewTrace();
 
 private: // methods

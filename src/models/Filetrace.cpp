@@ -21,11 +21,11 @@
 
 FileTrace::FileTrace(std::vector<Slot *> &slotss,
                      std::vector<Communication *> &communications,
-                     std::vector<CollectiveCommunicationEvent *> &collectiveCommunications_,
+                     std::vector<CollectiveCommunicationEvent *> &collectiveCommunications,
                      otf2::chrono::duration runtime) :
     slotsVec_(slotss),
     communications_(communications),
-    collectiveCommunications_(collectiveCommunications_) {
+    collectiveCommunications_(collectiveCommunications) {
     runtime_ = runtime;
     startTime_ = otf2::chrono::duration(0);
 

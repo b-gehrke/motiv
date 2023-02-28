@@ -24,35 +24,39 @@
 
 
 /**
- * Represents possible units on the time scale.
+ * @brief Represents possible units on the time scale.
  */
 struct TimeUnit {
     enum Unit {
-        NanoSecond,
-        MicroSecond,
-        MilliSecond,
-        Second,
-        Minute,
-        Hour,
+        NanoSecond, /**< Unit of a nanosecond */
+        MicroSecond, /**< Unit of a microsecond */
+        MilliSecond, /**< Unit of a millisecond */
+        Second, /**< Unit of a second */
+        Minute, /**< Unit of a minute */
+        Hour, /**< Unit of an hour */
     };
 
-    TimeUnit(Unit unit);
+    /**
+     * @brief Constructs or implicitly converts a TimeUnit from a Unit
+     * @param unit The init
+     */
+    TimeUnit(Unit unit); // NOLINT(google-explicit-constructor)
     /**
      * Construct TimeUnit from string.
      * @param unit SI time string (e.g. ns, μs, s, h)
      */
-    TimeUnit(QString unit);
+    explicit TimeUnit(QString unit);
 
     /**
      * Turns TimeUnit into SI time format.
-     * @return @ref Unit "Unit" as SI string
+     * @return @ref TimeUnit::Unit "Unit" as SI string
      */
-    QString str() const;
+    [[nodiscard]] QString str() const;
 
     /**
      * @return value for conversion between base representation (ns) and other units.
      */
-    double multiplier() const;
+    [[nodiscard]] double multiplier() const;
 
 private:
     Unit unit;

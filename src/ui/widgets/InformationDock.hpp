@@ -26,27 +26,67 @@
 #include <QFormLayout>
 #include <QDockWidget>
 
+/**
+ * @brief A UI component that shows additional information
+ *
+ * An InformationDock shows more detailed and additional information about the current selected item.
+ */
 class InformationDock : public QDockWidget {
 Q_OBJECT
 public:
+    /**
+     * @brief Creates a new instance of the InformationDock class
+     * @param parent The parent QWidget
+     */
     explicit InformationDock(QWidget *parent = nullptr);
-    ~InformationDock();
+    ~InformationDock() override;
 
 public:
+    /**
+     * @brief Add a strategy to display information for specific items
+     *
+     * When the selection changes the InformationDock instance iterates over all added InformationDockElementStrategy s
+     * and tries to update them until the first reports it accepted the update by returning True from the update function.
+     *
+     * @param s The strategy to add
+     */
     void addElementStrategy(InformationDockElementStrategy *s);
 
 public:
 Q_SIGNALS:
-
+    /**
+     * @brief Signal indicating to zoom to a specific time window
+     *
+     * @param from The time at which the new time window should start
+     * @param to The time at which the new time window should end
+     */
     void zoomToWindow(types::TraceTime from, types::TraceTime to);
+
+private Q_SLOTS:
+
+    /**
+     * @brief Handler for clicked event of the zoom into view button
+     */
+    void zoomIntoViewPressed();
 
 public Q_SLOTS:
 
-    void zoomIntoViewPressed();
-
+    /**
+     * @brief Sets the current element.
+     *
+     * This triggers an updateView call
+     *
+     * @param element The newly selected element
+     */
     void setElement(TimedElement *element);
 
 protected:
+    /**
+     * @brief Updates the view
+     *
+     * This function iterates over all added InformationDockElementStrategy s
+     * and tries to update them until the first reports it accepted the update by returning True from the update function.
+     */
     virtual void updateView();
 
 private: // fields

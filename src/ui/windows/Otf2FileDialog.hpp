@@ -22,7 +22,8 @@
 #include <QFileDialog>
 
 /**
- * Wrapper around @ref QFileDialog "QFileDialog" that displays files with a otf2-file ending only.
+ * @brief Wrapper around @ref QFileDialog "QFileDialog" that displays files with a otf2-file ending only.
+ *
  * Besides, it checks the history for the last file opened, and shows the according directory.
  * If the history is empty, the home directory is shown instead.
  */
@@ -30,8 +31,8 @@ class Otf2FileDialog : public QFileDialog {
     Q_OBJECT
 public:
     /**
-     * See @ref QFileDialog "QFileDialog"
-     * @param parent
+     * See Qt documentation for QFileDialog
+     * @param parent The parent QWidget
      */
     explicit Otf2FileDialog(QWidget *parent = nullptr);
 };

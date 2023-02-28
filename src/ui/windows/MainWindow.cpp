@@ -239,10 +239,6 @@ void MainWindow::createCentralWidget() {
     this->setCentralWidget(timeline);
 }
 
-void MainWindow::setFilepath(QString newFilepath) {
-    this->filepath = std::move(newFilepath);
-}
-
 QString MainWindow::promptFile() {
     auto newFilePath = QFileDialog::getOpenFileName(this, QFileDialog::tr("Open trace"), QString(),
                                                     QFileDialog::tr("OTF Traces (*.otf *.otf2)"));

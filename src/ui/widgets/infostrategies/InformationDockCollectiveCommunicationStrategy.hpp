@@ -22,12 +22,24 @@
 #include "InformationDockElementBaseStrategy.hpp"
 #include "src/models/communication/CollectiveCommunicationEvent.hpp"
 
+/**
+ * @brief A InformationDockElementStrategy to display information about a CollectiveCommunicationEvent
+ */
 class InformationDockCollectiveCommunicationStrategy : public InformationDockElementBaseStrategy<CollectiveCommunicationEvent> {
 public:
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::setup(QFormLayout*)
+     */
     void setup(QFormLayout *layout) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::updateView(QFormLayout*, T*)
+     */
     void updateView(QFormLayout *layout, CollectiveCommunicationEvent *element) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::title()
+     */
     std::string title() override;
 
 private:

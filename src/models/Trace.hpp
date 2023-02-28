@@ -28,7 +28,17 @@
 #include "TimedElement.hpp"
 
 
+/**
+ * @brief A comparator for otf2::definition::location_group objects
+ */
 struct LocationGroupCmp {
+    /**
+     * @brief Compares two otf2::definition::location_group objects
+     *
+     * @param l Left object
+     * @param r Right object
+     * @return True if l < r
+     */
     bool operator()(const otf2::definition::location_group *l, const otf2::definition::location_group *r) const {
         return l->ref() < r->ref();
     }

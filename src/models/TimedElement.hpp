@@ -20,6 +20,9 @@
 
 #include "src/types.hpp"
 
+/**
+ * @brief A base class for all elements with a start and end time
+ */
 class TimedElement {
 public:
     virtual ~TimedElement() = default;

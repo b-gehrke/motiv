@@ -30,28 +30,42 @@ enum SlotKind {
     Plain   = 0b0100
 };
 
+/**
+ * @brief A Slot represents a visual slot to be rendered in the UI. It contains the information of a
+ * location.
+ */
 class Slot : public TimedElement {
 public:
+    /**
+     * @brief Creates a new instance of the Slot class
+     *
+     * For step by step initialization use the nested Builder class.
+     *
+     * @param start @copybrief startTime
+     * @param end @copybrief endTime
+     * @param location @copybrief location
+     * @param region @copybrief region
+     */
     Slot(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
          otf2::definition::location *location, otf2::definition::region *region);
 
     /**
-     * Start time of the slot relative to the trace start time
+     * @brief Start time of the slot relative to the trace start time
      */
     otf2::chrono::duration startTime;
 
     /**
-     * End time of the slot relative to the trace start time
+     * @brief End time of the slot relative to the trace start time
      */
     types::TraceTime endTime;
 
     /**
-     * Location of the slot (thread) containing the location group (MPI rank)
+     * @brief Location of the slot (thread) containing the location group (MPI rank)
      */
     otf2::definition::location *location;
 
     /**
-     * Region the slot occurred in. For example, the source file and line.
+     * @brief Region the slot occurred in. For example, the source file and line.
      */
     otf2::definition::region *region;
 

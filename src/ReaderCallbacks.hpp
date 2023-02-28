@@ -40,6 +40,12 @@ using BuilderSetter = std::function<void(typename T::Builder &)>;
 
 typedef std::variant<NonBlockingSendEvent::Builder, NonBlockingReceiveEvent::Builder> NonBlockingCommunicationEventBuilder;
 
+/**
+ * @brief Class implementing handlers for the otf readers events
+ *
+ * This class contains all the logic for parsing OTF2 traces into our custom data structures; including linking start
+ * and end events of single operations to form a communication
+ */
 class ReaderCallbacks : public otf2::reader::callback {
     using otf2::reader::callback::event;
     using otf2::reader::callback::definition;
@@ -76,6 +82,10 @@ private:
 
     otf2::reader::reader &rdr_;
 public:
+    /**
+     * @brief Creates a new instance of the ReaderCallbacks class
+     * @param rdr Initialized reader
+     */
     explicit ReaderCallbacks(otf2::reader::reader &rdr);
 
     void definition(const otf2::definition::location &loc) override;
@@ -115,7 +125,7 @@ public:
     /**
      * @brief Returns all read point to point communications
      *
-     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     * The vector will only contain elements read by the reader when calling @link (otf2::reader::reader::read_events)
      *
      * @return All read point to point communications
      */
@@ -125,7 +135,7 @@ public:
     /**
      * @brief Returns all read collective communications
      *
-     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     * The vector will only contain elements read by the reader when calling @link (otf2::reader::reader::read_events)
      *
      * @return All read collective communications
      */
@@ -134,7 +144,7 @@ public:
     /**
      * @brief Returns all read slots
      *
-     * The vector will only contain elements read by the reader when calling @link(otf2::reader::reader::read_events)
+     * The vector will only contain elements read by the reader when calling @link (otf2::reader::reader::read_events)
      *
      * @return All read slots
      */

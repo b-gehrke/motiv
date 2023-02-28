@@ -26,8 +26,19 @@
 #include "src/types.hpp"
 #include "GenericIndicator.hpp"
 
+/**
+ * @brief Indicator for collective communications
+ *
+ * A slot is indicated by a rectangle.
+ */
 class SlotIndicator : public GenericIndicator<Slot, QGraphicsRectItem> {
 public: // constructors
+    /**
+     * @brief Creates a new instance of the SlotIndicator class
+     * @param rect The rect the slot should be rendered
+     * @param representedSlot The Slot object the indicator is representing
+     * @param parent The parent QGraphicsItem
+     */
     SlotIndicator(const QRectF &rect, Slot* representedSlot, QGraphicsItem *parent = nullptr);
 };
 

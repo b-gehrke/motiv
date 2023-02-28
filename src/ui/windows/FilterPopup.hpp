@@ -24,6 +24,11 @@
 #include <QCheckBox>
 #include "src/models/Filter.hpp"
 
+/**
+ * @brief A simple popup showing filter options.
+ *
+ * In this popup, all possible Filter settings can be changed.
+ */
 class FilterPopup : public QDialog {
 Q_OBJECT
 

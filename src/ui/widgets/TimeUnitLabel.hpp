@@ -23,9 +23,9 @@
 #include "src/types.hpp"
 
 /**
- * TimeUnitLabel constructs a @ref QLabel "QLabel" from a double value
- * that represents a time point.
- * It will always show the greatest possible unit where the value is greater than zero.
+ * @brief TimeUnitLabel constructs a QLabel from a double value that represents a time point.
+ *
+ * It will always show the greatest possible unit for witch the value is greater than zero.
  */
 class TimeUnitLabel : public QLabel {
     Q_OBJECT
@@ -47,6 +47,9 @@ public:
      */
     [[nodiscard]] double getTime() const;
 
+    /**
+     * @brief Updates the view to reflect the current state
+     */
     void updateView();
 
 private:

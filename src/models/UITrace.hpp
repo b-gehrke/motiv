@@ -67,10 +67,10 @@ public:
     /**
      * Wraps a trace into a UITrace optimized for rendering performance.
      *
-     * @seealso UITrace
+     * @see UITrace
      *
      * @param trace original trace to be optimized
-     * @param timePerPx duration that fits into one pixel
+     * @param timePerPixel duration that fits into one pixel
      * @return the UITrace wrapping the original trace
      */
     static UITrace *forResolution(Trace *trace, otf2::chrono::duration timePerPixel);
@@ -79,7 +79,7 @@ public:
     /**
      * Wraps a trace into a UITrace optimized for rendering performance.
      *
-     * @seealso UITrace
+     * @see UITrace
      *
      * @param trace original trace to be optimized
      * @param width the width in px for which the trace should be optimized

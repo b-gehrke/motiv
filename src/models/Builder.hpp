@@ -95,7 +95,8 @@ public:                                                                 \
  * The second arguments should contain several BUILDER_FIELD calls (without comma in between).
  * The last arguments must be the list of names used in content
  *
- * @example @code
+ * Example:
+ * @code
  * class SomeClass {
  * private:
  *    someType1 someField1;

@@ -22,23 +22,26 @@
 #include "NonBlockingP2PCommunicationEvent.hpp"
 
 /**
- * Class representing the non blocking receive event.
+ * @brief Class representing the non blocking receive event.
  */
 class NonBlockingReceiveEvent : public NonBlockingP2PCommunicationEvent {
 public:
 
     /**
-     * Creates a new instance of the NonBlockingReceiveEvent class.
+     * @brief Creates a new instance of the NonBlockingReceiveEvent class.
      *
      * @param start Start time of the event
      * @param end End time of the event
      * @param location Location of the event
      * @param communicator Communicator the event took place in
      */
-    NonBlockingReceiveEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &anEnd,
+    NonBlockingReceiveEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
                             otf2::definition::location *location, types::communicator *communicator);
 
-    CommunicationKind getKind() const override;
+    /**
+     * @copydoc CommunicationEvent::getKind()
+     */
+    [[nodiscard]] CommunicationKind getKind() const override;
 
     BUILDER(NonBlockingReceiveEvent,
             BUILDER_FIELD(otf2::chrono::duration, start)

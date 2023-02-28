@@ -25,7 +25,7 @@
 #include "src/models/Builder.hpp"
 
 /**
- * Class representing non blocking events in point to point communications like MPI_ISEND, MPI_IRECEIVE.
+ * @brief Class representing non blocking events in point to point communications like MPI_ISEND, MPI_IRECEIVE.
  *
  * This class bundles common functionality for these types of events and should be used as a base class and not
  * instantiated directly.
@@ -43,15 +43,28 @@ protected:
     NonBlockingP2PCommunicationEvent(const otf2::chrono::duration &start, const otf2::chrono::duration &end,
                                      otf2::definition::location* location, types::communicator* communicator);
 
-    otf2::chrono::duration start;
-    otf2::chrono::duration end;
-    otf2::definition::location* location;
-    types::communicator* communicator;
+    otf2::chrono::duration start; /**< The time when the event started */
+    otf2::chrono::duration end; /**< The time when the event ended */
+    otf2::definition::location* location; /**< The location of the event */
+    types::communicator* communicator; /**< The communicator of the operation */
 public:
-    otf2::definition::location * getLocation() const override;
-    otf2::chrono::duration getStartTime() const override;
-    otf2::chrono::duration getEndTime() const override;
-    types::communicator * getCommunicator() const override;
+
+    /**
+     * @copydoc CommunicationEvent::getLocation()
+     */
+    [[nodiscard]] otf2::definition::location * getLocation() const override;
+    /**
+     * @copydoc CommunicationEvent::getStartTime()
+     */
+    [[nodiscard]] otf2::chrono::duration getStartTime() const override;
+    /**
+     * @copydoc CommunicationEvent::getEndTime()
+     */
+    [[nodiscard]] otf2::chrono::duration getEndTime() const override;
+    /**
+     * @copydoc CommunicationEvent::getCommunicator()
+     */
+    [[nodiscard]] types::communicator * getCommunicator() const override;
 };
 
 #endif //MOTIV_NONBLOCKINGP2PCOMMUNICATIONEVENT_HPP

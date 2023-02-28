@@ -24,15 +24,26 @@
 #include "src/ui/TraceDataProxy.hpp"
 
 /**
- * The TimelineHeader displays a horizontal bar with evenly distributed labels marking a time point.
+ * @brief The TimelineHeader displays a horizontal bar with evenly distributed labels marking a time point.
  */
 class TimelineHeader : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the TimelineHeader class
+     *
+     * @param data A pointer to a TraceDataProxy
+     * @param parent The parent QWidget
+     */
     TimelineHeader(TraceDataProxy *data, QWidget *parent = nullptr);
 
 public Q_SLOTS:
+    /**
+     * @brief Updates the view
+     *
+     * The view is rerendered to reflect the current state of the TraceDataProxy
+     */
     void updateView();
 
 private: // widgets

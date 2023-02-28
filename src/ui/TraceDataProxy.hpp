@@ -34,20 +34,48 @@ class TraceDataProxy : public QObject {
 
 public: //constructors
     /**
-     * Constructs a new TraceDataProxy.
+     * @brief Constructs a new TraceDataProxy.
+     *
      * The object takes ownership of the supplied FileTrace.
-     * @param trace
-     * @param parent
+     * @param trace The entire trace
+     * @param settings The view settings
+     * @param parent The parent QObject
      */
     TraceDataProxy(FileTrace *trace, ViewSettings *settings, QObject *parent = nullptr);
     virtual ~TraceDataProxy() override;
 
 
 public: // methods
+    /**
+     * @brief Returns the current selection
+     *
+     * The selection refers to the parts of the trace that is in the selected time window
+     *
+     * @return The current selection
+     */
     [[nodiscard]] Trace *getSelection() const;
+    /**
+     * @brief Returns the selected start time
+     * @return The selected start time
+     */
     [[nodiscard]] types::TraceTime getBegin() const;
+
+    /**
+     * @brief Returns the selected end time
+     * @return The selected end time
+     */
     [[nodiscard]] types::TraceTime getEnd() const;
+
+    /**
+     * @brief Returns the current view settings
+     * @return The current view settings
+     */
     [[nodiscard]] ViewSettings *getSettings() const;
+
+    /**
+     * @brief Returns the entire trace
+     * @return The full trace
+     */
     [[nodiscard]] Trace *getFullTrace() const;
 
     /**

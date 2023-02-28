@@ -23,11 +23,26 @@
 #include "src/models/communication/CollectiveCommunicationEvent.hpp"
 #include "GenericIndicator.hpp"
 
+/**
+ * @brief Indicator for collective communications
+ *
+ * A collective communication is indicated by a rectangle. It only reacts to click events, if there are no other elements
+ * drawn behind it to avoid confusion when clicking on slots within a collective communication. For the same reasons, it
+ * does not highlight when hovering over it.
+ */
 class CollectiveCommunicationIndicator : public GenericIndicator<CollectiveCommunicationEvent, QGraphicsRectItem> {
 public:
-    CollectiveCommunicationIndicator(CollectiveCommunicationEvent *element, QGraphicsItem *parent = nullptr);
+    /**
+     * @brief Creates a new instance of the CollectiveCommunicationIdicator class
+     * @param element The CollectiveCommunicationEvent object the indicator is representing
+     * @param parent The parent QGraphicsItem
+     */
+    explicit CollectiveCommunicationIndicator(CollectiveCommunicationEvent *element, QGraphicsItem *parent = nullptr);
 
 protected:
+    /**
+     * @copydoc GenericIndicator::respondToEvent(QPointF);
+     */
     bool respondToEvent(QPointF mousePos) override;
 };
 

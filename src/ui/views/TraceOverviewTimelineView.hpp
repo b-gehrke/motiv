@@ -24,27 +24,66 @@
 #include <QResizeEvent>
 #include <QRubberBand>
 #include "src/ui/TraceDataProxy.hpp"
-
+/**
+ * @brief A smaller TimelineView dock widget designed for an overview and quick navigation
+ *
+ * A TraceOverviewTimelineView always shows the entire loaded trace but highlights the current selected time window.
+ * Furthermore, it allows selecting a new time range by dragging a selection in the overview.
+ */
 class TraceOverviewTimelineView : public QGraphicsView {
 Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the TraceOverviewTimelineView class.
+     * @param fullTrace Pointer to the entire loaded trace
+     * @param parent The parent QWidget
+     */
     explicit TraceOverviewTimelineView(Trace *fullTrace, QWidget *parent = nullptr);
 
 public: Q_SIGNALS:
+    /**
+     * @brief Signals a change in the selection
+     *
+     * This signal should trigger the main view to zoom to the selected time window.
+     *
+     * @param from The newly selected start time of the selection
+     * @param to The newly selected end time of the selection
+     */
     void windowSelectionChanged(types::TraceTime from, types::TraceTime to);
 
 public Q_SLOTS:
+    /**
+     * @brief Updates the view to reflect the current selection of the TraceDataProxy.
+     */
     void updateView();
+
+    /**
+     * @brief Set a new selection window. The UI is updated to reflect the changes
+     * @param from The new start of the selection
+     * @param to The new end of the selection
+     */
     void setSelectionWindow(types::TraceTime from, types::TraceTime to);
 
 
 protected:
+    /**
+     * @copydoc QGraphicsView::mousePressEvent(QMouseEvent*)
+     */
     void mousePressEvent(QMouseEvent *event) override;
 
+    /**
+     * @copydoc QGraphicsView::mouseReleaseEvent(QMouseEvent*)
+     */
     void mouseReleaseEvent(QMouseEvent *event) override;
 
+    /**
+     * @copydoc QGraphicsView::mouseMoveEvent(QMouseEvent*)
+     */
     void mouseMoveEvent(QMouseEvent *event) override;
+    /**
+     * @copydoc QGraphicsView::resizeEvent(QResizeEvent*)
+     */
     void resizeEvent(QResizeEvent *event) override;
 
 private:

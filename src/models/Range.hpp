@@ -25,13 +25,32 @@
 #include <vector>
 #include <memory>
 
+/**
+ * @brief A custom range implementation around std::vector<T>s
+ *
+ * An instance can be created as a copy of a vector or just with to iterators. This allows a more efficient way to pass
+ * sub ranges around.
+ *
+ * @tparam T Type of element
+ */
 template<typename T>
 class Range {
 public:
+    /**
+     * @brief Shortcut for the iterator
+     */
     using It = typename std::vector<T>::iterator;
 
+    /**
+     * @brief Creates an empty range
+     */
     Range() = default;
 
+    /**
+     * @brief Creates a Range defined by two iterators.
+     * @param begin Iterator pointing to the begin of the range.
+     * @param end Iterator pointing to one past the last element of the range.
+     */
     Range(It begin, It end) : begin_(begin), end_(end), vec_(nullptr) {};
 
     /**
@@ -59,6 +78,15 @@ public:
     explicit Range(std::vector<T> &vec) : vec_(new std::vector<T>(vec)), begin_(vec_->begin()), end_(vec_->end()) {};
 
 public:
+    /**
+     * @brief Copy assignment constructor.
+     *
+     * If the right hand side was constructed from a vector it is copied as well and the original vector is deleted.
+     * Otherwise the ranges are copied.
+     *
+     * @param rhs Right hand side of the assignment
+     * @return The copied element
+     */
     Range<T> &operator=(const Range<T> &rhs) {
         if (this == &rhs) {
             return *this;

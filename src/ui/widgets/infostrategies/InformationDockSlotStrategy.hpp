@@ -22,12 +22,24 @@
 #include "InformationDockElementBaseStrategy.hpp"
 #include "src/models/Slot.hpp"
 
+/**
+ * @brief A InformationDockElementStrategy to display information about a Slot
+ */
 class InformationDockSlotStrategy : public InformationDockElementBaseStrategy<Slot> {
 public:
+/**
+     * @copydoc InformationDockElementBaseStrategy<T>::setup(QFormLayout*)
+     */
     void setup(QFormLayout *layout) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::updateView(QFormLayout*, T*)
+     */
     void updateView(QFormLayout *layout, Slot *element) override;
 
+    /**
+     * @copydoc InformationDockElementBaseStrategy<T>::title()
+     */
     std::string title() override;
 
 private:

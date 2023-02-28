@@ -34,6 +34,12 @@ class Timeline : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Creates a new instance of the Timeline class
+     *
+     * @param data A pointer to a TraceDataProxy
+     * @param parent The parent QWidget
+     */
     explicit Timeline(TraceDataProxy *data, QWidget *parent = nullptr);
 
 private: // widgets
